@@ -1,0 +1,1 @@
+export const sharedVariable = "sup dog",
