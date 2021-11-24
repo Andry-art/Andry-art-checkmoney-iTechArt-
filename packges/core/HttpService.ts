@@ -24,7 +24,7 @@ export function saveToken(response: Promise<any>): Promise<void> {
     return tokenData = response;
 }
 
-export const getToken = (): object => {
+export const getToken = (): Promise<any> => {
     return tokenData
 }
 
@@ -42,7 +42,7 @@ class HttpService {
         this.saveToken = saveToken;
     }
 
-    public async authGet(url: string, limit: number = 1): Promise<any> {
+    public async authGet<T>(url: string, limit: number = 1): Promise<T | undefined> {
         let token = this.getToken()
         let tokenAccess = token.accessToken
 
@@ -66,7 +66,7 @@ class HttpService {
         }
     }
 
-    public async authPost(url: string, params: any, limit: number = 1): Promise<void> {
+    public async authPost<T>(url: string, params: any, limit: number = 1): Promise<T | undefined> {
         let token = this.getToken()
         let tokenAccess = token.accessToken
 
@@ -95,7 +95,7 @@ class HttpService {
         }
     }
 
-    public async authPut(url: string, params: any, limit: number = 1): Promise<any> {
+    public async authPut<T>(url: string, params: any, limit: number = 1): Promise<T | undefined> {
         let token = this.getToken()
         let tokenAccess = token.accessToken
 
@@ -123,7 +123,7 @@ class HttpService {
         }
     }
 
-    public async authDelete(url: string, params: any, limit: number = 1): Promise<any> {
+    public async authDelete(url: string, params: any, limit: number = 1): Promise<void> {
         let token = this.getToken()
         let tokenAccess = token.accessToken
 
@@ -148,7 +148,7 @@ class HttpService {
         }
     }
 
-    public async auth(url: string, email: string, password: string): Promise<any> {
+    public async auth<T>(url: string, email: string, password: string): Promise<T | undefined> {
         let response = await this.fetch(url, {
             method: 'POST',
             credentials: 'include',
@@ -172,7 +172,7 @@ class HttpService {
     }
 
 
-    public async refreshToken(token: string): Promise<any> {
+    public async refreshToken<T>(token: string): Promise<T | undefined> {
         let response = await this.fetch('api/auth/refreshToken', {
             method: 'POST',
             credentials: 'include',
