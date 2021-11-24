@@ -36,7 +36,7 @@ it('authPut', async () => {
     req.authPut('https://jsonplaceholder.typicode.com/posts', someParams)
 
     expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts',
-    { params: someParams });
+        { params: someParams });
 })
 
 it('authDelete', async () => {
@@ -47,7 +47,7 @@ it('authDelete', async () => {
     req.authDelete('https://jsonplaceholder.typicode.com/posts', someParams)
 
     expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts',
-    { params: someParams });
+        { params: someParams });
 })
 
 it('auth', async () => {
@@ -58,7 +58,7 @@ it('auth', async () => {
 
     req.auth('https://jsonplaceholder.typicode.com/posts', email, password)
 
-    expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts',email, password )
+    expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts', email, password)
 })
 
 it('refreshToken', async () => {
