@@ -6,60 +6,85 @@
 
 
 import HttpService from './HttpService';
-import {ErrorFetch} from './HttpService'
+import {ErrorFetch} from './HttpService';
 
 
 
+  it('authGet fetch', async () => {
+    const mockFetch = jest.fn().mockReturnValue({ok: true, json: () => {}});
+    const saveToken = jest.fn().mockReturnValue({});
+    const getToken = jest.fn().mockReturnValue({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"});
+    const http = new HttpService(mockFetch, getToken, saveToken);
+    const tokens = getToken();
 
-describe('function to be called with', () => {
-  const mockFetchErrorResponse = jest.fn().mockReturnValue({ json: () => { } })
-  const mockFetch = jest.fn().mockReturnValue({ json: () => { } });
-  const saveToken = jest.fn().mockReturnValue({ json: () => { } });
-  const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}));
-  const http = new HttpService(mockFetchErrorResponse,mockFetch, saveToken, getToken);
-  const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
-  const email = "randomUser@mail.com"
-  const password = "123123"
-  const tokens = getToken();
-  const token = "nkgwjnrgwkj4234"
-
-  it('authGet', () => {
-    http.authGet('https://jsonplaceholder.typicode.com/posts');
+    await http.authGet('https://jsonplaceholder.typicode.com/posts');
+    
     expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts', {
       method: 'GET',
       headers: { Authorization: `Bearer ${tokens.accessToken}` },
     });
   })
 
-  it('authPost', () => {
-    http.authPost('https://jsonplaceholder.typicode.com/posts', params)
+
+  it('authPost fetch', async () => {
+    const mockFetch = jest.fn().mockReturnValue({ok: true, json: () => {}});
+    const saveToken = jest.fn().mockReturnValue({});
+    const getToken = jest.fn().mockReturnValue({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"});
+    const http = new HttpService(mockFetch, getToken, saveToken);
+    const tokens = getToken();
+    const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+    await http.authPost('https://jsonplaceholder.typicode.com/posts', params)
     expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts', {
               method: 'POST',
               headers: { Authorization: `Bearer ${tokens.accessToken}`},
-              body: JSON.stringify({params}),
+              body: JSON.stringify(params),
           });
   })
 
-  it('authPut', () => {
-    http.authPut('https://jsonplaceholder.typicode.com/posts', params)
+  it('authPut fetch', async () => {
+    const mockFetch = jest.fn().mockReturnValue({ok: true, json: () => {}});
+    const saveToken = jest.fn().mockReturnValue({ json: () => { } });
+    const getToken = jest.fn().mockReturnValue({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"});
+    const http = new HttpService(mockFetch, getToken, saveToken);
+    const tokens = getToken();
+    const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+    await http.authPut('https://jsonplaceholder.typicode.com/posts', params)
     expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts', {
               method: 'PUT',
               headers: { Authorization: `Bearer ${tokens.accessToken}`},
-              body: JSON.stringify({params}),
+              body: JSON.stringify(params),
           });
   })
 
-  it('authDelete', () => {
-    http.authDelete('https://jsonplaceholder.typicode.com/posts', params)
+
+  it('authDelete fetch', async () => {
+    const mockFetch = jest.fn().mockReturnValue({ok: true, status: 200, json: () => {}});
+    const saveToken = jest.fn().mockReturnValue({ json: () => { } });
+    const getToken = jest.fn().mockReturnValue({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"});
+    const http = new HttpService(mockFetch, getToken, saveToken);
+    const tokens = getToken();
+    const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+    await http.authDelete('https://jsonplaceholder.typicode.com/posts', params)
     expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts', {
               method: 'DELETE',
               headers: { Authorization: `Bearer ${tokens.accessToken}`},
-              body: JSON.stringify({params}),
+              body: JSON.stringify(params),
           });
   })
 
-  it('auth', () => {
-    http.auth('https://jsonplaceholder.typicode.com/posts', email, password)
+
+  it('auth fetch', async () => {
+    const mockFetch = jest.fn().mockReturnValue({ok: true, json: () => {}});
+    const saveToken = jest.fn().mockReturnValue({ json: () => { } });
+    const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}));
+    const http = new HttpService(mockFetch, getToken, saveToken);
+    const email = "randomUser@mail.com"
+    const password = "123123"
+
+    await http.auth('https://jsonplaceholder.typicode.com/posts', email, password)
     expect(mockFetch).toBeCalledWith('https://jsonplaceholder.typicode.com/posts', {
               method: 'POST',
               headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
@@ -67,80 +92,177 @@ describe('function to be called with', () => {
           });
   })
 
-  it('refreshTokens', () => {
-    http.refreshToken(token)
-    expect(mockFetchErrorResponse).toBeCalledWith('api/auth/refreshToken', {
+  it('refreshTokens fetch', async () => {
+    const mockFetch = jest.fn().mockReturnValue({ok: true, json: () => {}});
+    const saveToken = jest.fn().mockReturnValue({ json: () => { } });
+    const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}));
+    const http = new HttpService(mockFetch, getToken, saveToken);
+    const token = "nkgwjnrgwkj4234"
+
+    await http.refreshToken(token)
+    expect(mockFetch).toBeCalledWith('api/auth/refreshToken', {
               method: 'POST',
               headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
               body: JSON.stringify({token}),
           });
   })
-
-})
-
-
-  describe('errors', () => {
-   const mockFetchErrorResponse = jest.fn().mockReturnValue({
-     ok: true,
-     json: () => {
-       return {accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"};   
-     }
-   }
- );
-    const mockFetchErrorFetch = jest.fn().mockReturnValue({ok: false})
-    const mockFetchErrorStatus = jest.fn().mockReturnValue({ok: false, status: 401})
-    const saveToken = jest.fn().mockReturnValue({  })
-    const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
-    const httpErrorFetch = new HttpService(mockFetchErrorResponse,mockFetchErrorFetch, getToken, saveToken)
-    const httpErrorStatus = new HttpService(mockFetchErrorResponse,mockFetchErrorStatus, getToken, saveToken)
-    const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
-    const email = "randomUser@mail.com"
-    const password = "123123"
-   
-
   
 
-    it('authGet error', () => {
-     httpErrorFetch.authGet('wwwwwwww').catch(e => expect(e).toEqual(new ErrorFetch('authGet error2', 'error')))
-     httpErrorStatus.authGet('wwwwwww').catch(e => expect(e).toEqual(new ErrorFetch('authGet error1', 401)))
+    it('authGet error fetch', () => {
+      const mockFetch = jest.fn().mockReturnValue({ok: false})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+
+     http.authGet('wwwwwwww').catch(e => expect(e).toEqual(new ErrorFetch('authGet error',  404, true)))
     })
 
-    it('authPost error', () => {
-      httpErrorFetch.authPost('wwwwwwww',params).catch(e => expect(e).toEqual(new ErrorFetch('authPost error2', 'error')))
-      httpErrorStatus.authPost('wwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authPost error1', 401)))
+
+    it('authGet error 401', () => {
+      const mockFetch =  jest.fn().mockReturnValueOnce({ok: false, status: 401}).mockReturnValueOnce({
+        ok: true,
+        json: () => {
+          return {accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"};   
+        }
+      }).mockReturnValueOnce({ok: false, status: 401})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+
+      http.authGet('wwwwwww').catch(e => expect(e).toEqual(new ErrorFetch('authGet error', 401, false)))
+     })
+
+    it('authPost error fetch', () => {
+      const mockFetch = jest.fn().mockReturnValue({ok: false})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+     http.authPost('wwwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authPost error',  404, true)))
     })
 
-    it('authPut error', () => {
-      httpErrorFetch.authPut('wwwwwwww',params).catch(e => expect(e).toEqual(new ErrorFetch('authPut error2', 'error')))
-      httpErrorStatus.authPut('wwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authPut error1', 401)))
+
+    it('authPost error 401', () => {
+      const mockFetch =  jest.fn().mockReturnValueOnce({ok: false, status: 401}).mockReturnValueOnce({
+        ok: true,
+        json: () => {
+          return {accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"};   
+        }
+      }).mockReturnValueOnce({ok: false, status: 401})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+      http.authPost('wwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authPost error', 401, false)))
+     })
+
+    it('authPut error fetch', () => {
+      const mockFetch = jest.fn().mockReturnValue({ok: false})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+     http.authPut('wwwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authPut error',  404, true)))
     })
 
-    it('authDelete error', () => {
-      httpErrorFetch.authDelete('wwwwwwww',params).catch(e => expect(e).toEqual(new ErrorFetch('authDelete error2', 'error')))
-      httpErrorStatus.authDelete('wwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authDelete error1', 401)))
-    })
-    
-    it('auth error', () => {
-      httpErrorFetch.auth('wwwwwwww', email, password).catch(e => expect(e).toEqual(new ErrorFetch('auth error2', 'error')))
-      httpErrorStatus.auth('wwwwwww', email, password).catch(e => expect(e).toEqual(new ErrorFetch('auth error1', 401)))
-    })
-  
-  });
 
-  it('refreshToken error', () => {
-    const mockFetchErrorResponse = jest.fn().mockReturnValue({})
-     const mockFetchErrorFetch = jest.fn().mockReturnValue({ok: false})
-     const mockFetchErrorStatus = jest.fn().mockReturnValue({ok: false, status: 201})
-     const saveToken = jest.fn().mockReturnValue({  })
-     const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
-     const httpErrorFetch = new HttpService(mockFetchErrorFetch,mockFetchErrorResponse, getToken, saveToken)
-     const httpErrorStatus = new HttpService(mockFetchErrorStatus, mockFetchErrorResponse, getToken, saveToken)
-     const token = "nkgwjnrgwkj4234"
+    it('authPut error 401', () => {
+      const mockFetch =  jest.fn().mockReturnValueOnce({ok: false, status: 401}).mockReturnValueOnce({
+        ok: true,
+        json: () => {
+          return {accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"};   
+        }
+      }).mockReturnValueOnce({ok: false, status: 401})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 
-    httpErrorFetch.refreshToken(token).catch(e => expect(e).toEqual(new ErrorFetch('refreshToken error2', 'error')))
-    httpErrorStatus.refreshToken(token).catch(e => expect(e).toEqual(new ErrorFetch('refreshToken error1', 401)))
-  })
-   
+      http.authPut('wwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authPut error', 401, false)))
+     })
+
+    it('authDelete error fetch', () => {
+      const mockFetch = jest.fn().mockReturnValue({ok: false})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+     http.authDelete('wwwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authDelete error',  404, true)))
+    })
+
+
+    it('authDelete error 401', () => {
+      const mockFetch =  jest.fn().mockReturnValueOnce({ok: false, status: 401}).mockReturnValueOnce({
+        ok: true,
+        json: () => {
+          return {accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"};   
+        }
+      }).mockReturnValueOnce({ok: false, status: 401})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+
+      http.authDelete('wwwwwww', params).catch(e => expect(e).toEqual(new ErrorFetch('authDelete error', 401, false)))
+     })
+
+    it('auth error fetch', () => {
+      const mockFetch = jest.fn().mockReturnValue({ok: false})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const email = "randomUser@mail.com"
+      const password = "123123"
+
+     http.auth('wwwwwwww', email, password).catch(e => expect(e).toEqual(new ErrorFetch('auth error',  404, true)))
+    })
+
+
+    it('auth error 401', () => {
+      const mockFetch =  jest.fn().mockReturnValueOnce({ok: false, status: 401}).mockReturnValueOnce({
+        ok: true,
+        json: () => {
+          return {accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"};   
+        }
+      }).mockReturnValueOnce({ok: false, status: 401})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const email = "randomUser@mail.com"
+      const password = "123123"
+
+      http.auth('wwwwwww', email, password).catch(e => expect(e).toEqual(new ErrorFetch('auth error', 401, false)))
+     })
+
+     it('refreshToken error fetch', () => {
+      const mockFetch = jest.fn().mockReturnValue({ok: false})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const token = "nkgwjnrgwkj4234"
+
+     http.refreshToken(token).catch(e => expect(e).toEqual(new ErrorFetch('refreshToken error',  404, true)))
+    })
+
+
+    it('refreshToken error 401', () => {
+      const mockFetch =  jest.fn().mockReturnValueOnce({ok: false, status: 401}).mockReturnValueOnce({
+        ok: true,
+        json: () => {
+          return {accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"};   
+        }
+      }).mockReturnValueOnce({ok: false, status: 401})
+      const saveToken = jest.fn().mockReturnValue({  })
+      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
+      const http = new HttpService(mockFetch, getToken, saveToken)
+      const token = "nkgwjnrgwkj4234"
+
+      http.refreshToken(token).catch(e => expect(e).toEqual(new ErrorFetch('refreshToken error', 401, false)))
+     })
 
 
   describe('return value', () => {
@@ -154,7 +276,7 @@ describe('function to be called with', () => {
   );
      const saveToken = jest.fn().mockReturnValue({  })
      const getToken = jest.fn().mockReturnValue(Promise.resolve({accessToken: 'wvwvw', refreshToken: "dfbdfbfdfb"}))
-     const http = new HttpService(mockFetch, mockFetch, getToken, saveToken)
+     const http = new HttpService( mockFetch, getToken, saveToken)
      const params = { 'Accept': 'application/json', 'Content-Type': 'application/json' }
      const email = "randomUser@mail.com"
      const password = "123123"
