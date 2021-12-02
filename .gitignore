@@ -1,1 +1,9 @@
 /node_modules/*
+
+/packages/core/node_modules/*
+
+/coverage/*
+
+/packages/core/coverage/*
+
+/packages/core/__snapshots__/*

@@ -1,0 +1,28 @@
+{
+    "name": "@checkmoney/core",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "build": "babel src -d lib",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@types/jest": "^27.0.3",
+        "@types/node": "^16.11.9",
+        "node-fetch": "^2.6.6",
+        "ts-node": "^10.4.0",
+        "tsc": "^2.0.3"
+    },
+    "devDependencies": {
+        "@types/jest": "^27.0.3",
+        "@types/node-fetch": "^3.0.3",
+        "eslint-plugin-import": "^2.25.3",
+        "jest": "^27.3.1",
+        "ts-jest": "^27.0.7",
+        "typescript": "^4.5.2"
+    },
+    "plugins": [
+        "@babel/plugin-transform-typescript"
+    ]
+}
