@@ -1,1 +1,3 @@
-export const sharedVariable = "sup dog",
+const sharedVariable = 'sup dog';
+
+export default sharedVariable;
