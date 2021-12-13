@@ -1,25 +1,29 @@
 {
-    "private": true,
-    "name": "checkmoney",
-    "version": "1.0.0",
-    "workspaces": [
-        "packges/*"
-    ],
-    "dependencies": {
-        "node-fetch": "^2.6.6",
-        "tsc": "^2.0.3"
-    },
-    "devDependencies": {
-        "@babel/preset-typescript": "^7.16.0",
-        "@types/jest": "^27.0.3",
-        "@types/node": "^16.11.9",
-        "@typescript-eslint/eslint-plugin": "^5.4.0",
-        "@typescript-eslint/parser": "^5.4.0",
-        "eslint": "^8.3.0",
-        "eslint-config-airbnb-base": "^15.0.0",
-        "eslint-plugin-import": "^2.25.3",
-        "jest": "^27.3.1",
-        "ts-jest": "^27.0.7",
-        "typescript": "^4.5.2"
-    }
+  "private": true,
+  "name": "checkmoney",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "yarn run eslint . --ext .js,.ts,.tsx",
+    "test": "yarn run jest"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.16.0",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/parser": "^5.6.0",
+    "babel-jest": "^27.4.2",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-plugin-jest": "^25.3.0",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.5.2"
+  }
 }

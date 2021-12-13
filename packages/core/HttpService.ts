@@ -1,21 +1,19 @@
 /* eslint-disable consistent-return */
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-classes-per-file */
-
-
+// eslint-disable-next-line max-classes-per-file
 type TokensData = {
   accessToken: string;
   refreshToken: string;
-}
+};
 
-// eslint-disable-next-line no-unused-vars
 type FetchCallback = (url: string, param?: object) => Promise<Response>;
 type SaveTokenCallback = (response: Promise<any>) => Promise<TokensData>;
 type GetTokenCallback = () => Promise<TokensData>;
 
 export class ErrorFetch extends Error {
-  code: number
-  isNetwork: boolean
+  code: number;
+
+  isNetwork: boolean;
+
   constructor(message: string, code: number, isNetwork: boolean) {
     super(message);
     this.message = message;
@@ -25,24 +23,25 @@ export class ErrorFetch extends Error {
 }
 
 class HttpService {
-  private fetch: FetchCallback;
+  private readonly fetch: FetchCallback;
 
+  private readonly getToken: GetTokenCallback;
 
-  private getToken: GetTokenCallback;
+  private readonly saveToken: SaveTokenCallback;
 
-  private saveToken: SaveTokenCallback;
-
-  constructor(fetchFunc: FetchCallback, getTokensFunc: GetTokenCallback, saveTokensFunc: SaveTokenCallback) {
+  constructor(
+    fetchFunc: FetchCallback,
+    getTokensFunc: GetTokenCallback,
+    saveTokensFunc: SaveTokenCallback,
+  ) {
     this.fetch = fetchFunc;
     this.getToken = getTokensFunc;
     this.saveToken = saveTokensFunc;
   }
 
-
-
   public async authGet<T>(url: string, limit: number = 1): Promise<T | undefined> {
     const tokens = await this.getToken();
-    let response
+    let response;
 
     try {
       response = await this.fetch(url, {
@@ -54,7 +53,7 @@ class HttpService {
 
       if (response.ok) {
         const responseJSON = await response.json();
-        return responseJSON
+        return responseJSON;
       }
       if (response.status === 401 && limit === 1) {
         await this.refreshToken(tokens.refreshToken);
@@ -64,17 +63,14 @@ class HttpService {
         throw new ErrorFetch('authGet error', response.status, false);
       }
       throw new ErrorFetch('authGet error', response.status, true);
-
     } catch (error) {
-      if (error instanceof(ErrorFetch)) {
-        throw error
+      if (error instanceof (ErrorFetch)) {
+        throw error;
       } else {
-        console.log(error)
+        console.log(error);
       }
-     
     }
   }
-
 
   public async authPost<T>(url: string, params: any, limit: number = 1): Promise<T | undefined> {
     const tokens = await this.getToken();
@@ -93,7 +89,7 @@ class HttpService {
 
       if (response.ok) {
         const responseJSON = await response.json();
-        return responseJSON
+        return responseJSON;
       }
 
       if (response.status === 401 && limit === 1) {
@@ -105,12 +101,11 @@ class HttpService {
       }
 
       throw new ErrorFetch('authPost error', response.status, true);
-
     } catch (error) {
-      if (error instanceof(ErrorFetch)) {
-        throw error
+      if (error instanceof (ErrorFetch)) {
+        throw error;
       } else {
-        console.log(error)
+        console.log(error);
       }
     }
   }
@@ -132,22 +127,23 @@ class HttpService {
 
       if (response.ok) {
         const responseJSON = await response.json();
-        return responseJSON
+        return responseJSON;
       }
 
       if (response.status === 401 && limit === 1) {
         await this.refreshToken(tokens.refreshToken);
         return await this.authPut(url, params, limit - 1);
-      } if (response.status === 401) {
+      }
+      if (response.status === 401) {
         throw new ErrorFetch('authPut error', response.status, false);
       }
 
       throw new ErrorFetch('authPut error', response.status, true);
     } catch (error) {
-      if (error instanceof(ErrorFetch)) {
-        throw error
+      if (error instanceof (ErrorFetch)) {
+        throw error;
       } else {
-        console.log(error)
+        console.log(error);
       }
     }
   }
@@ -168,7 +164,7 @@ class HttpService {
       });
 
       if (response.status === 200) {
-        return await response.json()
+        return await response.json();
       }
 
       if (response.status === 401 && limit === 1) {
@@ -181,10 +177,10 @@ class HttpService {
 
       throw new ErrorFetch('authDelete error', response.status, true);
     } catch (error) {
-      if (error instanceof(ErrorFetch)) {
-        throw error
+      if (error instanceof (ErrorFetch)) {
+        throw error;
       } else {
-        console.log(error)
+        console.log(error);
       }
     }
   }
@@ -208,7 +204,7 @@ class HttpService {
       if (response.ok) {
         const responseData = await response.json();
         this.saveToken(responseData);
-        return responseData
+        return responseData;
       }
       if (response.status === 401) {
         throw new ErrorFetch('auth error', response.status, false);
@@ -216,10 +212,10 @@ class HttpService {
 
       throw new ErrorFetch('auth error', response.status, true);
     } catch (error) {
-      if (error instanceof(ErrorFetch)) {
-        throw error
+      if (error instanceof (ErrorFetch)) {
+        throw error;
       } else {
-        console.log(error)
+        console.log(error);
       }
     }
   }
@@ -237,12 +233,12 @@ class HttpService {
         body: JSON.stringify({
           token,
         }),
-      })
+      });
 
       if (response.ok) {
-        let responseJSON = await response.json()
-        this.saveToken(responseJSON);
-        return responseJSON
+        const responseJSON = await response.json();
+        await this.saveToken(responseJSON);
+        return responseJSON;
       }
       if (response.status === 401) {
         throw new ErrorFetch('refreshToken error', response.status, false);
@@ -250,10 +246,10 @@ class HttpService {
 
       throw new ErrorFetch('refreshToken error', response.status, true);
     } catch (error) {
-      if (error instanceof(ErrorFetch)) {
-        throw error
+      if (error instanceof (ErrorFetch)) {
+        throw error;
       } else {
-        console.log(error)
+        console.log(error);
       }
     }
   }
