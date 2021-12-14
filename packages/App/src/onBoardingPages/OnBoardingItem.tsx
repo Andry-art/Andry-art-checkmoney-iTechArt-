@@ -1,7 +1,13 @@
-import React from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, {FC} from 'react';
 import {View, Image, useWindowDimensions, StyleSheet, Text} from 'react-native';
+import {OnBoardingInfo} from './OnBoarding';
 
-const OnBordingItem = ({item}: any) => {
+interface Props {
+  item: OnBoardingInfo;
+}
+
+const OnBoardingItem: FC<Props> = ({item}) => {
   const {width} = useWindowDimensions();
 
   return (
@@ -11,7 +17,7 @@ const OnBordingItem = ({item}: any) => {
         style={[styles.img, {width, resizeMode: 'contain'}]}
       />
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.descript}>{item.description}</Text>
+      <Text style={styles.description}>{item.description}</Text>
     </View>
   );
 };
@@ -35,7 +41,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  descript: {
+  description: {
     fontWeight: '300',
     color: 'black',
     textAlign: 'center',
@@ -43,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OnBordingItem;
+export default OnBoardingItem;

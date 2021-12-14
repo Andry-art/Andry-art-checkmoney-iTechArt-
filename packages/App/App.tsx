@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import OnBording from './components/OnBording';
+import OnBoarding from './src/onBoardingPages/OnBoarding';
 
 const App = () => {
   return (
     <View style={styles.container}>
-      <OnBording />
+      <OnBoarding />
     </View>
   );
 };

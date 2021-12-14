@@ -1,21 +1,23 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
+import {OnBoardingInfo} from './OnBoarding';
 
-const Paginator = ({data, item}: any) => {
+interface Props {
+  data: Array<OnBoardingInfo>;
+  item: number;
+}
+
+const Paginator: FC<Props> = ({data, item}) => {
   return (
     <View style={styles.pag}>
-      {item ? (
-        data.map((it: any) => {
-          return (
-            <Animated.View
-              style={it.id === item.index + 1 ? styles.dot : styles.dot2}
-              key={it.id}
-            />
-          );
-        })
-      ) : (
-        <View />
-      )}
+      {data.map((it: OnBoardingInfo) => {
+        return (
+          <Animated.View
+            style={it.id === item ? styles.dot : styles.dot2}
+            key={it.id}
+          />
+        );
+      })}
     </View>
   );
 };

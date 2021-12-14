@@ -1,6 +1,6 @@
 export default [
   {
-    id: 1,
+    id: 0,
     title: 'Make plans',
     description:
       'Plan your expenses and income. Make forecasts and monitor budget execution.',
@@ -8,7 +8,7 @@ export default [
   },
 
   {
-    id: 2,
+    id: 1,
     title: 'Select deposits',
     description:
       'Compare the most profitable offers of banks. Use the deposit selection service.',
@@ -16,7 +16,7 @@ export default [
   },
 
   {
-    id: 3,
+    id: 2,
     title: 'Consider finances',
     description:
       'Combine all your finances in one system. Keep a general record of cash, cards, mutual funds, loans and deposits.',
