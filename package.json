@@ -2,14 +2,28 @@
   "private": true,
   "name": "checkmoney",
   "version": "1.0.0",
-  "workspaces":{ 
-   "packages": ["packages/*"],
-  "nohoist": [
-    "**/react-native", 
-    "**/react-native/**",
-    "**/react-native-reanimated/**"
-  ]
-},
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/react-native",
+      "**/react-native/**",
+      "**/react-native-reanimated",
+      "**/react-native-reanimated/**",
+      "**/@react-native-async-storage/**",
+      "**/@react-native-community/cli",
+      "**/@react-native-community/**",
+      "**/@react-navigation/**",
+      "**/react-native-safe-area-context",
+      "**/react-native-safe-area-context/**",
+      "**/react-native-screens",
+      "**/react-native-screens/**",
+      "**/react-native-svg",
+      "**/react-native-svg/**",
+      "**/jetifier"
+    ]
+  },
   "scripts": {
     "lint": "yarn run eslint . --ext .js,.ts,.tsx",
     "test": "yarn run jest"
@@ -31,6 +45,4 @@
     "ts-jest": "^27.0.7",
     "typescript": "^4.5.2"
   }
-
- 
 }

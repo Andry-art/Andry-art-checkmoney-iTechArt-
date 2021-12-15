@@ -8,11 +8,13 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import BG from '../Pics/Group32.png';
 import passwordUnvisible from '../Pics/passwordUnvisible.png';
 import passwordVisible from '../Pics/passwordVisible.png';
 import HttpService from '@checkmoney/core';
+
+AsyncStorage.clear();
 
 const SomeScrin: FC = () => {
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
