@@ -4,6 +4,7 @@ import slides from '../../slides';
 import OnBoardingItem from './OnBoardingItem';
 import Paginator from './Paginator';
 import NextButton from './NextButton';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface OnBoardingInfo {
   id: number;
@@ -18,7 +19,7 @@ const viewability: object = {
   viewAreaCoveragePercentThreshold: 10,
 };
 
-const OnBoarding: FC = () => {
+const OnBoarding: FC = ({setViewOnBoarding}: any) => {
   const [itemVisible, setItemVisible] = useState<number>(0);
 
   let viewableItemsChanged = useCallback(({viewableItems}) => {
@@ -27,16 +28,21 @@ const OnBoarding: FC = () => {
 
   const slideRef = useRef<FlatList>(null);
 
-  const scrollTo = () => {
+  const scrollTo = async () => {
     if (itemVisible < slides.length - 1) {
       slideRef.current?.scrollToIndex({index: itemVisible + 1});
     } else {
-      console.log('we are done');
+      try {
+        // await AsyncStorage.setItem('@viewedOnBoarding', 'true');
+        setViewOnBoarding(true);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
   return (
-    <View>
+    <View style={styles.onBoard}>
       <View style={styles.list}>
         <FlatList
           data={slides}
@@ -61,6 +67,9 @@ const styles = StyleSheet.create({
   list: {
     height: '70%',
     marginBottom: 20,
+  },
+  onBoard: {
+    backgroundColor: 'white',
   },
 });
 

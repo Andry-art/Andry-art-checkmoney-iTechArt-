@@ -1,7 +1,7 @@
 {
     "name": "@checkmoney/core",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "HttpService.tsx",
     "license": "MIT",
     "scripts": {
         "build": "babel src -d lib",
@@ -24,5 +24,6 @@
     },
     "plugins": [
         "@babel/plugin-transform-typescript"
-    ]
+    ],
+    "description": "core part"
 }
