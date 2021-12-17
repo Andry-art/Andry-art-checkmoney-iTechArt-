@@ -21,7 +21,11 @@
       "**/react-native-screens/**",
       "**/react-native-svg",
       "**/react-native-svg/**",
-      "**/jetifier"
+      "**/jetifier",
+      "**/react-native-sensitive-info/**",
+      "**/react-native-sensitive-info",
+      "**/react-native-encrypted-storage/**",
+      "**/react-native-encrypted-storage"
     ]
   },
   "scripts": {
