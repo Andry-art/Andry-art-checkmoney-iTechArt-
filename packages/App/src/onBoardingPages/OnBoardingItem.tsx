@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
+import {ViewStyle, StyleProp, ImageStyle} from 'react-native';
 import {View, Image, useWindowDimensions, StyleSheet, Text} from 'react-native';
 import {OnBoardingInfo} from './OnBoarding';
 
@@ -10,12 +11,18 @@ interface Props {
 const OnBoardingItem: FC<Props> = ({item}) => {
   const {width} = useWindowDimensions();
 
+  const viewStyle = useMemo<StyleProp<ViewStyle>>(
+    () => [styles.container, {width}],
+    [width],
+  );
+  const imageStyle = useMemo<StyleProp<ImageStyle>>(
+    () => [styles.img, {width}],
+    [width],
+  );
+
   return (
-    <View style={[styles.container, {width}]}>
-      <Image
-        source={item.image}
-        style={[styles.img, {width, resizeMode: 'contain'}]}
-      />
+    <View style={viewStyle}>
+      <Image source={item.image} style={imageStyle} />
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.description}>{item.description}</Text>
     </View>
@@ -31,6 +38,7 @@ const styles = StyleSheet.create({
   img: {
     flex: 1,
     justifyContent: 'center',
+    resizeMode: 'contain',
   },
 
   title: {

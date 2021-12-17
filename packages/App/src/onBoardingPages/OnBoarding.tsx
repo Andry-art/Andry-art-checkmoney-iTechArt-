@@ -1,5 +1,11 @@
 import React, {FC, useCallback, useRef, useState} from 'react';
-import {View, FlatList, StyleSheet, ImageSourcePropType} from 'react-native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  ImageSourcePropType,
+  ViewabilityConfig,
+} from 'react-native';
 import slides from '../../slides';
 import OnBoardingItem from './OnBoardingItem';
 import Paginator from './Paginator';
@@ -14,26 +20,30 @@ export interface OnBoardingInfo {
 
 const keyExtractor = (item: OnBoardingInfo) => item.id.toString();
 
-const viewability: object = {
+const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 10,
 };
 
 const OnBoarding: FC = () => {
   const [itemVisible, setItemVisible] = useState<number>(0);
 
-  let viewableItemsChanged = useCallback(({viewableItems}) => {
+  const viewableItemsChanged = useCallback(({viewableItems}) => {
     setItemVisible(viewableItems[0].index);
   }, []);
 
   const slideRef = useRef<FlatList>(null);
 
+<<<<<<< Updated upstream
   const scrollTo = () => {
+=======
+  const scrollToNext = useCallback(async () => {
+>>>>>>> Stashed changes
     if (itemVisible < slides.length - 1) {
       slideRef.current?.scrollToIndex({index: itemVisible + 1});
     } else {
       console.log('we are done');
     }
-  };
+  }, [itemVisible, setViewOnBoarding]);
 
   return (
     <View>
@@ -52,7 +62,7 @@ const OnBoarding: FC = () => {
         />
       </View>
       <Paginator data={slides} item={itemVisible} />
-      <NextButton page={itemVisible} scrollTo={scrollTo} />
+      <NextButton page={itemVisible} scrollToNext={scrollToNext} />
     </View>
   );
 };
