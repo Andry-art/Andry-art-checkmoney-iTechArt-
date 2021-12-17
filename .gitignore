@@ -7,3 +7,4 @@
 /packages/core/coverage/*
 
 /packages/core/__snapshots__/*
+node_modules
