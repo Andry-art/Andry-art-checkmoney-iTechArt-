@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useContext} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,42 +8,53 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import BG from '../Pics/Group32.png';
 import passwordUnvisible from '../Pics/passwordUnvisible.png';
 import passwordVisible from '../Pics/passwordVisible.png';
-import HttpService from '@checkmoney/core';
+import ButtonApp from './components/ButtonApp';
+import {Context} from '../App';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
-AsyncStorage.clear();
+// AsyncStorage.clear();
 
 const SomeScrin: FC = () => {
+  const HTTP = useContext(Context);
+
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
   const [visibleRepeatPass, setVisibleRepeatPass] = useState<boolean>(true);
+  const [wrongPassword, setWrongPassword] = useState<boolean>(false);
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [repeatPassword, setRepeatPassword] = useState<string>('');
 
-  let www = new HttpService(
-    fetch,
-    () => {},
-    () => {},
-  );
+  const registration = async (
+    emailreg: string,
+    passwordreg: string,
+    repeatPasswordreg: string,
+  ) => {
+    if (passwordreg !== repeatPasswordreg) {
+      setWrongPassword(true);
+    } else {
+      const response = await HTTP.auth(
+        'http://localhost:8000/auth/register',
+        emailreg,
+        passwordreg,
+      );
 
-  const qqq = www.auth(
-    'http://localhost:8000/auth/login',
-    'bruno@email.com',
-    'bruno',
-  );
+      console.log(response);
+    }
+  };
 
-  console.log(www);
-
-  // const cleanStore = () => {
-  //   try {
-  //     AsyncStorage.removeItem('@viewedOnBoarding');
-  //   } catch {
-  //     console.log('ssss');
-  //   }
-  // };
+  const get = async () => {
+    try {
+      const newreq = await HTTP.authGet('http://localhost:8000/products');
+      console.log(newreq);
+    } catch (e) {
+      console.log('getrequest', e);
+    }
+  };
 
   return (
     <ImageBackground style={styles.backGround} source={BG}>
@@ -67,6 +78,7 @@ const SomeScrin: FC = () => {
           onChangeText={setPassword}
           textContentType="password"
           secureTextEntry={visiblePass}
+          onFocus={() => setWrongPassword(false)}
         />
         <TouchableOpacity onPress={() => setVisiblePass(prev => !prev)}>
           <Image
@@ -80,8 +92,10 @@ const SomeScrin: FC = () => {
         <Text style={styles.labels}>Repeat password</Text>
         <TextInput
           style={styles.inputs}
+          onChangeText={setRepeatPassword}
           textContentType="password"
           secureTextEntry={visibleRepeatPass}
+          onFocus={() => setWrongPassword(false)}
         />
         <TouchableOpacity onPress={() => setVisibleRepeatPass(prev => !prev)}>
           <Image
@@ -89,18 +103,24 @@ const SomeScrin: FC = () => {
             style={styles.passwordIcon}
           />
         </TouchableOpacity>
+        {wrongPassword && (
+          <Text style={{color: 'red'}}>Password is not the same</Text>
+        )}
       </View>
 
-      <TouchableOpacity style={styles.signIn}>
-        <Text style={styles.signInText}>Sign in</Text>
-      </TouchableOpacity>
+      <ButtonApp
+        label="Sign in"
+        styleBtn={styles.signIn}
+        styleTxt={styles.signInText}
+        func={() => registration(email, password, repeatPassword)}
+      />
 
-      <TouchableOpacity style={styles.logIn}>
-        <Text style={styles.logInText}>LogIn</Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity onPress={cleanStore}>
-        <Text>Clean</Text>
-      </TouchableOpacity> */}
+      <ButtonApp
+        label="LogIn"
+        styleBtn={styles.logIn}
+        styleTxt={styles.logInText}
+        func={() => get()}
+      />
     </ImageBackground>
   );
 };

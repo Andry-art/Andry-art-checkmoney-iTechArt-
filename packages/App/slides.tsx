@@ -1,10 +1,14 @@
+import MakePlansImage from './Pics/19197176.jpg';
+import SelectDepositsImage from './Pics/11060.jpg';
+import ConsiderFinancesImage from './Pics/5867.jpg';
+
 export default [
   {
     id: 0,
     title: 'Make plans',
     description:
       'Plan your expenses and income. Make forecasts and monitor budget execution.',
-    image: require('./Pics/19197176.jpg'),
+    image: MakePlansImage,
   },
 
   {
@@ -12,7 +16,7 @@ export default [
     title: 'Select deposits',
     description:
       'Compare the most profitable offers of banks. Use the deposit selection service.',
-    image: require('./Pics/11060.jpg'),
+    image: SelectDepositsImage,
   },
 
   {
@@ -20,6 +24,6 @@ export default [
     title: 'Consider finances',
     description:
       'Combine all your finances in one system. Keep a general record of cash, cards, mutual funds, loans and deposits.',
-    image: require('./Pics/5867.jpg'),
+    image: ConsiderFinancesImage,
   },
 ];
