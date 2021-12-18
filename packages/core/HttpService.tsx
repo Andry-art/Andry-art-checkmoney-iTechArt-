@@ -6,8 +6,8 @@ type TokensData = {
 };
 
 type FetchCallback = (url: string, param?: object) => Promise<Response>;
-type SaveTokenCallback = (response: Promise<any>) => Promise<TokensData>;
-type GetTokenCallback = () => Promise<TokensData>;
+type SaveTokenCallback = (response: Promise<any>) => any;
+type GetTokenCallback = () => any;
 
 export class ErrorFetch extends Error {
   code: number;

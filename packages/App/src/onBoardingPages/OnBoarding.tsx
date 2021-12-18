@@ -39,7 +39,11 @@ const OnBoarding: FC = () => {
     } else {
       console.log('we are done');
     }
+<<<<<<< HEAD
   }, [itemVisible]);
+=======
+  }, [itemVisible, setViewOnBoarding]);
+>>>>>>> aa552c8358226dc46b3958003014942e5a6ea604
 
   return (
     <View>

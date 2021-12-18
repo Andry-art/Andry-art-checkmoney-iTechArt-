@@ -33,10 +33,33 @@ const HTTP = new HttpService(fetch, getToken, saveToken);
 
 export const Context = React.createContext(HTTP);
 
+const getToken = async () => {
+  try {
+    const session = await EncryptedStorage.getItem('user_session');
+    return JSON.parse(session);
+  } catch (error) {
+    console.log('getToken', error);
+  }
+};
+
+const saveToken = async (data: any) => {
+  try {
+    await EncryptedStorage.setItem('user_session', JSON.stringify(data));
+  } catch (error) {
+    console.log('saveToken', error);
+  }
+};
+
+const HTTP = new HttpService(fetch, getToken, saveToken);
+
+export const Context = React.createContext(HTTP);
+
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [viewOnBoarding, setViewOnBoarding] = useState(true);
   const [loginOk, setLoginOk] = useState(false);
+
+  console.log('111', HTTP);
 
   console.log('111', HTTP);
 
