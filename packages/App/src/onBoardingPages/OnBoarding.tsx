@@ -1,10 +1,15 @@
 import React, {FC, useCallback, useRef, useState} from 'react';
-import {View, FlatList, StyleSheet, ImageSourcePropType} from 'react-native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  ImageSourcePropType,
+  ViewabilityConfig,
+} from 'react-native';
 import slides from '../../slides';
 import OnBoardingItem from './OnBoardingItem';
 import Paginator from './Paginator';
 import NextButton from './NextButton';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface OnBoardingInfo {
   id: number;
@@ -15,34 +20,29 @@ export interface OnBoardingInfo {
 
 const keyExtractor = (item: OnBoardingInfo) => item.id.toString();
 
-const viewability: object = {
+const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 10,
 };
 
-const OnBoarding: FC = ({setViewOnBoarding}: any) => {
+const OnBoarding: FC = () => {
   const [itemVisible, setItemVisible] = useState<number>(0);
 
-  let viewableItemsChanged = useCallback(({viewableItems}) => {
+  const viewableItemsChanged = useCallback(({viewableItems}) => {
     setItemVisible(viewableItems[0].index);
   }, []);
 
   const slideRef = useRef<FlatList>(null);
 
-  const scrollTo = async () => {
+  const scrollToNext = useCallback(async () => {
     if (itemVisible < slides.length - 1) {
       slideRef.current?.scrollToIndex({index: itemVisible + 1});
     } else {
-      try {
-        // await AsyncStorage.setItem('@viewedOnBoarding', 'true');
-        setViewOnBoarding(true);
-      } catch (e) {
-        console.log(e);
-      }
+      console.log('we are done');
     }
-  };
+  }, [itemVisible]);
 
   return (
-    <View style={styles.onBoard}>
+    <View>
       <View style={styles.list}>
         <FlatList
           data={slides}
@@ -58,7 +58,7 @@ const OnBoarding: FC = ({setViewOnBoarding}: any) => {
         />
       </View>
       <Paginator data={slides} item={itemVisible} />
-      <NextButton page={itemVisible} scrollTo={scrollTo} />
+      <NextButton page={itemVisible} scrollToNext={scrollToNext} />
     </View>
   );
 };
@@ -67,9 +67,6 @@ const styles = StyleSheet.create({
   list: {
     height: '70%',
     marginBottom: 20,
-  },
-  onBoard: {
-    backgroundColor: 'white',
   },
 });
 

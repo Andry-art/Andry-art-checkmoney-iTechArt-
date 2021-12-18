@@ -3,7 +3,7 @@ import {View, StyleSheet, Animated} from 'react-native';
 import {OnBoardingInfo} from './OnBoarding';
 
 interface Props {
-  data: Array<OnBoardingInfo>;
+  data: Array<any>;
   item: number;
 }
 
@@ -13,7 +13,7 @@ const Paginator: FC<Props> = ({data, item}) => {
       {data.map((it: OnBoardingInfo) => {
         return (
           <Animated.View
-            style={it.id === item ? styles.dot : styles.dot2}
+            style={it.id === item ? styles.dotActive : styles.dotInactive}
             key={it.id}
           />
         );
@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 
-  dot: {
+  dotActive: {
     height: 10,
     width: 10,
     borderRadius: 5,
     backgroundColor: 'darkblue',
     marginHorizontal: 8,
   },
-  dot2: {
+  dotInactive: {
     height: 10,
     width: 10,
     borderRadius: 5,

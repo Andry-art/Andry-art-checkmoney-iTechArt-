@@ -1,19 +1,25 @@
-import React, {FC} from 'react';
-import {View, StyleSheet, TextInput, Text} from 'react-native';
+import React, {ChangeEvent, FC} from 'react';
+import {View, StyleSheet, TextInput, Text, TextInputProps} from 'react-native';
 
-interface Props {
+interface Props extends TextInputProps {
   label: string;
-  secur?: boolean;
+  change: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Input: FC<Props> = ({label, secur}) => {
+const Input: FC<Props> = ({label, change, ...textInputProps}) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    change(e);
+  };
+
   return (
     <View style={styles.inputArea}>
       <Text style={styles.labels}>{label}</Text>
       <TextInput
+        {...textInputProps}
         style={styles.inputs}
+        onChangeText={e => handleChange(e)}
         // textContentType={content}
-        secureTextEntry={secur}
+        // secureTextEntry={secur}
       />
     </View>
   );

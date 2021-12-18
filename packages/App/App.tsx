@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import OnBoarding from './src/onBoardingPages/OnBoarding';
-// import {NavigationContainer} from '@react-navigation/native';
-// import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import SomeScrin from './src/SomeScrin';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Registration from './src/Registaration/Registration';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import {View, StyleSheet} from 'react-native';
 import Loading from './src/Loading';
 import HttpService from '@checkmoney/core';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import Balance from './src/Balance';
 
-// const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const getToken = async () => {
   try {
@@ -34,7 +35,8 @@ export const Context = React.createContext(HTTP);
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  const [viewOnBoarding, setViewOnBoarding] = useState(false);
+  const [viewOnBoarding, setViewOnBoarding] = useState(true);
+  const [loginOk, setLoginOk] = useState(false);
 
   console.log('111', HTTP);
 
@@ -57,15 +59,23 @@ const App = () => {
 
   return (
     <Context.Provider value={HTTP}>
-      <View style={styles.container}>
-        {loading ? (
-          <Loading />
-        ) : viewOnBoarding ? (
-          <SomeScrin />
-        ) : (
-          <OnBoarding setViewOnBoarding={setViewOnBoarding} />
-        )}
-      </View>
+      {!loginOk ? (
+        <View style={styles.container}>
+          {loading ? (
+            <Loading />
+          ) : viewOnBoarding ? (
+            <Registration setLoginOk={setLoginOk} />
+          ) : (
+            <OnBoarding setViewOnBoarding={setViewOnBoarding} />
+          )}
+        </View>
+      ) : (
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Balance" component={Balance} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      )}
     </Context.Provider>
   );
 };

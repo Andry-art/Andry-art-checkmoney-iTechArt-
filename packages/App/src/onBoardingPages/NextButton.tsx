@@ -6,31 +6,31 @@ import Animated, {
   useAnimatedProps,
   withTiming,
 } from 'react-native-reanimated';
-import img from '../../Pics/right-arrow.png';
+import RightArrowImageSource from '../../Pics/right-arrow.png';
 
 interface Props {
   page: number;
-  scrollTo: Function;
+  scrollToNext: () => void;
 }
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-const NextButton: FC<Props> = ({page, scrollTo}) => {
+const NextButton: FC<Props> = ({page, scrollToNext}) => {
   const percent: number = (page + 1) * (100 / 3);
   const size: number = 110;
   const strokeWidth: number = 4;
   const center: number = size / 2;
   const radius: number = size / 2 - strokeWidth / 2;
   const circumference: number = 2 * Math.PI * radius;
-  const animationProg = useSharedValue<number>(0);
+  const animationProgress = useSharedValue<number>(0);
 
   useEffect(() => {
-    animationProg.value = withTiming(percent, {duration: 300});
-  }, [animationProg, percent]);
+    animationProgress.value = withTiming(percent, {duration: 300});
+  }, [animationProgress, percent]);
 
   const animatedProps = useAnimatedProps(() => {
     const progress: number =
-      circumference - (circumference * animationProg.value) / 100;
+      circumference - (circumference * animationProgress.value) / 100;
     return {
       strokeDashoffset: progress,
     };
@@ -56,11 +56,8 @@ const NextButton: FC<Props> = ({page, scrollTo}) => {
           animatedProps={animatedProps}
         />
       </Svg>
-      <TouchableOpacity style={styles.button} onPress={() => scrollTo()}>
-        <Image
-          source={img}
-          style={[styles.arrow, {transform: [{rotate: '90 deg'}]}]}
-        />
+      <TouchableOpacity style={styles.button} onPress={scrollToNext}>
+        <Image source={RightArrowImageSource} style={styles.arrow} />
       </TouchableOpacity>
     </View>
   );
@@ -83,6 +80,7 @@ const styles = StyleSheet.create({
   arrow: {
     width: 50,
     height: 50,
+    transform: [{rotate: '90 deg'}],
   },
 });
 
