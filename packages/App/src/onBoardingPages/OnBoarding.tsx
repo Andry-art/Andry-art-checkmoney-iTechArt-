@@ -44,7 +44,11 @@ const OnBoarding: FC<Props> = ({setViewOnBoarding}) => {
 
   const slideRef = useRef<FlatList>(null);
 
+
   const scrollToNext = useCallback(async () => {
+
+  const scrollToNext = useCallback(async () => {
+
     if (itemVisible < slides.length - 1) {
       slideRef.current?.scrollToIndex({index: itemVisible + 1});
     } else {
