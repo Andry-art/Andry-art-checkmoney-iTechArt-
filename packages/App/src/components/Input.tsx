@@ -7,17 +7,13 @@ interface Props extends TextInputProps {
 }
 
 const Input: FC<Props> = ({label, change, ...textInputProps}) => {
-  const handleChange = (e: React.SetStateAction<string>) => {
-    change(e);
-  };
-
   return (
     <View style={styles.inputArea}>
       <Text style={styles.labels}>{label}</Text>
       <TextInput
         {...textInputProps}
         style={styles.inputs}
-        onChangeText={e => handleChange(e)}
+        onChangeText={change}
       />
     </View>
   );
