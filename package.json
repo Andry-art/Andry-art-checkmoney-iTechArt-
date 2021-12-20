@@ -25,7 +25,10 @@
       "**/react-native-sensitive-info/**",
       "**/react-native-sensitive-info",
       "**/react-native-encrypted-storage/**",
-      "**/react-native-encrypted-storage"
+      "**/react-native-encrypted-storage",
+      "**/formik/**",
+      "**/formik",
+      "**/yup/**"
     ]
   },
   "scripts": {

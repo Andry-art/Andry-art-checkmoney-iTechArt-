@@ -35,7 +35,9 @@
     "react-test-renderer": "17.0.2",
     "get-yarn-workspaces": "1.0.2",
     "react-native-sensitive-info" : "5.5.8",
-    "react-native-encrypted-storage": "4.0.2"
+    "react-native-encrypted-storage": "4.0.2",
+    "formik": "2.2.9",
+    "yup": "0.32.11"
   },
   "jest": {
     "preset": "react-native"
