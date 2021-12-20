@@ -1,13 +1,13 @@
 /* eslint-disable consistent-return */
 // eslint-disable-next-line max-classes-per-file
 type TokensData = {
-  accessToken: string;
+  access_token: string;
   refreshToken: string;
 };
 
 type FetchCallback = (url: string, param?: object) => Promise<Response>;
-type SaveTokenCallback = (response: Promise<any>) => Promise<TokensData>;
-type GetTokenCallback = () => Promise<TokensData>;
+type SaveTokenCallback = (response: Promise<any>) => any;
+type GetTokenCallback = () => any;
 
 export class ErrorFetch extends Error {
   code: number;
@@ -47,7 +47,7 @@ class HttpService {
       response = await this.fetch(url, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
+          Authorization: `Bearer ${tokens.access_token}`,
         },
       });
 
@@ -80,7 +80,7 @@ class HttpService {
       response = await this.fetch(url, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
+          Authorization: `Bearer ${tokens.access_token}`,
         },
         body: JSON.stringify(
           params,
@@ -118,7 +118,7 @@ class HttpService {
       response = await this.fetch(url, {
         method: 'PUT',
         headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
+          Authorization: `Bearer ${tokens.access_token}`,
         },
         body: JSON.stringify(
           params,
@@ -156,7 +156,7 @@ class HttpService {
       response = await this.fetch(url, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${tokens.accessToken}`,
+          Authorization: `Bearer ${tokens.access_token}`,
         },
         body: JSON.stringify(
           params,

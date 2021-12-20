@@ -1,4 +1,11 @@
-import React, {FC, useCallback, useRef, useState} from 'react';
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   FlatList,
@@ -18,13 +25,17 @@ export interface OnBoardingInfo {
   image: ImageSourcePropType;
 }
 
+interface Props {
+  setViewOnBoarding: Dispatch<SetStateAction<boolean>>;
+}
+
 const keyExtractor = (item: OnBoardingInfo) => item.id.toString();
 
 const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 10,
 };
 
-const OnBoarding: FC = () => {
+const OnBoarding: FC<Props> = ({setViewOnBoarding}) => {
   const [itemVisible, setItemVisible] = useState<number>(0);
 
   const viewableItemsChanged = useCallback(({viewableItems}) => {
@@ -33,20 +44,21 @@ const OnBoarding: FC = () => {
 
   const slideRef = useRef<FlatList>(null);
 
-<<<<<<< Updated upstream
-  const scrollTo = () => {
-=======
+
   const scrollToNext = useCallback(async () => {
->>>>>>> Stashed changes
+
+  const scrollToNext = useCallback(async () => {
+
     if (itemVisible < slides.length - 1) {
       slideRef.current?.scrollToIndex({index: itemVisible + 1});
     } else {
+      setViewOnBoarding(true);
       console.log('we are done');
     }
   }, [itemVisible, setViewOnBoarding]);
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.list}>
         <FlatList
           data={slides}
@@ -71,6 +83,10 @@ const styles = StyleSheet.create({
   list: {
     height: '70%',
     marginBottom: 20,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
   },
 });
 

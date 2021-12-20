@@ -1,20 +1,82 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import OnBoarding from './src/onBoardingPages/OnBoarding';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+// import Registration from './src/Registaration/Registration';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loading from './src/components/Loading';
+import HttpService from '@checkmoney/core';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import Balance from './src/Balance';
+import LogIn from './src/Registaration/LogIn';
+import SignUp from './src/Registaration/SignUp';
 
-const App = () => {
-  return (
-    <View style={styles.container}>
-      <OnBoarding />
-    </View>
-  );
+const Stack = createNativeStackNavigator();
+
+const getToken = async () => {
+  try {
+    const session = await EncryptedStorage.getItem('user_session');
+    return JSON.parse(session || '{}');
+  } catch (error) {
+    console.log('getToken', error);
+  }
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-});
+const saveToken = async (data: any) => {
+  try {
+    await EncryptedStorage.setItem('user_session', JSON.stringify(data));
+  } catch (error) {
+    console.log('saveToken', error);
+  }
+};
+
+const HTTP = new HttpService(fetch, getToken, saveToken);
+
+const App = () => {
+  const [loading, setLoading] = useState(true);
+  const [viewOnBoarding, setViewOnBoarding] = useState(false);
+
+  const checkOnBoarding = async () => {
+    try {
+      // const value = await AsyncStorage.getItem('@viewedOnBoarding');
+      // if (value !== null) {
+      //   setViewOnBoarding(true);
+      // }
+    } catch (e) {
+      console.log('Error checkOnBoarding', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkOnBoarding();
+  }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
+  if (!viewOnBoarding) {
+    return <OnBoarding setViewOnBoarding={setViewOnBoarding} />;
+  } else {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="LogIn"
+            component={LogIn}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="SignIn"
+            component={SignUp}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="Balance" component={Balance} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+};
 
 export default App;
