@@ -1,4 +1,4 @@
-import React, {FC, useState, useContext} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -10,46 +10,46 @@ import {
 } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import BG from '../../Pics/Group32.png';
-import passwordUnvisible from '../../Pics/passwordUnvisible.png';
-import passwordVisible from '../../Pics/passwordVisible.png';
+import PasswordInvisibleSource from '../../Pics/passwordUnvisible.png';
+import PasswordVisibleSource from '../../Pics/passwordVisible.png';
 import ButtonApp from '../components/ButtonApp';
-import {Context} from '../../App';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 
 const logInSchema = yup.object({
   email: yup.string().required().email(),
-  password: yup.string().required(),
+  password: yup.string().required().min(6),
 });
 
-const LogIn: FC = ({navigation}: any) => {
-  const HTTP = useContext(Context);
+const initialValues = {email: '', password: ''};
 
+const LogIn: FC = ({navigation}: any) => {
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
 
+  const passwordVisibility = useCallback(() => {
+    setVisiblePass(prev => !prev);
+  }, []);
+
   const logIn = async (emailReg: string, passwordReg: string) => {
-    const response = await HTTP.auth(
-      'http://localhost:8000/auth/login',
-      emailReg,
-      passwordReg,
-    );
-    console.log(response);
+    console.log('request', emailReg, passwordReg);
   };
 
-  const signUpPage = () => {
+  const goToSignUpScreen = () => {
     navigation.navigate('SignIn');
   };
+
+  const onSubmit = useCallback((values: {email: string; password: string}) => {
+    logIn(values.email, values.password);
+  }, []);
 
   return (
     <ImageBackground style={styles.backGround} source={BG}>
       <Text style={styles.title}>Log In</Text>
 
       <Formik
-        initialValues={{email: '', password: ''}}
+        initialValues={initialValues}
         validationSchema={logInSchema}
-        onSubmit={values => {
-          logIn(values.email, values.password);
-        }}>
+        onSubmit={onSubmit}>
         {({
           handleChange,
           handleBlur,
@@ -87,10 +87,13 @@ const LogIn: FC = ({navigation}: any) => {
                 secureTextEntry={visiblePass}
                 onBlur={handleBlur('password')}
               />
-              <TouchableOpacity
-                onPress={() => setVisiblePass((prev: boolean) => !prev)}>
+              <TouchableOpacity onPress={passwordVisibility}>
                 <Image
-                  source={visiblePass ? passwordUnvisible : passwordVisible}
+                  source={
+                    visiblePass
+                      ? PasswordInvisibleSource
+                      : PasswordVisibleSource
+                  }
                   style={styles.passwordIcon}
                 />
               </TouchableOpacity>
@@ -113,7 +116,7 @@ const LogIn: FC = ({navigation}: any) => {
         label="Sign Up"
         styleBtn={styles.signUp}
         styleTxt={styles.signUpText}
-        func={() => signUpPage()}
+        onPress={goToSignUpScreen}
       />
     </ImageBackground>
   );

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FC} from 'react';
+import React, {FC} from 'react';
 import {View, StyleSheet, TextInput, Text, TextInputProps} from 'react-native';
 
 interface Props extends TextInputProps {
@@ -7,7 +7,7 @@ interface Props extends TextInputProps {
 }
 
 const Input: FC<Props> = ({label, change, ...textInputProps}) => {
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.SetStateAction<string>) => {
     change(e);
   };
 
@@ -18,8 +18,6 @@ const Input: FC<Props> = ({label, change, ...textInputProps}) => {
         {...textInputProps}
         style={styles.inputs}
         onChangeText={e => handleChange(e)}
-        // textContentType={content}
-        // secureTextEntry={secur}
       />
     </View>
   );

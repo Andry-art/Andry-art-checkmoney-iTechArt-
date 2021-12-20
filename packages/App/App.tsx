@@ -32,8 +32,6 @@ const saveToken = async (data: any) => {
 
 const HTTP = new HttpService(fetch, getToken, saveToken);
 
-export const Context = React.createContext(HTTP);
-
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [viewOnBoarding, setViewOnBoarding] = useState(false);
@@ -55,42 +53,30 @@ const App = () => {
     checkOnBoarding();
   }, []);
 
-  return (
-    <Context.Provider value={HTTP}>
+  if (loading) {
+    return <Loading />;
+  }
+  if (!viewOnBoarding) {
+    return <OnBoarding setViewOnBoarding={setViewOnBoarding} />;
+  } else {
+    return (
       <NavigationContainer>
-        {loading ? (
-          <Loading />
-        ) : (
-          <Stack.Navigator>
-            {!viewOnBoarding ? (
-              <Stack.Screen name="onBoarding" options={{headerShown: false}}>
-                {props => (
-                  <OnBoarding
-                    {...props}
-                    setViewOnBoarding={setViewOnBoarding}
-                  />
-                )}
-              </Stack.Screen>
-            ) : (
-              <>
-                <Stack.Screen
-                  name="LogIn"
-                  component={LogIn}
-                  options={{headerShown: false}}
-                />
-                <Stack.Screen
-                  name="SignIn"
-                  component={SignUp}
-                  options={{headerShown: false}}
-                />
-                <Stack.Screen name="Balance" component={Balance} />
-              </>
-            )}
-          </Stack.Navigator>
-        )}
+        <Stack.Navigator>
+          <Stack.Screen
+            name="LogIn"
+            component={LogIn}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="SignIn"
+            component={SignUp}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="Balance" component={Balance} />
+        </Stack.Navigator>
       </NavigationContainer>
-    </Context.Provider>
-  );
+    );
+  }
 };
 
 export default App;

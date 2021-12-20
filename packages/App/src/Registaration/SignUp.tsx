@@ -1,4 +1,4 @@
-import React, {FC, useState, useContext} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -10,51 +10,55 @@ import {
 } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import BG from '../../Pics/Group32.png';
-import passwordUnvisible from '../../Pics/passwordUnvisible.png';
-import passwordVisible from '../../Pics/passwordVisible.png';
+import PasswordInvisibleSource from '../../Pics/passwordUnvisible.png';
+import PasswordVisibleSource from '../../Pics/passwordVisible.png';
 import ButtonApp from '../components/ButtonApp';
-import {Context} from '../../App';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 
 const signUpSchema = yup.object({
   email: yup.string().required().email(),
-  password: yup.string().required(),
+  password: yup.string().required().min(6),
   repeatPassword: yup
     .string()
     .required()
     .oneOf([yup.ref('password')], 'Password is not the same'),
 });
 
-const LogIn: FC = ({navigation}: any) => {
-  const HTTP = useContext(Context);
+const initialValues = {email: '', password: '', repeatPassword: ''};
 
+const LogIn: FC = ({navigation}: any) => {
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
   const [visibleRepeatPass, setVisibleRepeatPass] = useState<boolean>(true);
 
+  const passwordVisibility = useCallback(() => {
+    setVisiblePass(prev => !prev);
+  }, []);
+
+  const repeatPasswordVisibility = useCallback(() => {
+    setVisibleRepeatPass(prev => !prev);
+  }, []);
+
   const signUp = async (emailReg: string, passwordReg: string) => {
-    const response = await HTTP.auth(
-      'http://localhost:8000/auth/register',
-      emailReg,
-      passwordReg,
-    );
-    console.log(response);
+    console.log('request', emailReg, passwordReg);
   };
 
-  const logInPage = () => {
+  const goToLogInScreen = () => {
     navigation.navigate('LogIn');
   };
+
+  const onSubmit = useCallback((values: {email: string; password: string}) => {
+    signUp(values.email, values.password);
+  }, []);
 
   return (
     <ImageBackground style={styles.backGround} source={BG}>
       <Text style={styles.welcome}>Sign Up</Text>
 
       <Formik
-        initialValues={{email: '', password: '', repeatPassword: ''}}
+        initialValues={initialValues}
         validationSchema={signUpSchema}
-        onSubmit={values => {
-          signUp(values.email, values.password);
-        }}>
+        onSubmit={onSubmit}>
         {({
           handleChange,
           handleBlur,
@@ -92,10 +96,13 @@ const LogIn: FC = ({navigation}: any) => {
                 secureTextEntry={visiblePass}
                 onBlur={handleBlur('password')}
               />
-              <TouchableOpacity
-                onPress={() => setVisiblePass((prev: boolean) => !prev)}>
+              <TouchableOpacity onPress={passwordVisibility}>
                 <Image
-                  source={visiblePass ? passwordUnvisible : passwordVisible}
+                  source={
+                    visiblePass
+                      ? PasswordInvisibleSource
+                      : PasswordVisibleSource
+                  }
                   style={styles.passwordIcon}
                 />
               </TouchableOpacity>
@@ -114,11 +121,12 @@ const LogIn: FC = ({navigation}: any) => {
                 value={values.repeatPassword}
                 onBlur={handleBlur('repeatPassword')}
               />
-              <TouchableOpacity
-                onPress={() => setVisibleRepeatPass((prev: boolean) => !prev)}>
+              <TouchableOpacity onPress={repeatPasswordVisibility}>
                 <Image
                   source={
-                    visibleRepeatPass ? passwordUnvisible : passwordVisible
+                    visibleRepeatPass
+                      ? PasswordInvisibleSource
+                      : PasswordVisibleSource
                   }
                   style={styles.passwordIcon}
                 />
@@ -141,10 +149,10 @@ const LogIn: FC = ({navigation}: any) => {
       </Formik>
 
       <ButtonApp
-        label="Log In"
+        label="Sign Up"
         styleBtn={styles.logIn}
         styleTxt={styles.logInText}
-        func={() => logInPage()}
+        onPress={goToLogInScreen}
       />
     </ImageBackground>
   );

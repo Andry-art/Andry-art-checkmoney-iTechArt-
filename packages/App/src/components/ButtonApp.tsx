@@ -1,16 +1,16 @@
 import React, {FC} from 'react';
-import {StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {TouchableOpacity, Text} from 'react-native';
 
 interface Props {
   label: string;
   styleBtn?: any;
   styleTxt?: any;
-  func?: any;
+  onPress?: () => void;
 }
 
-const ButtonApp: FC<Props> = ({label, styleBtn, styleTxt, func}) => {
+const ButtonApp: FC<Props> = ({label, styleBtn, styleTxt, onPress}) => {
   return (
-    <TouchableOpacity style={styleBtn} onPress={func}>
+    <TouchableOpacity style={styleBtn} onPress={onPress}>
       <Text style={styleTxt}>{label}</Text>
     </TouchableOpacity>
   );
