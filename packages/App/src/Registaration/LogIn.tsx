@@ -15,32 +15,39 @@ import PasswordVisibleSource from '../../Pics/passwordVisible.png';
 import ButtonApp from '../components/ButtonApp';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import {useDispatch} from 'react-redux';
+import {userLogIn} from '../store/actions/userLogIn';
 
 const logInSchema = yup.object({
   email: yup.string().required().email(),
-  password: yup.string().required().min(6),
+  password: yup.string().required().min(4),
 });
 
 const initialValues = {email: '', password: ''};
 
 const LogIn: FC = ({navigation}: any) => {
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
+  const dispatch = useDispatch();
 
   const passwordVisibility = useCallback(() => {
     setVisiblePass(prev => !prev);
   }, []);
 
-  const logIn = async (emailReg: string, passwordReg: string) => {
-    console.log('request', emailReg, passwordReg);
-  };
+  // const logIn = async (emailReg: string, passwordReg: string) => {
+  //   console.log('request', emailReg, passwordReg);
+  // };
 
   const goToSignUpScreen = () => {
     navigation.navigate('SignIn');
   };
 
-  const onSubmit = useCallback((values: {email: string; password: string}) => {
-    logIn(values.email, values.password);
-  }, []);
+  const onSubmit = useCallback(
+    (values: {email: string; password: string}) => {
+      // logIn(values.email, values.password);
+      dispatch(userLogIn(values.email, values.password));
+    },
+    [dispatch],
+  );
 
   return (
     <ImageBackground style={styles.backGround} source={BG}>
