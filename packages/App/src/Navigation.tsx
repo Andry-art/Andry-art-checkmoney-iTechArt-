@@ -5,7 +5,8 @@ import Balance from './Balance';
 import LogIn from './Registaration/LogIn';
 import SignUp from './Registaration/SignUp';
 import Loading from './components/Loading';
-import {userIsLogIn, IsLoadingUser} from './store/selectors/registration';
+import {userIsLogIn} from './store/selectors/userIsLoged';
+import {IsLoadingUser} from './store/selectors/userIsLoading';
 import {useSelector} from 'react-redux';
 
 const Stack = createNativeStackNavigator();

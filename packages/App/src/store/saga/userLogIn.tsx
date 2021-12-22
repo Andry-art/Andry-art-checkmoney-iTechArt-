@@ -1,12 +1,19 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
-import {createAction} from '@reduxjs/toolkit';
+import {
+  ActionCreatorWithoutPayload,
+  ActionCreatorWithPreparedPayload,
+  createAction,
+} from '@reduxjs/toolkit';
 import {Api} from '../Api';
 
-export const userLogInRequest = createAction('userLogInRequest');
-export const userLogInSuccess = createAction('userLogInSuccess');
-export const userLogInFailed = createAction('userLogInFailed', error => ({
-  payload: error,
-}));
+export const userLogInRequest: ActionCreatorWithoutPayload =
+  createAction('userLogInRequest');
+export const userLogInSuccess: ActionCreatorWithoutPayload =
+  createAction('userLogInSuccess');
+export const userLogInFailed: ActionCreatorWithPreparedPayload<any, string> =
+  createAction('userLogInFailed', error => ({
+    payload: error,
+  }));
 
 export function* userSendLogIn(action: any): Generator {
   yield put(userLogInRequest());
@@ -17,7 +24,6 @@ export function* userSendLogIn(action: any): Generator {
       action.payload.email,
       action.payload.password,
     )) as Response;
-    console.log(response);
     if (!response) {
       return;
     }
@@ -37,7 +43,6 @@ export function* userSendSignUp(action: any): Generator {
       action.payload.email,
       action.payload.password,
     )) as Response;
-    console.log(response);
     if (!response) {
       return;
     }
