@@ -15,3 +15,5 @@ export const store = configureStore({
 });
 
 SagaMiddleware.run(userIsLogIn);
+
+export type RootState = ReturnType<typeof rootReducer>;

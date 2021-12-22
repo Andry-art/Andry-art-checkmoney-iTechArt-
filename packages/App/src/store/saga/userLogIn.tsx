@@ -1,6 +1,7 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import {userLogInSuccess, userLogInFailed} from './logInActions';
 import {Api} from '../Api';
+import {userLogIn} from '../actions/userLogIn';
 
 export function* userSendLogIn(action: any): Generator {
   try {
@@ -17,11 +18,13 @@ export function* userSendLogIn(action: any): Generator {
 
     yield put(userLogInSuccess());
   } catch (error) {
-    yield put(userLogInFailed(error));
+    yield put(userLogInFailed((error as Error).message));
   }
 }
 
-export function* userSendSignUp(action: any): Generator {
+export function* userSendSignUp(
+  action: ReturnType<typeof userLogIn>,
+): Generator {
   try {
     const response = (yield call(
       Api.auth.bind(Api),
@@ -35,7 +38,7 @@ export function* userSendSignUp(action: any): Generator {
 
     yield put(userLogInSuccess());
   } catch (error) {
-    yield put(userLogInFailed(error));
+    yield put(userLogInFailed((error as Error).message));
   }
 }
 

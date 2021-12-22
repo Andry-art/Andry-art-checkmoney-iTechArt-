@@ -5,15 +5,18 @@ import Balance from './Balance';
 import LogIn from './Registaration/LogIn';
 import SignUp from './Registaration/SignUp';
 import Loading from './components/Loading';
-import {userIsLogIn} from './store/selectors/userIsLoged';
-import {IsLoadingUser} from './store/selectors/userIsLoading';
+import {userIsLogIn, IsLoadingUser} from './store/selectors/registration';
 import {useSelector} from 'react-redux';
+import {RootState} from './store/Store';
 
 const Stack = createNativeStackNavigator();
 
+const IsLogIn = userIsLogIn;
+const IsLoading = IsLoadingUser;
+
 const Navigation = () => {
-  const isLogIn = useSelector(state => userIsLogIn(state));
-  const isLoading = useSelector(state => IsLoadingUser(state));
+  const isLogIn = useSelector((state: RootState) => IsLogIn(state));
+  const isLoading = useSelector((state: RootState) => IsLoading(state));
 
   if (isLoading) {
     return <Loading />;
