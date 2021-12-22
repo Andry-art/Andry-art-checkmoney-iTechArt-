@@ -1,4 +1,9 @@
 import {createReducer} from '@reduxjs/toolkit';
+import {
+  userLogInSuccess,
+  userLogInFailed,
+  userLogInRequest,
+} from '../saga/userLogIn';
 
 const initialState = {
   isLogIn: false,
@@ -8,12 +13,13 @@ const initialState = {
 
 const userIsLogIn = createReducer(initialState, builder => {
   builder
-    .addCase('userLogInSuccess', state => ({
+    .addCase(userLogInRequest, state => ({...state, isLoading: true}))
+    .addCase(userLogInSuccess, state => ({
       ...state,
       isLogIn: true,
       isLoading: false,
     }))
-    .addCase('userLogInFailed', (state, action) => ({
+    .addCase(userLogInFailed, (state, action) => ({
       ...state,
       isLogIn: false,
       isLoading: false,
