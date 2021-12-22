@@ -1,8 +1,4 @@
 import {createAction} from '@reduxjs/toolkit';
 
-export const userLogIn = createAction(
-  'USER_LOG_IN',
-  (email: string, password: string) => ({
-    payload: {email, password},
-  }),
-);
+export const userLogIn =
+  createAction<{email: string; password: string}>('USER_LOG_IN');

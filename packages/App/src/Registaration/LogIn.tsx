@@ -33,18 +33,15 @@ const LogIn: FC = ({navigation}: any) => {
     setVisiblePass(prev => !prev);
   }, []);
 
-  // const logIn = async (emailReg: string, passwordReg: string) => {
-  //   console.log('request', emailReg, passwordReg);
-  // };
-
   const goToSignUpScreen = () => {
     navigation.navigate('SignIn');
   };
 
   const onSubmit = useCallback(
     (values: {email: string; password: string}) => {
-      // logIn(values.email, values.password);
-      dispatch(userLogIn(values.email, values.password));
+      const email = values.email;
+      const password = values.password;
+      dispatch(userLogIn({email, password}));
     },
     [dispatch],
   );

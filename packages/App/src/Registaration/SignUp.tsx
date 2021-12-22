@@ -48,7 +48,9 @@ const LogIn: FC = ({navigation}: any) => {
 
   const onSubmit = useCallback(
     (values: {email: string; password: string}) => {
-      dispatch(userSignUp(values.email, values.password));
+      const email = values.email;
+      const password = values.password;
+      dispatch(userSignUp({email, password}));
     },
     [dispatch],
   );
