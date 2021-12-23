@@ -8,7 +8,7 @@ import {store} from './src/store/Store';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  const [viewOnBoarding, setViewOnBoarding] = useState(false);
+  const [viewOnBoarding, setViewOnBoarding] = useState(true);
 
   const checkOnBoarding = async () => {
     try {
