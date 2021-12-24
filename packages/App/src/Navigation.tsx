@@ -9,14 +9,12 @@ import {useSelector} from 'react-redux';
 import {RootState} from './store/Store';
 import BalanceNavigation from './balance/BalanceNavigation';
 
+
 const Stack = createNativeStackNavigator();
 
-const IsLogIn = userIsLogIn;
-const IsLoading = IsLoadingUser;
-
 const Navigation = () => {
-  const isLogIn = useSelector((state: RootState) => IsLogIn(state));
-  const isLoading = useSelector((state: RootState) => IsLoading(state));
+  const isLogIn = useSelector(userIsLogIn);
+  const isLoading = useSelector(IsLoadingUser);
 
   if (isLoading) {
     return <Loading />;
