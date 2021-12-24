@@ -1,7 +1,20 @@
-import React from 'react';
-import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
+import React, {FC} from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ImageProps,
+} from 'react-native';
 
-const Button = ({title, picture, onPress}: any) => {
+interface Props {
+  title: string;
+  picture: ImageProps;
+  onPress: () => void;
+}
+
+const Button: FC<Props> = ({title, picture, onPress}) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={onPress}>

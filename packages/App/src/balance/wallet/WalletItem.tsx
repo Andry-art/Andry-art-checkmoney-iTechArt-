@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {FC, useMemo} from 'react';
 import {
   StyleSheet,
   View,
@@ -12,7 +12,13 @@ import {
 
 import walletIconSource from '../../../Pics/balance/wallet.png';
 
-const WalletItem = ({title, amount, color}: any) => {
+interface Props {
+  title: string;
+  amount: number;
+  color: string;
+}
+
+const WalletItem: FC<Props> = ({title, amount, color}) => {
   const {width} = useWindowDimensions();
 
   const viewStyle = useMemo<StyleProp<ViewStyle>>(
@@ -33,7 +39,7 @@ const WalletItem = ({title, amount, color}: any) => {
           <Text style={styles.cardTitleText}>{title}</Text>
         </View>
         <View style={styles.total}>
-          <Text style={styles.totalText}>{amount}</Text>
+          <Text style={styles.totalText}>{amount}$</Text>
         </View>
       </TouchableOpacity>
     </View>

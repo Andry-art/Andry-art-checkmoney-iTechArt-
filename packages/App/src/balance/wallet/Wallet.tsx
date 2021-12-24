@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, Text} from 'react-native';
+import {StyleSheet, View, FlatList, Text, ImageProps} from 'react-native';
 import WalletItem from './WalletItem';
 import Button from './Button';
 import incomeIconSource from '../../../Pics/balance/income.png';
@@ -16,12 +16,26 @@ import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
 import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
 import iconSalarySource from '../../../Pics/categories/money.png';
 
-const wallets = [
+interface walletInfo {
+  key: string;
+  color: string;
+  walletTitle: string;
+  walletAmount: number;
+  transactions: Array<{
+    type: string;
+    amount: number;
+    category: string;
+    date: string;
+    icon: ImageProps;
+  }>;
+}
+
+const wallets: Array<walletInfo> = [
   {
     key: '01',
     color: '#74EA8E',
     walletTitle: 'cash',
-    walletAmount: '450$',
+    walletAmount: 450,
     transactions: [
       {
         type: 'income',
@@ -72,7 +86,7 @@ const wallets = [
     key: '02',
     color: '#8D45A7',
     walletTitle: 'card',
-    walletAmount: '550$',
+    walletAmount: 550,
     transactions: [
       {
         type: 'expenses',
@@ -119,7 +133,15 @@ const viewability: ViewabilityConfig = {
 
 const Wallet = () => {
   const [itemVisible, setItemVisible] = useState<number>(0);
-  const [inCome, setInCome] = useState(wallets[itemVisible].transactions);
+  const [inCome, setInCome] = useState<
+    Array<{
+      type: string;
+      amount: number;
+      category: string;
+      date: string;
+      icon: ImageProps;
+    }>
+  >(wallets[itemVisible].transactions);
 
   const filterInCome = () => {
     setInCome(
@@ -137,6 +159,8 @@ const Wallet = () => {
     setInCome(wallets[itemVisible].transactions);
   };
 
+  const newCard = () => {};
+
   const viewableItemsChanged = useCallback(({viewableItems}) => {
     setItemVisible(viewableItems[0].index);
   }, []);
@@ -151,15 +175,7 @@ const Wallet = () => {
         <Text style={styles.title}>Wallet</Text>
         <Text>
           {wallets.reduce((sum, cur) => {
-            return (
-              sum +
-              Number(
-                cur.walletAmount
-                  .split('')
-                  .filter(it => !isNaN(Number(it)))
-                  .join(''),
-              )
-            );
+            return sum + cur.walletAmount;
           }, 0)}
           $
         </Text>
@@ -199,7 +215,7 @@ const Wallet = () => {
           picture={allCategoriesIconSource}
           onPress={allCategories}
         />
-        <Button title="New card" picture={addNewIconSource} />
+        <Button title="New card" picture={addNewIconSource} onPress={newCard} />
       </View>
       <View style={styles.categoriesList}>
         <View style={styles.categoriesListTitle}>

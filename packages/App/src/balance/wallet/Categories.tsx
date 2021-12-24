@@ -1,7 +1,15 @@
-import React from 'react';
-import {StyleSheet, View, Text, Image} from 'react-native';
+import React, {FC} from 'react';
+import {StyleSheet, View, Text, Image, ImageProps} from 'react-native';
 
-const Categories = ({category, amount, date, type, icon}: any) => {
+interface Props {
+  category: string;
+  amount: number;
+  date: string;
+  type: string;
+  icon: ImageProps;
+}
+
+const Categories: FC<Props> = ({category, amount, date, type, icon}) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconsInfo}>
