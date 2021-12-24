@@ -1,9 +1,11 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import {userLogInSuccess, userLogInFailed} from './logInActions';
 import {Api} from '../Api';
-import {userLogIn} from '../actions/userLogIn';
+import {userLogIn} from '../actions/registration';
 
-export function* userSendLogIn(action: any): Generator {
+export function* userSendLogIn(
+  action: ReturnType<typeof userLogIn>,
+): Generator {
   try {
     const response = (yield call(
       Api.auth.bind(Api),

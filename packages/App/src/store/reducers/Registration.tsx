@@ -8,7 +8,7 @@ interface IRegistration {
 }
 
 const initialState: IRegistration = {
-  isLogIn: false,
+  isLogIn: true,
   isLoading: false,
   error: '',
 };
