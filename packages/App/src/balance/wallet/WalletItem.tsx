@@ -12,9 +12,11 @@ import {
 
 import walletIconSource from '../../../Pics/balance/wallet.png';
 
+type AmountInCents = number;
+
 interface Props {
   title: string;
-  amount: number;
+  amount: AmountInCents;
   color: string;
 }
 

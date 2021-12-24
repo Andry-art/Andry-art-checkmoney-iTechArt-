@@ -5,12 +5,12 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ImageProps,
+  ImageURISource,
 } from 'react-native';
 
 interface Props {
   title: string;
-  picture: ImageProps;
+  picture: ImageURISource;
   onPress: () => void;
 }
 

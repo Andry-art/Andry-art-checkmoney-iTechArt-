@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, Text, ImageProps} from 'react-native';
+import {StyleSheet, View, FlatList, Text, ImageURISource} from 'react-native';
 import WalletItem from './WalletItem';
 import Button from './Button';
 import incomeIconSource from '../../../Pics/balance/income.png';
@@ -16,21 +16,25 @@ import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
 import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
 import iconSalarySource from '../../../Pics/categories/money.png';
 
-interface walletInfo {
+type AmountInCents = number;
+
+interface Transactions {
+  type: string;
+  amount: number;
+  category: string;
+  date: string;
+  icon: ImageURISource;
+}
+
+interface WalletInfo {
   key: string;
   color: string;
   walletTitle: string;
-  walletAmount: number;
-  transactions: Array<{
-    type: string;
-    amount: number;
-    category: string;
-    date: string;
-    icon: ImageProps;
-  }>;
+  walletAmount: AmountInCents;
+  transactions: Array<Transactions>;
 }
 
-const wallets: Array<walletInfo> = [
+const wallets: Array<WalletInfo> = [
   {
     key: '01',
     color: '#74EA8E',
@@ -133,15 +137,9 @@ const viewability: ViewabilityConfig = {
 
 const Wallet = () => {
   const [itemVisible, setItemVisible] = useState<number>(0);
-  const [inCome, setInCome] = useState<
-    Array<{
-      type: string;
-      amount: number;
-      category: string;
-      date: string;
-      icon: ImageProps;
-    }>
-  >(wallets[itemVisible].transactions);
+  const [inCome, setInCome] = useState<Array<Transactions>>(
+    wallets[itemVisible].transactions,
+  );
 
   const filterInCome = () => {
     setInCome(
@@ -175,7 +173,7 @@ const Wallet = () => {
         <Text style={styles.title}>Wallet</Text>
         <Text>
           {wallets.reduce((sum, cur) => {
-            return sum + cur.walletAmount;
+            return (sum * 100 + cur.walletAmount * 100) / 100;
           }, 0)}
           $
         </Text>

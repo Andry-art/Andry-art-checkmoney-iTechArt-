@@ -1,12 +1,14 @@
 import React, {FC} from 'react';
-import {StyleSheet, View, Text, Image, ImageProps} from 'react-native';
+import {StyleSheet, View, Text, Image, ImageURISource} from 'react-native';
+
+type AmountInCents = number;
 
 interface Props {
   category: string;
-  amount: number;
+  amount: AmountInCents;
   date: string;
   type: string;
-  icon: ImageProps;
+  icon: ImageURISource;
 }
 
 const Categories: FC<Props> = ({category, amount, date, type, icon}) => {
