@@ -16,7 +16,7 @@ import ButtonApp from '../components/ButtonApp';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch} from 'react-redux';
-import {userLogIn} from '../store/actions/userLogIn';
+import {userLogIn} from '../store/actions/registration';
 
 const logInSchema = yup.object({
   email: yup.string().required().email(),
