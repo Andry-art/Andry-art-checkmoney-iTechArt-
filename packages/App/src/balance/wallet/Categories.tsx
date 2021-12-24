@@ -1,20 +1,23 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image} from 'react-native';
-import iconCarSource from '../../../Pics/balance/car.png';
 
-const Categories = ({item}: any) => {
+const Categories = ({category, amount, date, type, icon}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconsInfo}>
         <View style={styles.iconBG}>
-          <Image source={iconCarSource} />
+          <Image source={icon} />
         </View>
         <View style={styles.info}>
-          <Text style={styles.title}>Auto</Text>
-          <Text style={styles.date}>20.01.2020</Text>
+          <Text style={styles.title}>{category}</Text>
+          <Text style={styles.date}>{date}</Text>
         </View>
       </View>
-      <Text style={styles.sum}>{item.balance}</Text>
+      {type === 'income' ? (
+        <Text style={styles.sumPlus}>+{amount}$</Text>
+      ) : (
+        <Text style={styles.sumMinus}>-{amount}$</Text>
+      )}
     </View>
   );
 };
@@ -56,11 +59,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  sum: {
+  sumMinus: {
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: 18,
+    color: 'red',
+  },
+
+  sumPlus: {
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: '900',
+    fontSize: 18,
+    color: 'green',
   },
 });
 

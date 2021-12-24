@@ -12,7 +12,7 @@ import {
 
 import walletIconSource from '../../../Pics/balance/wallet.png';
 
-const WalletItem = ({item}: any) => {
+const WalletItem = ({title, amount, color}: any) => {
   const {width} = useWindowDimensions();
 
   const viewStyle = useMemo<StyleProp<ViewStyle>>(
@@ -20,15 +20,20 @@ const WalletItem = ({item}: any) => {
     [width],
   );
 
+  const backgroundColor = useMemo<StyleProp<ViewStyle>>(
+    () => [styles.card, {backgroundColor: color}],
+    [color],
+  );
+
   return (
     <View style={viewStyle}>
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity style={backgroundColor}>
         <View style={styles.cardTitle}>
           <Image source={walletIconSource} />
-          <Text style={styles.cardTitleText}>Cash</Text>
+          <Text style={styles.cardTitleText}>{title}</Text>
         </View>
         <View style={styles.total}>
-          <Text style={styles.totalText}>{item.balance}</Text>
+          <Text style={styles.totalText}>{amount}</Text>
         </View>
       </TouchableOpacity>
     </View>
