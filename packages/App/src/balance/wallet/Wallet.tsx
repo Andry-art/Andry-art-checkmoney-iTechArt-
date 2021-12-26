@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, Text, ImageURISource} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {StyleSheet, View, FlatList, Text} from 'react-native';
 import WalletItem from './WalletItem';
 import Button from './Button';
 import incomeIconSource from '../../../Pics/balance/income.png';
@@ -8,153 +8,34 @@ import allCategoriesIconSource from '../../../Pics/balance/category.png';
 import addNewIconSource from '../../../Pics/balance/add.png';
 import Categories from './Categories';
 import {ViewabilityConfig} from 'react-native';
-import iconCarSource from '../../../Pics/categories/car.png';
-import iconHealthSource from '../../../Pics/categories/heart-beat.png';
-import iconGrocerySource from '../../../Pics/categories/food.png';
-import iconUnknownSource from '../../../Pics/categories/question.png';
-import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
-import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
-import iconSalarySource from '../../../Pics/categories/money.png';
-
-type AmountInCents = number;
-
-interface Transactions {
-  type: string;
-  amount: number;
-  category: string;
-  date: string;
-  icon: ImageURISource;
-}
-
-interface WalletInfo {
-  key: string;
-  color: string;
-  walletTitle: string;
-  walletAmount: AmountInCents;
-  transactions: Array<Transactions>;
-}
-
-const wallets: Array<WalletInfo> = [
-  {
-    key: '01',
-    color: '#74EA8E',
-    walletTitle: 'cash',
-    walletAmount: 450,
-    transactions: [
-      {
-        type: 'income',
-        amount: 200,
-        category: 'salary',
-        date: '20.09.2020',
-        icon: iconSalarySource,
-      },
-      {
-        type: 'income',
-        amount: 50,
-        category: 'unknown',
-        date: '20.09.2020',
-        icon: iconUnknownSource,
-      },
-      {
-        type: 'expenses',
-        amount: 40,
-        category: 'car',
-        date: '24.09.2020',
-        icon: iconCarSource,
-      },
-      {
-        type: 'expenses',
-        amount: 27,
-        category: 'shopping',
-        date: '26.09.2020',
-        icon: iconShoppingSource,
-      },
-      {
-        type: 'expenses',
-        amount: 210,
-        category: 'restaurant',
-        date: '27.09.2020',
-        icon: iconRestaurantSource,
-      },
-      {
-        type: 'expenses',
-        amount: 63,
-        category: 'health',
-        date: '27.09.2020',
-        icon: iconHealthSource,
-      },
-    ],
-  },
-
-  {
-    key: '02',
-    color: '#8D45A7',
-    walletTitle: 'card',
-    walletAmount: 550,
-    transactions: [
-      {
-        type: 'expenses',
-        amount: 40,
-        category: 'grocery',
-        date: '20.09.2020',
-        icon: iconGrocerySource,
-      },
-      {
-        type: 'expenses',
-        amount: 200,
-        category: 'car',
-        date: '20.09.2020',
-        icon: iconCarSource,
-      },
-      {
-        type: 'expenses',
-        amount: 50,
-        category: 'unknown',
-        date: '20.09.2020',
-        icon: iconSalarySource,
-      },
-      {
-        type: 'income',
-        amount: 50,
-        category: 'unknown',
-        date: '20.09.2020',
-        icon: iconUnknownSource,
-      },
-      {
-        type: 'expenses',
-        amount: 40,
-        category: 'car',
-        date: '24.09.2020',
-        icon: iconCarSource,
-      },
-    ],
-  },
-];
+import {WalletItems} from '../../store/selectors/walletItems';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  filterInComeItems,
+  filterExpensesItems,
+  getAllItemWallet,
+} from '../../store/actions/walletActions';
 
 const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 10,
 };
 
 const Wallet = () => {
+  const dispatch = useDispatch();
+  const receivedWalletItems = useSelector(WalletItems);
+
   const [itemVisible, setItemVisible] = useState<number>(0);
-  const [inCome, setInCome] = useState<Array<Transactions>>(
-    wallets[itemVisible].transactions,
-  );
 
   const filterInCome = () => {
-    setInCome(
-      wallets[itemVisible].transactions.filter(it => it.type === 'income'),
-    );
+    dispatch(filterInComeItems(itemVisible));
   };
 
   const filterExpenses = () => {
-    setInCome(
-      wallets[itemVisible].transactions.filter(it => it.type === 'expenses'),
-    );
+    dispatch(filterExpensesItems(itemVisible));
   };
 
   const allCategories = () => {
-    setInCome(wallets[itemVisible].transactions);
+    dispatch(getAllItemWallet());
   };
 
   const newCard = () => {};
@@ -163,16 +44,12 @@ const Wallet = () => {
     setItemVisible(viewableItems[0].index);
   }, []);
 
-  useEffect(() => {
-    setInCome(wallets[itemVisible].transactions);
-  }, [itemVisible]);
-
   return (
     <View style={styles.container}>
       <View style={styles.wallet}>
         <Text style={styles.title}>Wallet</Text>
         <Text>
-          {wallets.reduce((sum, cur) => {
+          {receivedWalletItems.reduce((sum, cur) => {
             return (sum * 100 + cur.walletAmount * 100) / 100;
           }, 0)}
           $
@@ -180,7 +57,7 @@ const Wallet = () => {
       </View>
       <View style={styles.list}>
         <FlatList
-          data={wallets}
+          data={receivedWalletItems}
           keyExtractor={item => item.key}
           renderItem={({item}) => (
             <WalletItem
@@ -220,7 +97,7 @@ const Wallet = () => {
           <Text style={styles.categoriesListText}>All categories</Text>
         </View>
         <FlatList
-          data={inCome}
+          data={receivedWalletItems[itemVisible].transactions}
           keyExtractor={(item, ind) => String(ind + item.amount)}
           renderItem={({item}) => (
             <Categories

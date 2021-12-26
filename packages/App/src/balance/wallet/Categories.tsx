@@ -1,22 +1,40 @@
 import React, {FC} from 'react';
-import {StyleSheet, View, Text, Image, ImageURISource} from 'react-native';
-
-type AmountInCents = number;
+import {StyleSheet, View, Text, Image, ImageSourcePropType} from 'react-native';
+import iconCarSource from '../../../Pics/categories/car.png';
+import iconHealthSource from '../../../Pics/categories/heart-beat.png';
+import iconGrocerySource from '../../../Pics/categories/food.png';
+import iconUnknownSource from '../../../Pics/categories/question.png';
+import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
+import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
+import iconSalarySource from '../../../Pics/categories/money.png';
+import {AmountInCents} from '../../types/types';
 
 interface Props {
   category: string;
   amount: AmountInCents;
   date: string;
   type: string;
-  icon: ImageURISource;
+  icon: string;
 }
 
 const Categories: FC<Props> = ({category, amount, date, type, icon}) => {
+  const imgSource: Record<string, ImageSourcePropType> = {
+    iconCarSource: iconCarSource,
+    iconHealthSource: iconHealthSource,
+    iconUnknownSource: iconUnknownSource,
+    iconGrocerySource: iconGrocerySource,
+    iconShoppingSource: iconShoppingSource,
+    iconRestaurantSource: iconRestaurantSource,
+    iconSalarySource: iconSalarySource,
+  };
+
+  const img = imgSource[icon];
+
   return (
     <View style={styles.container}>
       <View style={styles.iconsInfo}>
         <View style={styles.iconBG}>
-          <Image source={icon} />
+          <Image source={img} />
         </View>
         <View style={styles.info}>
           <Text style={styles.title}>{category}</Text>
@@ -59,7 +77,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '800',
-    fontSize: 14,
+    fontSize: 18,
+    color: 'black',
   },
 
   date: {

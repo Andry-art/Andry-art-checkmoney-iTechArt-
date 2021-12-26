@@ -9,10 +9,8 @@ import {
   useWindowDimensions,
   Image,
 } from 'react-native';
-
 import walletIconSource from '../../../Pics/balance/wallet.png';
-
-type AmountInCents = number;
+import {AmountInCents} from '../../types/types';
 
 interface Props {
   title: string;

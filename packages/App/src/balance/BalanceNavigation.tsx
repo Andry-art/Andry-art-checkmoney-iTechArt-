@@ -1,11 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Balance from './Balance';
 import Wallet from './wallet/Wallet';
+import {getAllItemWallet} from '../store/actions/walletActions';
+import {useDispatch} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
 const BalanceNavigation = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAllItemWallet());
+  }, [dispatch]);
+
   return (
     <Stack.Navigator>
       <Stack.Screen
