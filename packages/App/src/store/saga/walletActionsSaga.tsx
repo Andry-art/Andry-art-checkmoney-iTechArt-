@@ -17,3 +17,27 @@ export const filterExpensesSuccess = createAction<{
   response: Array<WalletInfo>;
   page: number;
 }>('filterExpensesItems');
+
+export const addNewCardSaga = createAction<WalletInfo>('addCard');
+
+export const deleteCardSaga = createAction<number>('deleteCard');
+
+export const monetaryMove = createAction<{
+  key: number;
+  amount: number;
+  title?: string;
+  type?: string;
+  category?: string;
+  date?: string;
+  icon?: string;
+  idCard?: number;
+}>('monetaryMovements');
+
+export const addTransactionSaga = createAction<WalletInfo>('addTransaction');
+
+export const deleteTransactionSaga =
+  createAction<WalletInfo>('deleteTransaction');
+
+export const addCorrectTransaction = createAction<WalletInfo>(
+  'addCorrectTransaction',
+);

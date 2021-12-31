@@ -4,10 +4,25 @@ import {
   getWalletItemsFailed,
   filterIncomeSuccess,
   filterExpensesSuccess,
+  addNewCardSaga,
+  deleteCardSaga,
+  monetaryMove,
+  addTransactionSaga,
+  deleteTransactionSaga,
+  addCorrectTransaction,
 } from './walletActionsSaga';
 import {Api} from '../Api';
 import {WalletInfo} from '../../types/types';
-import {filterInComeItems} from '../actions/walletActions';
+import {
+  filterInComeItems,
+  addNewCard,
+  deleteWalletCard,
+  cardMonetaryMove,
+  addTransactionAction,
+  deleteTransactionAction,
+  correctTransactionInfo,
+  getCorrectTransaction,
+} from '../actions/walletActions';
 
 export function* getWalletItems(): Generator {
   try {
@@ -69,8 +84,183 @@ export function* filterItems(
   }
 }
 
+export function* addCard(action: ReturnType<typeof addNewCard>): Generator {
+  try {
+    const newCard = {
+      key: action.payload.key,
+      color: action.payload.color,
+      walletTitle: action.payload.cardName,
+      walletAmount: Number(action.payload.amount),
+      transactions: [],
+    };
+
+    const response = (yield call(
+      Api.authPost.bind(Api),
+      'http://localhost:8000/wallet',
+      newCard,
+    )) as WalletInfo;
+    if (response) {
+      yield put(addNewCardSaga(response));
+    }
+  } catch (error) {
+    console.log('addCard', error);
+    yield put(getWalletItemsFailed((error as Error).message));
+  }
+}
+
+export function* deleteCardRequest(
+  action: ReturnType<typeof deleteWalletCard>,
+): Generator {
+  try {
+    const response = yield call(
+      Api.authDelete.bind(Api),
+      `http://localhost:8000/wallet/${action.payload}`,
+    );
+
+    if (response) {
+      yield put(deleteCardSaga(action.payload));
+    }
+  } catch (error) {
+    console.log('Delete', error);
+    yield put(getWalletItemsFailed((error as Error).message));
+  }
+}
+
+export function* monetaryMovements(
+  action: ReturnType<typeof cardMonetaryMove>,
+): Generator {
+  try {
+    yield put(monetaryMove(action.payload));
+  } catch (error) {
+    console.log('post', error);
+    yield put(getWalletItemsFailed((error as Error).message));
+  }
+}
+
+export function* addTransaction(
+  action: ReturnType<typeof addTransactionAction>,
+): Generator {
+  try {
+    const categoryAmount = action.payload.transaction.amountTransaction;
+    const totalAmount = action.payload.item.walletAmount;
+    const newTransaction = action.payload.transaction;
+    let item = action.payload.item;
+
+    console.log(action.payload.transaction.type);
+    if (action.payload.transaction.type === 'income') {
+      item = {...item, walletAmount: totalAmount + categoryAmount};
+    }
+    if (action.payload.transaction.type === 'expenses') {
+      item = {...item, walletAmount: totalAmount - categoryAmount};
+    }
+
+    const newArrayOfTransaction = [newTransaction, ...item.transactions];
+    const newPosition = {...item, transactions: newArrayOfTransaction};
+
+    const response = (yield call(
+      Api.authPut.bind(Api),
+      `http://localhost:8000/wallet/${action.payload.item.id}`,
+      newPosition,
+    )) as WalletInfo;
+    if (response) {
+      yield put(addTransactionSaga(response));
+    }
+  } catch (error) {
+    console.log('post', error);
+    yield put(getWalletItemsFailed((error as Error).message));
+  }
+}
+
+export function* deleteTransaction(
+  action: ReturnType<typeof deleteTransactionAction>,
+): Generator {
+  try {
+    let item = action.payload.item;
+
+    const newArrayTransactions = action.payload.item.transactions.filter(
+      it => it.keyTransaction !== action.payload.transactionKey.keyTransaction,
+    );
+
+    item = {...item, transactions: newArrayTransactions};
+
+    if (action.payload.transactionKey.type === 'income') {
+      item = {
+        ...item,
+        walletAmount: item.walletAmount - action.payload.transactionKey.amount,
+      };
+    }
+
+    if (action.payload.transactionKey.type === 'expenses') {
+      item = {
+        ...item,
+        walletAmount: item.walletAmount + action.payload.transactionKey.amount,
+      };
+    }
+
+    const response = (yield call(
+      Api.authPut.bind(Api),
+      `http://localhost:8000/wallet/${action.payload.item.id}`,
+      item,
+    )) as WalletInfo;
+
+    if (response) {
+      yield put(deleteTransactionSaga(response));
+    }
+  } catch (error) {
+    console.log('deleteTransaction', error);
+    yield put(getWalletItemsFailed((error as Error).message));
+  }
+}
+
+export function* correctTransaction(
+  action: ReturnType<typeof correctTransactionInfo>,
+): Generator {
+  try {
+    yield put(monetaryMove(action.payload));
+  } catch (error) {
+    console.log('deleteTransaction', error);
+    yield put(getWalletItemsFailed((error as Error).message));
+  }
+}
+
+export function* correctTransactionToSend(
+  action: ReturnType<typeof getCorrectTransaction>,
+): Generator {
+  try {
+    let item = action.payload.item;
+    const newTransactions = item.transactions.map(it =>
+      it.keyTransaction === action.payload.correctedTransaction.keyTransaction
+        ? action.payload.correctedTransaction
+        : it,
+    );
+    item = {...item, transactions: newTransactions};
+
+    const response = (yield call(
+      Api.authPut.bind(Api),
+      `http://localhost:8000/wallet/${action.payload.item.id}`,
+      item,
+    )) as WalletInfo;
+
+    if (response) {
+      yield put(addCorrectTransaction(response));
+    }
+  } catch (error) {
+    console.log('correctTransactionToSend', error);
+    yield put(getWalletItemsFailed((error as Error).message));
+  }
+}
+
 export function* WalletItems(): Generator {
   yield takeEvery('GET_WALLET_ITEMS', getWalletItems);
   yield takeEvery('FILTER_INCOME', filterItems);
   yield takeEvery('FILTER_EXPENSES', filterItems);
+  yield takeEvery('ADD_CARD', addCard);
+  yield takeEvery('DELETE_CARD', deleteCardRequest);
+  yield takeEvery('CARD_MONETARY_MOVE', monetaryMovements);
+  yield takeEvery('ADD_TRANSACTION', addTransaction);
+  yield takeEvery('DELETE_TRANSACTION', deleteTransaction);
+  yield takeEvery('CORRECT_TRANSACTION_INFO', correctTransaction);
+  yield takeEvery('CORRECT_TRANSACTION', correctTransactionToSend);
 }
+
+addNewCard;

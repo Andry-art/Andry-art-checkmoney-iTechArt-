@@ -7,3 +7,7 @@ export const IsLoadingWallet = (state: RootState) => {
 export const WalletItems = (state: RootState) => {
   return state.wallet.walletContent;
 };
+
+export const monetaryMove = (state: RootState) => {
+  return state.wallet.monetaryMovements;
+};

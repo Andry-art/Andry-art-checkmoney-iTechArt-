@@ -81,6 +81,8 @@ class HttpService {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${tokens.access_token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(
           params,
@@ -119,6 +121,8 @@ class HttpService {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${tokens.access_token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(
           params,
@@ -148,7 +152,7 @@ class HttpService {
     }
   }
 
-  public async authDelete(url: string, params: any, limit: number = 1): Promise<void> {
+  public async authDelete(url: string, params?: any, limit: number = 1): Promise<void> {
     const tokens = await this.getToken();
     let response;
 

@@ -8,17 +8,37 @@ import {
   ViewStyle,
   useWindowDimensions,
   Image,
+  Platform,
+  UIManager,
+  Animated,
+  LayoutAnimation,
 } from 'react-native';
 import walletIconSource from '../../../Pics/balance/wallet.png';
 import {AmountInCents} from '../../types/types';
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 interface Props {
   title: string;
   amount: AmountInCents;
   color: string;
+  onLongPress: (id: number) => void;
+  keyCard: number;
+  onPress: (key: number, amount: number, title: string) => void;
 }
 
-const WalletItem: FC<Props> = ({title, amount, color}) => {
+const WalletItem: FC<Props> = ({
+  title,
+  amount,
+  color,
+  onLongPress,
+  keyCard,
+  onPress,
+}) => {
   const {width} = useWindowDimensions();
 
   const viewStyle = useMemo<StyleProp<ViewStyle>>(
@@ -31,9 +51,14 @@ const WalletItem: FC<Props> = ({title, amount, color}) => {
     [color],
   );
 
+  LayoutAnimation.easeInEaseOut();
+
   return (
-    <View style={viewStyle}>
-      <TouchableOpacity style={backgroundColor}>
+    <Animated.View style={viewStyle}>
+      <TouchableOpacity
+        style={backgroundColor}
+        onLongPress={() => onLongPress(keyCard)}
+        onPress={() => onPress(keyCard, amount, title)}>
         <View style={styles.cardTitle}>
           <Image source={walletIconSource} />
           <Text style={styles.cardTitleText}>{title}</Text>
@@ -42,7 +67,7 @@ const WalletItem: FC<Props> = ({title, amount, color}) => {
           <Text style={styles.totalText}>{amount}$</Text>
         </View>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 

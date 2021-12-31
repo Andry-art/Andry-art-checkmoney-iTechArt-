@@ -1,5 +1,12 @@
 import React, {FC} from 'react';
-import {StyleSheet, View, Text, Image, ImageSourcePropType} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  ImageSourcePropType,
+  TouchableOpacity,
+} from 'react-native';
 import iconCarSource from '../../../Pics/categories/car.png';
 import iconHealthSource from '../../../Pics/categories/heart-beat.png';
 import iconGrocerySource from '../../../Pics/categories/food.png';
@@ -10,14 +17,33 @@ import iconSalarySource from '../../../Pics/categories/money.png';
 import {AmountInCents} from '../../types/types';
 
 interface Props {
+  keyTransaction: number;
   category: string;
   amount: AmountInCents;
   date: string;
   type: string;
   icon: string;
+  onLongPress: (keyTransaction: number, amount: number, type: string) => void;
+  onPress: (
+    keyTransaction: number,
+    category: string,
+    date: string,
+    amount: number,
+    type: string,
+    icon: string,
+  ) => void;
 }
 
-const Categories: FC<Props> = ({category, amount, date, type, icon}) => {
+const Transactions: FC<Props> = ({
+  keyTransaction,
+  category,
+  amount,
+  date,
+  type,
+  icon,
+  onLongPress,
+  onPress,
+}) => {
   const imgSource: Record<string, ImageSourcePropType> = {
     iconCarSource: iconCarSource,
     iconHealthSource: iconHealthSource,
@@ -31,7 +57,12 @@ const Categories: FC<Props> = ({category, amount, date, type, icon}) => {
   const img = imgSource[icon];
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onLongPress={() => onLongPress(keyTransaction, amount, type)}
+      onPress={() =>
+        onPress(keyTransaction, category, date, amount, type, icon)
+      }>
       <View style={styles.iconsInfo}>
         <View style={styles.iconBG}>
           <Image source={img} />
@@ -46,7 +77,7 @@ const Categories: FC<Props> = ({category, amount, date, type, icon}) => {
       ) : (
         <Text style={styles.sumMinus}>-{amount}$</Text>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -105,4 +136,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Categories;
+export default Transactions;

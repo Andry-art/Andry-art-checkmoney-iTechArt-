@@ -6,25 +6,45 @@ import incomeIconSource from '../../../Pics/balance/income.png';
 import expensesIconSource from '../../../Pics/balance/expense.png';
 import allCategoriesIconSource from '../../../Pics/balance/category.png';
 import addNewIconSource from '../../../Pics/balance/add.png';
-import Categories from './Categories';
+import Transactions from './Transactions';
 import {ViewabilityConfig} from 'react-native';
-import {WalletItems} from '../../store/selectors/walletItems';
+import {WalletItems, IsLoadingWallet} from '../../store/selectors/walletItems';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   filterInComeItems,
   filterExpensesItems,
   getAllItemWallet,
+  deleteWalletCard,
+  cardMonetaryMove,
+  deleteTransactionAction,
+  correctTransactionInfo,
 } from '../../store/actions/walletActions';
+import Loading from '../../components/Loading';
+import {WalletInfo} from '../../types/types';
+import CardModal from './CardModal';
 
 const viewability: ViewabilityConfig = {
-  viewAreaCoveragePercentThreshold: 10,
+  viewAreaCoveragePercentThreshold: 50,
 };
 
-const Wallet = () => {
+const Wallet = ({navigation}: any) => {
   const dispatch = useDispatch();
+
   const receivedWalletItems = useSelector(WalletItems);
 
+  const isLoading = useSelector(IsLoadingWallet);
+
   const [itemVisible, setItemVisible] = useState<number>(0);
+  const [modalCardVisible, setModalCardVisible] = useState<boolean>(false);
+  const [modalTransactionVisible, setModalTransactionVisible] =
+    useState<boolean>(false);
+  const [cardId, setCardId] = useState<number>(0);
+  const [transactionKey, setTransactionKey] = useState<{
+    keyTransaction: number;
+    amount: number;
+    type: string;
+  }>({keyTransaction: 0, amount: 0, type: ''});
+  const [refItem, setRefItem] = useState<FlatList<WalletInfo> | null>();
 
   const filterInCome = () => {
     dispatch(filterInComeItems(itemVisible));
@@ -38,11 +58,69 @@ const Wallet = () => {
     dispatch(getAllItemWallet());
   };
 
-  const newCard = () => {};
+  const newCard = () => {
+    navigation.navigate('NewCard');
+  };
+
+  const toAddMonetaryMovements = (
+    key: number,
+    amount: number,
+    title: string,
+  ) => {
+    dispatch(cardMonetaryMove({key, amount, title}));
+    navigation.navigate('addMonetaryMovements');
+  };
+
+  const showModal = (id: number) => {
+    setCardId(id);
+    setModalCardVisible(true);
+  };
+
+  const deleteCard = () => {
+    dispatch(deleteWalletCard(cardId));
+    setItemVisible(0);
+    refItem?.scrollToIndex({animated: true, index: 0});
+    setModalCardVisible(false);
+  };
+
+  const showModalTransaction = (
+    keyTransaction: number,
+    amount: number,
+    type: string,
+  ) => {
+    setTransactionKey({keyTransaction, amount, type});
+    setModalTransactionVisible(true);
+  };
+
+  const deleteTransaction = () => {
+    const item = receivedWalletItems[itemVisible];
+    dispatch(deleteTransactionAction({item, transactionKey}));
+    setModalTransactionVisible(false);
+  };
+
+  const correctTransaction = (
+    keyTransaction: number,
+    category: string,
+    date: string,
+    amount: number,
+    type: string,
+    icon: string,
+  ) => {
+    const key = keyTransaction;
+    const idCard = receivedWalletItems[itemVisible].key;
+    dispatch(
+      correctTransactionInfo({key, amount, category, date, type, icon, idCard}),
+    );
+    navigation.navigate('correctTransaction');
+  };
 
   const viewableItemsChanged = useCallback(({viewableItems}) => {
     setItemVisible(viewableItems[0].index);
   }, []);
+
+  if (isLoading) {
+    <Loading />;
+  }
 
   return (
     <View style={styles.container}>
@@ -55,15 +133,26 @@ const Wallet = () => {
           $
         </Text>
       </View>
+
+      <CardModal
+        title=" Would you like to delete card?"
+        visible={modalCardVisible}
+        onPressDelete={deleteCard}
+        onPressHide={setModalCardVisible}
+      />
+
       <View style={styles.list}>
         <FlatList
           data={receivedWalletItems}
-          keyExtractor={item => item.key}
+          keyExtractor={item => String(item.key)}
           renderItem={({item}) => (
             <WalletItem
+              keyCard={item.key}
               title={item.walletTitle}
               amount={item.walletAmount}
               color={item.color}
+              onLongPress={showModal}
+              onPress={toAddMonetaryMovements}
             />
           )}
           centerContent={true}
@@ -72,8 +161,10 @@ const Wallet = () => {
           pagingEnabled
           viewabilityConfig={viewability}
           onViewableItemsChanged={viewableItemsChanged}
+          ref={ref => setRefItem(ref)}
         />
       </View>
+
       <View style={styles.buttonArea}>
         <Button
           title="Incoming"
@@ -96,16 +187,26 @@ const Wallet = () => {
         <View style={styles.categoriesListTitle}>
           <Text style={styles.categoriesListText}>All categories</Text>
         </View>
+
+        <CardModal
+          title="Would you like to delete transaction?"
+          visible={modalTransactionVisible}
+          onPressDelete={deleteTransaction}
+          onPressHide={setModalTransactionVisible}
+        />
         <FlatList
           data={receivedWalletItems[itemVisible].transactions}
-          keyExtractor={(item, ind) => String(ind + item.amount)}
+          keyExtractor={item => String(item.keyTransaction)}
           renderItem={({item}) => (
-            <Categories
+            <Transactions
               category={item.category}
-              amount={item.amount}
+              amount={item.amountTransaction}
               date={item.date}
               type={item.type}
               icon={item.icon}
+              keyTransaction={item.keyTransaction}
+              onLongPress={showModalTransaction}
+              onPress={correctTransaction}
             />
           )}
         />
