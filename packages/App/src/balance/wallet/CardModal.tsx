@@ -1,16 +1,25 @@
-import React, {Dispatch, FC, SetStateAction} from 'react';
+import React, {Dispatch, FC, SetStateAction, useCallback} from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 interface Props {
   title: string;
-  visible: boolean;
+  isVisible: boolean;
   onPressDelete: () => void;
   onPressHide: Dispatch<SetStateAction<boolean>>;
 }
 
-const CardModal: FC<Props> = ({title, visible, onPressDelete, onPressHide}) => {
+const CardModal: FC<Props> = ({
+  title,
+  isVisible,
+  onPressDelete,
+  onPressHide,
+}) => {
+  const hide = useCallback(() => {
+    onPressHide(false);
+  }, [onPressHide]);
+
   return (
-    <Modal animationType="fade" transparent={true} visible={visible}>
+    <Modal animationType="fade" transparent={true} visible={isVisible}>
       <View style={styles.modal}>
         <View style={styles.modalTitle}>
           <Text style={styles.modalTextTitle}>{title}</Text>
@@ -21,9 +30,7 @@ const CardModal: FC<Props> = ({title, visible, onPressDelete, onPressHide}) => {
             style={styles.modalBtnDelete}>
             <Text style={styles.modalBtnText}>Delete</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => onPressHide(false)}
-            style={styles.modalBtnCancel}>
+          <TouchableOpacity onPress={hide} style={styles.modalBtnCancel}>
             <Text style={styles.modalBtnText}>Cancel</Text>
           </TouchableOpacity>
         </View>

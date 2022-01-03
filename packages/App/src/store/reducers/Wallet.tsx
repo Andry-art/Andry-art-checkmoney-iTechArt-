@@ -3,33 +3,32 @@ import {
   getWalletItemsSuccess,
   getWalletItemsFailed,
   filterIncomeSuccess,
+  filterFailed,
   filterExpensesSuccess,
   monetaryMove,
-  deleteTransactionSaga,
-  addNewCardSaga,
-  deleteCardSaga,
-  addTransactionSaga,
-  addCorrectTransaction,
-} from '../saga/walletActionsSaga';
+  deleteTransactionSuccess,
+  addNewCardSuccess,
+  addNewCardFailed,
+  deleteCardSuccess,
+  addTransactionSuccess,
+  addCorrectTransactionSuccess,
+  deleteCardFailed,
+  addTransactionFailed,
+  deleteTransactionFailed,
+  addCorrectTransactionFailed,
+} from './actions/walletActionsSaga';
+import {
+  getAllItemWallet,
+  filterInComeRequest,
+  filterExpensesRequest,
+  addNewCardRequest,
+  deleteWalletCardRequest,
+  addTransactionRequest,
+  deleteTransactionRequest,
+  addCorrectTransactionRequest,
+} from '../actions/walletActions';
 import {WalletInfo} from '../../types/types';
-
-interface MonetaryMovements {
-  key: number;
-  amount: number;
-  title?: string;
-  type?: string;
-  category?: string;
-  date?: string;
-  icon?: string;
-  idCard?: number;
-}
-
-interface IWallet {
-  walletContent: Array<WalletInfo>;
-  monetaryMovements: MonetaryMovements;
-  isLoading: boolean;
-  error: string;
-}
+import {IWallet} from '../../types/types';
 
 const initialState: IWallet = {
   walletContent: [],
@@ -43,12 +42,18 @@ const initialState: IWallet = {
     idCard: 0,
   },
   isLoading: false,
-  error: '',
+  isLoadingTransactions: false,
+  isLoadingNewCard: false,
+  isLoadingDeleteCard: false,
+  errorGet: '',
+  errorFilters: '',
+  errorDeleteCard: '',
+  errorAddNewCard: '',
 };
 
 const Wallet = createReducer<IWallet>(initialState, builder => {
   builder
-    .addCase('GET_WALLET_ITEMS', state => ({...state, isLoading: true}))
+    .addCase(getAllItemWallet, state => ({...state, isLoading: true}))
     .addCase(
       getWalletItemsSuccess,
       (state, action: PayloadAction<Array<WalletInfo>>) => ({
@@ -59,9 +64,16 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     )
     .addCase(getWalletItemsFailed, (state, action: PayloadAction<string>) => ({
       ...state,
-      isLogIn: false,
       isLoading: false,
-      error: action.payload,
+      errorGet: action.payload,
+    }))
+    .addCase(filterInComeRequest, state => ({
+      ...state,
+      isLoadingTransactions: true,
+    }))
+    .addCase(filterExpensesRequest, state => ({
+      ...state,
+      isLoadingTransactions: true,
     }))
     .addCase(
       filterIncomeSuccess,
@@ -73,9 +85,15 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
           action.payload.response[action.payload.page].transactions.filter(
             it => it.type === 'income',
           );
+        state.isLoadingTransactions = false;
         return state;
       },
     )
+    .addCase(filterFailed, (state, action: PayloadAction<string>) => ({
+      ...state,
+      isLoadingTransactions: false,
+      errorFilters: action.payload,
+    }))
     .addCase(
       filterExpensesSuccess,
       (
@@ -86,31 +104,49 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
           action.payload.response[action.payload.page].transactions.filter(
             it => it.type === 'expenses',
           );
+        state.isLoadingTransactions = false;
         return state;
       },
     )
-    .addCase(addNewCardSaga, (state, action) => {
+    .addCase(addNewCardRequest, state => ({
+      ...state,
+      isLoadingNewCard: true,
+    }))
+    .addCase(addNewCardSuccess, (state, action) => {
       state.walletContent.push(action.payload);
+      state.isLoadingNewCard = false;
       return state;
     })
-    .addCase(deleteCardSaga, (state, action: PayloadAction<number>) => {
+    .addCase(addNewCardFailed, (state, action: PayloadAction<string>) => ({
+      ...state,
+      isLoadingNewCard: false,
+      errorAddNewCard: action.payload,
+    }))
+    .addCase(deleteWalletCardRequest, state => ({
+      ...state,
+      isLoadingDeleteCard: true,
+    }))
+    .addCase(deleteCardSuccess, (state, action: PayloadAction<number>) => {
       state.walletContent = state.walletContent.filter(
         it => it.key !== action.payload,
       );
       return state;
     })
+    .addCase(deleteCardFailed, (state, action: PayloadAction<string>) => ({
+      ...state,
+      isLoadingDeleteCard: false,
+      errorDeleteCard: action.payload,
+    }))
     .addCase(monetaryMove, (state, action) => ({
       ...state,
       monetaryMovements: action.payload,
     }))
-    .addCase(addTransactionSaga, (state, action: PayloadAction<WalletInfo>) => {
-      state.walletContent = state.walletContent.map(it =>
-        it.key === action.payload.key ? action.payload : it,
-      );
-      return state;
-    })
+    .addCase(addTransactionRequest, state => ({
+      ...state,
+      isLoadingTransactions: true,
+    }))
     .addCase(
-      deleteTransactionSaga,
+      addTransactionSuccess,
       (state, action: PayloadAction<WalletInfo>) => {
         state.walletContent = state.walletContent.map(it =>
           it.key === action.payload.key ? action.payload : it,
@@ -118,12 +154,50 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
         return state;
       },
     )
-    .addCase(addCorrectTransaction, (state, action) => {
+    .addCase(addTransactionFailed, (state, action: PayloadAction<string>) => ({
+      ...state,
+      isLoadingTransactions: false,
+      errorFilters: action.payload,
+    }))
+    .addCase(deleteTransactionRequest, state => ({
+      ...state,
+      isLoadingTransactions: true,
+    }))
+    .addCase(
+      deleteTransactionSuccess,
+      (state, action: PayloadAction<WalletInfo>) => {
+        state.walletContent = state.walletContent.map(it =>
+          it.key === action.payload.key ? action.payload : it,
+        );
+        return state;
+      },
+    )
+    .addCase(
+      deleteTransactionFailed,
+      (state, action: PayloadAction<string>) => ({
+        ...state,
+        isLoadingTransactions: false,
+        errorFilters: action.payload,
+      }),
+    )
+    .addCase(addCorrectTransactionRequest, state => ({
+      ...state,
+      isLoadingTransactions: true,
+    }))
+    .addCase(addCorrectTransactionSuccess, (state, action) => {
       state.walletContent = state.walletContent.map(it =>
         it.key === action.payload.key ? action.payload : it,
       );
       return state;
-    });
+    })
+    .addCase(
+      addCorrectTransactionFailed,
+      (state, action: PayloadAction<string>) => ({
+        ...state,
+        isLoadingTransactions: false,
+        errorFilters: action.payload,
+      }),
+    );
 });
 
 export default Wallet;

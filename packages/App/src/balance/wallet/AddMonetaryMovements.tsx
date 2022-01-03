@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -11,11 +11,18 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
-import {WalletItems} from '../../store/selectors/walletItems';
-import {addTransactionAction} from '../../store/actions/walletActions';
+import {walletItems} from '../../store/selectors/walletItems';
+import {addTransactionRequest} from '../../store/actions/walletActions';
+import {
+  BalanceNavigatorList,
+  ChosenCategory,
+  Expenses,
+  Income,
+} from '../../types/types';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-const income = ['iconUnknownSource', 'iconSalarySource'];
-const expenses = [
+const income: Income = ['iconUnknownSource', 'iconSalarySource'];
+const expenses: Expenses = [
   'iconUnknownSource',
   'iconCarSource',
   'iconHealthSource',
@@ -24,70 +31,69 @@ const expenses = [
   'iconRestaurantSource',
 ];
 
-const AddMonetaryMovements: FC = ({navigation}: any) => {
+interface Props {
+  navigation: NativeStackNavigationProp<BalanceNavigatorList, 'BalanceMenu'>;
+}
+
+const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const {key, amount, title} = useSelector(monetaryMove);
-  const [moneyMove, setMoneyMove] = useState<boolean>(false);
-  const [categoryInfo, setCategoryInfo] = useState<{
-    icon: string;
-    category: string;
-  }>({
+  const [isMoneyMove, setIsMoneyMove] = useState<boolean>(false);
+  const [categoryInfo, setCategoryInfo] = useState<ChosenCategory>({
     icon: '',
     category: '',
   });
   const [inputValue, setInputValue] = useState<string>('');
   const [modal, setModal] = useState<boolean>(false);
 
-  const receivedWalletItems = useSelector(WalletItems);
+  const receivedWalletItems = useSelector(walletItems);
 
-  const addCategory = (
-    input: string,
-    chooseCategory: {icon: string; category: string},
-    transactionType: boolean,
-  ) => {
-    const amountTransaction = Number(input);
-    const type = transactionType ? 'income' : 'expenses';
-    const icon = chooseCategory.icon
-      ? chooseCategory.icon
-      : 'iconUnknownSource';
-    const category = chooseCategory.category
-      ? chooseCategory.category
-      : 'Unknown';
-    const [chosenWallet] = receivedWalletItems.filter(it => it.id === key);
-    const keyTransaction =
-      chosenWallet.transactions.length === 0
-        ? 1
-        : chosenWallet.transactions[0].keyTransaction + 1;
+  const addCategory = () => {
+    const amountTransaction = Number(inputValue);
+    const type = isMoneyMove ? 'income' : 'expenses';
+    const icon = categoryInfo.icon ? categoryInfo.icon : 'iconUnknownSource';
+    const category = categoryInfo.category ? categoryInfo.category : 'Unknown';
+    const chosenWallet = receivedWalletItems.find(it => it.key === key);
+    if (chosenWallet !== undefined) {
+      const keyTransaction =
+        chosenWallet.transactions.length === 0
+          ? 1
+          : chosenWallet.transactions[0].keyTransaction + 1;
 
-    const date = new Date().toLocaleDateString();
+      const date = new Date().toLocaleDateString();
 
-    if (
-      type === 'expenses' &&
-      chosenWallet.walletAmount - amountTransaction < 0
-    ) {
-      setModal(true);
-    }
+      if (
+        type === 'expenses' &&
+        chosenWallet.walletAmount - amountTransaction < 0
+      ) {
+        setModal(true);
+      }
 
-    if (
-      type === 'income' ||
-      chosenWallet.walletAmount - amountTransaction > 0
-    ) {
-      dispatch(
-        addTransactionAction({
-          item: chosenWallet,
-          transaction: {
-            keyTransaction,
-            type,
-            amountTransaction,
-            category,
-            icon,
-            date,
-          },
-        }),
-      );
-      navigation.goBack();
+      if (
+        type === 'income' ||
+        chosenWallet.walletAmount - amountTransaction >= 0
+      ) {
+        dispatch(
+          addTransactionRequest({
+            item: chosenWallet,
+            transaction: {
+              keyTransaction,
+              type,
+              amountTransaction,
+              category,
+              icon,
+              date,
+            },
+          }),
+        );
+        navigation.goBack();
+      }
     }
   };
+
+  const changeMovements = useCallback(() => {
+    setIsMoneyMove(prev => !prev);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -112,9 +118,9 @@ const AddMonetaryMovements: FC = ({navigation}: any) => {
       </View>
       <TouchableOpacity
         style={styles.BtnIncomeExpenses}
-        onPress={() => setMoneyMove(prev => !prev)}>
+        onPress={changeMovements}>
         <Text style={styles.textIncomeExpenses}>
-          {moneyMove ? 'Income' : 'Expenses'}
+          {isMoneyMove ? 'Income' : 'Expenses'}
         </Text>
       </TouchableOpacity>
       <View style={styles.inputArea}>
@@ -128,11 +134,11 @@ const AddMonetaryMovements: FC = ({navigation}: any) => {
       </View>
       <View>
         <FlatList
-          data={moneyMove ? income : expenses}
+          data={isMoneyMove ? income : expenses}
           keyExtractor={it => it}
           renderItem={it => (
             <CategoriesInAddMoneyMove
-              pic={it.item}
+              picture={it.item}
               onPress={setCategoryInfo}
               chosen={categoryInfo}
             />
@@ -144,9 +150,9 @@ const AddMonetaryMovements: FC = ({navigation}: any) => {
       <TouchableOpacity
         disabled={inputValue ? false : true}
         style={inputValue ? styles.confirm : styles.confirmDis}
-        onPress={() => addCategory(inputValue, categoryInfo, moneyMove)}>
+        onPress={addCategory}>
         <Text style={styles.confirmText}>
-          {moneyMove ? 'Add income' : 'Add expenses'}
+          {isMoneyMove ? 'Add income' : 'Add expenses'}
         </Text>
       </TouchableOpacity>
     </View>

@@ -4,24 +4,30 @@ import {
   getWalletItemsFailed,
   filterIncomeSuccess,
   filterExpensesSuccess,
-  addNewCardSaga,
-  deleteCardSaga,
+  addNewCardSuccess,
+  deleteCardSuccess,
   monetaryMove,
-  addTransactionSaga,
-  deleteTransactionSaga,
-  addCorrectTransaction,
-} from './walletActionsSaga';
+  addTransactionSuccess,
+  deleteTransactionSuccess,
+  addCorrectTransactionSuccess,
+  filterFailed,
+  addNewCardFailed,
+  deleteCardFailed,
+  deleteTransactionFailed,
+  addCorrectTransactionFailed,
+  addTransactionFailed,
+} from '../reducers/actions/walletActionsSaga';
 import {Api} from '../Api';
 import {WalletInfo} from '../../types/types';
 import {
-  filterInComeItems,
-  addNewCard,
-  deleteWalletCard,
+  filterInComeRequest,
+  addNewCardRequest,
+  deleteWalletCardRequest,
   cardMonetaryMove,
-  addTransactionAction,
-  deleteTransactionAction,
+  addTransactionRequest,
+  deleteTransactionRequest,
   correctTransactionInfo,
-  getCorrectTransaction,
+  addCorrectTransactionRequest,
 } from '../actions/walletActions';
 
 export function* getWalletItems(): Generator {
@@ -43,48 +49,34 @@ export function* getWalletItems(): Generator {
 }
 
 export function* filterItems(
-  action: ReturnType<typeof filterInComeItems>,
+  action: ReturnType<typeof filterInComeRequest>,
 ): Generator {
-  if (action.type === 'FILTER_INCOME') {
-    try {
-      const page = action.payload;
-      const response = (yield call(
-        Api.authGet.bind(Api),
-        'http://localhost:8000/wallet',
-      )) as Array<WalletInfo>;
+  try {
+    const page = action.payload;
+    const response = (yield call(
+      Api.authGet.bind(Api),
+      'http://localhost:8000/wallet',
+    )) as Array<WalletInfo>;
 
-      if (!response) {
-        return;
-      }
+    if (!response) {
+      return;
+    }
 
+    if (action.type === 'FILTER_INCOME') {
       yield put(filterIncomeSuccess({response, page}));
-    } catch (error) {
-      console.log('filterErrorIncome', error);
-      yield put(getWalletItemsFailed((error as Error).message));
     }
-  }
-
-  if (action.type === 'FILTER_EXPENSES') {
-    try {
-      const page = action.payload;
-      const response = (yield call(
-        Api.authGet.bind(Api),
-        'http://localhost:8000/wallet',
-      )) as Array<WalletInfo>;
-
-      if (!response) {
-        return;
-      }
-
+    if (action.type === 'FILTER_EXPENSES') {
       yield put(filterExpensesSuccess({response, page}));
-    } catch (error) {
-      console.log('filterErrorExpenses', error);
-      yield put(getWalletItemsFailed((error as Error).message));
     }
+  } catch (error) {
+    console.log('filterErrorIncome', error);
+    yield put(filterFailed((error as Error).message));
   }
 }
 
-export function* addCard(action: ReturnType<typeof addNewCard>): Generator {
+export function* addCard(
+  action: ReturnType<typeof addNewCardRequest>,
+): Generator {
   try {
     const newCard = {
       key: action.payload.key,
@@ -100,16 +92,16 @@ export function* addCard(action: ReturnType<typeof addNewCard>): Generator {
       newCard,
     )) as WalletInfo;
     if (response) {
-      yield put(addNewCardSaga(response));
+      yield put(addNewCardSuccess(response));
     }
   } catch (error) {
     console.log('addCard', error);
-    yield put(getWalletItemsFailed((error as Error).message));
+    yield put(addNewCardFailed((error as Error).message));
   }
 }
 
 export function* deleteCardRequest(
-  action: ReturnType<typeof deleteWalletCard>,
+  action: ReturnType<typeof deleteWalletCardRequest>,
 ): Generator {
   try {
     const response = yield call(
@@ -118,27 +110,22 @@ export function* deleteCardRequest(
     );
 
     if (response) {
-      yield put(deleteCardSaga(action.payload));
+      yield put(deleteCardSuccess(action.payload));
     }
   } catch (error) {
     console.log('Delete', error);
-    yield put(getWalletItemsFailed((error as Error).message));
+    yield put(deleteCardFailed((error as Error).message));
   }
 }
 
 export function* monetaryMovements(
   action: ReturnType<typeof cardMonetaryMove>,
 ): Generator {
-  try {
-    yield put(monetaryMove(action.payload));
-  } catch (error) {
-    console.log('post', error);
-    yield put(getWalletItemsFailed((error as Error).message));
-  }
+  yield put(monetaryMove(action.payload));
 }
 
 export function* addTransaction(
-  action: ReturnType<typeof addTransactionAction>,
+  action: ReturnType<typeof addTransactionRequest>,
 ): Generator {
   try {
     const categoryAmount = action.payload.transaction.amountTransaction;
@@ -163,16 +150,16 @@ export function* addTransaction(
       newPosition,
     )) as WalletInfo;
     if (response) {
-      yield put(addTransactionSaga(response));
+      yield put(addTransactionSuccess(response));
     }
   } catch (error) {
     console.log('post', error);
-    yield put(getWalletItemsFailed((error as Error).message));
+    yield put(addTransactionFailed((error as Error).message));
   }
 }
 
 export function* deleteTransaction(
-  action: ReturnType<typeof deleteTransactionAction>,
+  action: ReturnType<typeof deleteTransactionRequest>,
 ): Generator {
   try {
     let item = action.payload.item;
@@ -204,27 +191,22 @@ export function* deleteTransaction(
     )) as WalletInfo;
 
     if (response) {
-      yield put(deleteTransactionSaga(response));
+      yield put(deleteTransactionSuccess(response));
     }
   } catch (error) {
     console.log('deleteTransaction', error);
-    yield put(getWalletItemsFailed((error as Error).message));
+    yield put(deleteTransactionFailed((error as Error).message));
   }
 }
 
 export function* correctTransaction(
   action: ReturnType<typeof correctTransactionInfo>,
 ): Generator {
-  try {
-    yield put(monetaryMove(action.payload));
-  } catch (error) {
-    console.log('deleteTransaction', error);
-    yield put(getWalletItemsFailed((error as Error).message));
-  }
+  yield put(monetaryMove(action.payload));
 }
 
-export function* correctTransactionToSend(
-  action: ReturnType<typeof getCorrectTransaction>,
+export function* correctTransactionChange(
+  action: ReturnType<typeof addCorrectTransactionRequest>,
 ): Generator {
   try {
     let item = action.payload.item;
@@ -242,11 +224,11 @@ export function* correctTransactionToSend(
     )) as WalletInfo;
 
     if (response) {
-      yield put(addCorrectTransaction(response));
+      yield put(addCorrectTransactionSuccess(response));
     }
   } catch (error) {
     console.log('correctTransactionToSend', error);
-    yield put(getWalletItemsFailed((error as Error).message));
+    yield put(addCorrectTransactionFailed((error as Error).message));
   }
 }
 
@@ -260,7 +242,5 @@ export function* WalletItems(): Generator {
   yield takeEvery('ADD_TRANSACTION', addTransaction);
   yield takeEvery('DELETE_TRANSACTION', deleteTransaction);
   yield takeEvery('CORRECT_TRANSACTION_INFO', correctTransaction);
-  yield takeEvery('CORRECT_TRANSACTION', correctTransactionToSend);
+  yield takeEvery('CORRECT_TRANSACTION', correctTransactionChange);
 }
-
-addNewCard;

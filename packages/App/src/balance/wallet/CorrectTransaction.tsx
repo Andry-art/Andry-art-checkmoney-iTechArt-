@@ -1,4 +1,4 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useCallback, useRef, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -11,11 +11,18 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
-import {WalletItems} from '../../store/selectors/walletItems';
-import {getCorrectTransaction} from '../../store/actions/walletActions';
+import {walletItems} from '../../store/selectors/walletItems';
+import {addCorrectTransactionRequest} from '../../store/actions/walletActions';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {
+  BalanceNavigatorList,
+  ChosenCategory,
+  Income,
+  Expenses,
+} from '../../types/types';
 
-const income = ['iconUnknownSource', 'iconSalarySource'];
-const expenses = [
+const income: Income = ['iconUnknownSource', 'iconSalarySource'];
+const expenses: Expenses = [
   'iconUnknownSource',
   'iconCarSource',
   'iconHealthSource',
@@ -24,15 +31,16 @@ const expenses = [
   'iconRestaurantSource',
 ];
 
-const CorrectTransaction: FC = ({navigation}: any) => {
+interface Props {
+  navigation: NativeStackNavigationProp<BalanceNavigatorList, 'BalanceMenu'>;
+}
+
+const CorrectTransaction: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const transaction = useSelector(monetaryMove);
 
-  const receivedWalletItems = useSelector(WalletItems);
-  const [categoryInfo, setCategoryInfo] = useState<{
-    icon: string;
-    category: string;
-  }>({
+  const receivedWalletItems = useSelector(walletItems);
+  const [categoryInfo, setCategoryInfo] = useState<ChosenCategory>({
     icon: transaction.icon || '',
     category: transaction.category || '',
   });
@@ -40,7 +48,7 @@ const CorrectTransaction: FC = ({navigation}: any) => {
     String(transaction.amount),
   );
 
-  const [modal, setModal] = useState<boolean>(false);
+  const [isModal, setIsModal] = useState<boolean>(false);
 
   const oldAmount = useRef(transaction.amount);
   const oldIcon = useRef(transaction.icon);
@@ -55,10 +63,7 @@ const CorrectTransaction: FC = ({navigation}: any) => {
     let [item] = receivedWalletItems.filter(
       it => it.key === transaction.idCard,
     );
-    let difference = amountTransaction - oldAmount.current;
-    if (difference < 0) {
-      difference = difference * -1;
-    }
+    let difference = Math.abs(amountTransaction - oldAmount.current);
 
     if (type === 'income' && oldAmount.current > amountTransaction) {
       item = {...item, walletAmount: item.walletAmount - difference};
@@ -75,7 +80,7 @@ const CorrectTransaction: FC = ({navigation}: any) => {
     }
 
     if (item.walletAmount < 0) {
-      setModal(true);
+      setIsModal(true);
     }
 
     if (
@@ -83,7 +88,7 @@ const CorrectTransaction: FC = ({navigation}: any) => {
       (type === 'income' || item.walletAmount > 0)
     ) {
       dispatch(
-        getCorrectTransaction({
+        addCorrectTransactionRequest({
           item,
           correctedTransaction: {
             keyTransaction,
@@ -96,21 +101,23 @@ const CorrectTransaction: FC = ({navigation}: any) => {
           difference,
         }),
       );
+      navigation.goBack();
     }
-    navigation.goBack();
   };
+
+  const setModal = useCallback(() => {
+    setIsModal(false);
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Modal animationType="fade" transparent={true} visible={modal}>
+      <Modal animationType="fade" transparent={true} visible={isModal}>
         <View style={styles.modal}>
           <View style={styles.modalTitle}>
             <Text style={styles.modalTextTitle}>Not enough money</Text>
           </View>
           <View style={styles.modalBtnArea}>
-            <TouchableOpacity
-              style={styles.modalBtnCancel}
-              onPress={() => setModal(false)}>
+            <TouchableOpacity style={styles.modalBtnCancel} onPress={setModal}>
               <Text style={styles.modalBtnText}>Ok</Text>
             </TouchableOpacity>
           </View>
@@ -135,7 +142,7 @@ const CorrectTransaction: FC = ({navigation}: any) => {
           keyExtractor={it => it}
           renderItem={it => (
             <CategoriesInAddMoneyMove
-              pic={it.item}
+              picture={it.item}
               onPress={setCategoryInfo}
               chosen={categoryInfo}
             />

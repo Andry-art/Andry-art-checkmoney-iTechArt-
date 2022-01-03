@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useMemo, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,9 +10,12 @@ import {
 import walletIconSource from '../../../Pics/balance/wallet.png';
 import {useFormik} from 'formik';
 import {useDispatch, useSelector} from 'react-redux';
-import {addNewCard} from '../../store/actions/walletActions';
-import {WalletItems} from '../../store/selectors/walletItems';
+import {addNewCardRequest} from '../../store/actions/walletActions';
+import {walletItems} from '../../store/selectors/walletItems';
 import * as yup from 'yup';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {BalanceNavigatorList} from '../../types/types';
+import ColorsNewCard from './ColorsNewCard';
 
 const colors = ['#8D45A7', '#DFE24A', '#56E24A', '#3FECEC', '#EA4953'];
 const initialValues = {
@@ -25,32 +28,44 @@ const newCardSchema = yup.object({
   amount: yup.string().required(),
 });
 
-const NewCard: FC = ({navigation}: any) => {
-  const dispatch = useDispatch();
-  const receivedWalletItems = useSelector(WalletItems);
-  const [cardColor, setCardColor] = useState('#56E24A');
+interface Props {
+  navigation: NativeStackNavigationProp<BalanceNavigatorList, 'BalanceMenu'>;
+}
 
-  const {handleChange, handleSubmit, values, isValid, dirty} = useFormik({
+const NewCard: FC<Props> = ({navigation}) => {
+  const dispatch = useDispatch();
+  const receivedWalletItems = useSelector(walletItems);
+  const [cardColor, setCardColor] = useState<string>('#56E24A');
+
+  const {handleChange, handleSubmit, values, isValid, dirty} = useFormik<{
+    cardName: string;
+    amount: string;
+  }>({
     enableReinitialize: true,
     initialValues: initialValues,
     validationSchema: newCardSchema,
-    onSubmit: (values: {cardName: string; amount: string}) => {
+    onSubmit: values => {
       const cardName = values.cardName;
       const amount = values.amount;
       const color = cardColor;
       const key = receivedWalletItems[receivedWalletItems.length - 1].key + 1;
 
-      dispatch(addNewCard({cardName, amount, color, key}));
+      dispatch(addNewCardRequest({cardName, amount, color, key}));
       navigation.goBack();
     },
   });
+
+  const cardColorMemo = useMemo(
+    () => [styles.card, {backgroundColor: cardColor}],
+    [cardColor],
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>New Card</Text>
       </View>
-      <View style={[styles.card, {backgroundColor: cardColor}]}>
+      <View style={cardColorMemo}>
         <View style={styles.titleCard}>
           <Image source={walletIconSource} />
           <TextInput
@@ -73,11 +88,7 @@ const NewCard: FC = ({navigation}: any) => {
       </View>
       <View style={styles.colorsArea}>
         {colors.map(it => (
-          <TouchableOpacity
-            key={it}
-            style={[styles.colorsItems, {backgroundColor: it}]}
-            onPress={() => setCardColor(it)}
-          />
+          <ColorsNewCard key={it} color={it} onPress={setCardColor} />
         ))}
       </View>
       <TouchableOpacity
@@ -142,11 +153,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     textAlign: 'center',
   },
-  colorsItems: {
-    width: 60,
-    height: 60,
-    borderRadius: 100,
-  },
+
   colorsArea: {
     flexDirection: 'row',
     justifyContent: 'space-between',

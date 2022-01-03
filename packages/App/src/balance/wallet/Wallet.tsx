@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {FC, useCallback, useState} from 'react';
 import {StyleSheet, View, FlatList, Text} from 'react-native';
 import WalletItem from './WalletItem';
 import Button from './Button';
@@ -8,35 +8,54 @@ import allCategoriesIconSource from '../../../Pics/balance/category.png';
 import addNewIconSource from '../../../Pics/balance/add.png';
 import Transactions from './Transactions';
 import {ViewabilityConfig} from 'react-native';
-import {WalletItems, IsLoadingWallet} from '../../store/selectors/walletItems';
+import {
+  walletItems,
+  isLoadingWallet,
+  walletsAmount,
+  isLoadingTransactions,
+} from '../../store/selectors/walletItems';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  filterInComeItems,
-  filterExpensesItems,
+  filterInComeRequest,
+  filterExpensesRequest,
   getAllItemWallet,
-  deleteWalletCard,
+  deleteWalletCardRequest,
   cardMonetaryMove,
-  deleteTransactionAction,
+  deleteTransactionRequest,
   correctTransactionInfo,
 } from '../../store/actions/walletActions';
 import Loading from '../../components/Loading';
-import {WalletInfo} from '../../types/types';
+import {
+  BalanceNavigatorList,
+  WalletInfo,
+  ITransactions,
+} from '../../types/types';
 import CardModal from './CardModal';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 50,
 };
 
-const Wallet = ({navigation}: any) => {
+const keyExtractorForCards = (item: WalletInfo) => String(item.key);
+const keyExtractorForTransactions = (item: ITransactions) =>
+  String(item.keyTransaction);
+
+interface Props {
+  navigation: NativeStackNavigationProp<BalanceNavigatorList>;
+}
+
+const Wallet: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
 
-  const receivedWalletItems = useSelector(WalletItems);
-
-  const isLoading = useSelector(IsLoadingWallet);
+  const receivedWalletItems = useSelector(walletItems);
+  const receivedSum = useSelector(walletsAmount);
+  const isLoading = useSelector(isLoadingWallet);
+  const isLoadingTransaction = useSelector(isLoadingTransactions);
 
   const [itemVisible, setItemVisible] = useState<number>(0);
-  const [modalCardVisible, setModalCardVisible] = useState<boolean>(false);
-  const [modalTransactionVisible, setModalTransactionVisible] =
+  const [isModalCardVisible, setIsModalCardVisible] = useState<boolean>(false);
+  const [isModalTransactionVisible, setIsModalTransactionVisible] =
     useState<boolean>(false);
   const [cardId, setCardId] = useState<number>(0);
   const [transactionKey, setTransactionKey] = useState<{
@@ -47,11 +66,11 @@ const Wallet = ({navigation}: any) => {
   const [refItem, setRefItem] = useState<FlatList<WalletInfo> | null>();
 
   const filterInCome = () => {
-    dispatch(filterInComeItems(itemVisible));
+    dispatch(filterInComeRequest(itemVisible));
   };
 
   const filterExpenses = () => {
-    dispatch(filterExpensesItems(itemVisible));
+    dispatch(filterExpensesRequest(itemVisible));
   };
 
   const allCategories = () => {
@@ -73,14 +92,14 @@ const Wallet = ({navigation}: any) => {
 
   const showModal = (id: number) => {
     setCardId(id);
-    setModalCardVisible(true);
+    setIsModalCardVisible(true);
   };
 
   const deleteCard = () => {
-    dispatch(deleteWalletCard(cardId));
+    dispatch(deleteWalletCardRequest(cardId));
     setItemVisible(0);
     refItem?.scrollToIndex({animated: true, index: 0});
-    setModalCardVisible(false);
+    setIsModalCardVisible(false);
   };
 
   const showModalTransaction = (
@@ -89,13 +108,13 @@ const Wallet = ({navigation}: any) => {
     type: string,
   ) => {
     setTransactionKey({keyTransaction, amount, type});
-    setModalTransactionVisible(true);
+    setIsModalTransactionVisible(true);
   };
 
   const deleteTransaction = () => {
     const item = receivedWalletItems[itemVisible];
-    dispatch(deleteTransactionAction({item, transactionKey}));
-    setModalTransactionVisible(false);
+    dispatch(deleteTransactionRequest({item, transactionKey}));
+    setIsModalTransactionVisible(false);
   };
 
   const correctTransaction = (
@@ -126,25 +145,20 @@ const Wallet = ({navigation}: any) => {
     <View style={styles.container}>
       <View style={styles.wallet}>
         <Text style={styles.title}>Wallet</Text>
-        <Text>
-          {receivedWalletItems.reduce((sum, cur) => {
-            return (sum * 100 + cur.walletAmount * 100) / 100;
-          }, 0)}
-          $
-        </Text>
+        <Text>{receivedSum}$</Text>
       </View>
 
       <CardModal
         title=" Would you like to delete card?"
-        visible={modalCardVisible}
+        isVisible={isModalCardVisible}
         onPressDelete={deleteCard}
-        onPressHide={setModalCardVisible}
+        onPressHide={setIsModalCardVisible}
       />
 
       <View style={styles.list}>
         <FlatList
           data={receivedWalletItems}
-          keyExtractor={item => String(item.key)}
+          keyExtractor={keyExtractorForCards}
           renderItem={({item}) => (
             <WalletItem
               keyCard={item.key}
@@ -190,26 +204,30 @@ const Wallet = ({navigation}: any) => {
 
         <CardModal
           title="Would you like to delete transaction?"
-          visible={modalTransactionVisible}
+          isVisible={isModalTransactionVisible}
           onPressDelete={deleteTransaction}
-          onPressHide={setModalTransactionVisible}
+          onPressHide={setIsModalTransactionVisible}
         />
-        <FlatList
-          data={receivedWalletItems[itemVisible].transactions}
-          keyExtractor={item => String(item.keyTransaction)}
-          renderItem={({item}) => (
-            <Transactions
-              category={item.category}
-              amount={item.amountTransaction}
-              date={item.date}
-              type={item.type}
-              icon={item.icon}
-              keyTransaction={item.keyTransaction}
-              onLongPress={showModalTransaction}
-              onPress={correctTransaction}
-            />
-          )}
-        />
+        {isLoadingTransaction || isLoading ? (
+          <Loading />
+        ) : (
+          <FlatList
+            data={receivedWalletItems[itemVisible].transactions}
+            keyExtractor={keyExtractorForTransactions}
+            renderItem={({item}) => (
+              <Transactions
+                category={item.category}
+                amount={item.amountTransaction}
+                date={item.date}
+                type={item.type}
+                icon={item.icon}
+                keyTransaction={item.keyTransaction}
+                onLongPress={showModalTransaction}
+                onPress={correctTransaction}
+              />
+            )}
+          />
+        )}
       </View>
     </View>
   );

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback} from 'react';
 import {
   StyleSheet,
   View,
@@ -56,13 +56,19 @@ const Transactions: FC<Props> = ({
 
   const img = imgSource[icon];
 
+  const onLongPressCallBack = useCallback(() => {
+    onLongPress(keyTransaction, amount, type);
+  }, [amount, keyTransaction, onLongPress, type]);
+
+  const onPressCallBack = useCallback(() => {
+    onPress(keyTransaction, category, date, amount, type, icon);
+  }, [amount, category, date, icon, keyTransaction, onPress, type]);
+
   return (
     <TouchableOpacity
       style={styles.container}
-      onLongPress={() => onLongPress(keyTransaction, amount, type)}
-      onPress={() =>
-        onPress(keyTransaction, category, date, amount, type, icon)
-      }>
+      onLongPress={onLongPressCallBack}
+      onPress={onPressCallBack}>
       <View style={styles.iconsInfo}>
         <View style={styles.iconBG}>
           <Image source={img} />

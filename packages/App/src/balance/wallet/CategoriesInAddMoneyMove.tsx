@@ -1,4 +1,4 @@
-import React, {Dispatch, FC, SetStateAction, useMemo} from 'react';
+import React, {Dispatch, FC, SetStateAction, useCallback, useMemo} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   Image,
   ImageSourcePropType,
 } from 'react-native';
+import {ChosenCategory} from '../../types/types';
 import iconCarSource from '../../../Pics/categories/car.png';
 import iconHealthSource from '../../../Pics/categories/heart-beat.png';
 import iconGrocerySource from '../../../Pics/categories/food.png';
@@ -36,32 +37,37 @@ const text: Record<string, string> = {
 };
 
 interface Props {
-  pic: string;
-  chosen: {icon: string; category: string};
-  onPress: Dispatch<SetStateAction<{icon: string; category: string}>>;
+  picture: string;
+  chosen: ChosenCategory;
+  onPress: Dispatch<SetStateAction<ChosenCategory>>;
 }
 
-const CategoriesInAddMoneyMove: FC<Props> = ({pic, chosen, onPress}) => {
-  const img = imgSource[pic];
-  const title = text[pic];
+const CategoriesInAddMoneyMove: FC<Props> = ({picture, chosen, onPress}) => {
+  const img = imgSource[picture];
+  const title = text[picture];
   const chosenStyle = useMemo(
     () => [styles.icon, {backgroundColor: '#0096E9'}],
     [],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const chosenCategory = (icon: string, category: string) => {
     onPress({icon, category});
   };
 
+  const chosenCategoryCallback = useCallback(() => {
+    chosenCategory(picture, title);
+  }, [chosenCategory, picture, title]);
+
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => chosenCategory(pic, title)}>
-      <View style={chosen.icon === pic ? chosenStyle : styles.icon}>
+    <TouchableOpacity style={styles.container} onPress={chosenCategoryCallback}>
+      <View style={chosen.icon === picture ? chosenStyle : styles.icon}>
         <Image source={img} />
       </View>
       <Text
-        style={chosen.icon === pic ? styles.chosenText : styles.notchosenText}>
+        style={
+          chosen.icon === picture ? styles.chosenText : styles.notchosenText
+        }>
         {title}
       </Text>
     </TouchableOpacity>

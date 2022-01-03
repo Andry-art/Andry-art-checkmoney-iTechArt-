@@ -1,4 +1,4 @@
-import React, {FC, useMemo} from 'react';
+import React, {FC, useCallback, useMemo} from 'react';
 import {
   StyleSheet,
   View,
@@ -53,12 +53,20 @@ const WalletItem: FC<Props> = ({
 
   LayoutAnimation.easeInEaseOut();
 
+  const onLongPressCallBack = useCallback(() => {
+    onLongPress(keyCard);
+  }, [keyCard, onLongPress]);
+
+  const onPressCallBack = useCallback(() => {
+    onPress(keyCard, amount, title);
+  }, [amount, keyCard, onPress, title]);
+
   return (
     <Animated.View style={viewStyle}>
       <TouchableOpacity
         style={backgroundColor}
-        onLongPress={() => onLongPress(keyCard)}
-        onPress={() => onPress(keyCard, amount, title)}>
+        onLongPress={onLongPressCallBack}
+        onPress={onPressCallBack}>
         <View style={styles.cardTitle}>
           <Image source={walletIconSource} />
           <Text style={styles.cardTitleText}>{title}</Text>

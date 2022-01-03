@@ -3,23 +3,23 @@ import {WalletInfo} from '../../types/types';
 
 export const getAllItemWallet = createAction<undefined>('GET_WALLET_ITEMS');
 
-export const filterInComeItems = createAction<number>('FILTER_INCOME');
+export const filterInComeRequest = createAction<number>('FILTER_INCOME');
 
-export const filterExpensesItems = createAction<number>('FILTER_EXPENSES');
+export const filterExpensesRequest = createAction<number>('FILTER_EXPENSES');
 
-export const addNewCard =
+export const addNewCardRequest =
   createAction<{cardName: string; amount: string; color: string; key: number}>(
     'ADD_CARD',
   );
 
-export const deleteWalletCard = createAction<number>('DELETE_CARD');
+export const deleteWalletCardRequest = createAction<number>('DELETE_CARD');
 
 export const cardMonetaryMove =
   createAction<{key: number; amount: number; title: string}>(
     'CARD_MONETARY_MOVE',
   );
 
-export const addTransactionAction = createAction<{
+export const addTransactionRequest = createAction<{
   item: WalletInfo;
   transaction: {
     keyTransaction: number;
@@ -31,7 +31,7 @@ export const addTransactionAction = createAction<{
   };
 }>('ADD_TRANSACTION');
 
-export const deleteTransactionAction = createAction<{
+export const deleteTransactionRequest = createAction<{
   item: WalletInfo;
   transactionKey: {keyTransaction: number; amount: number; type: string};
 }>('DELETE_TRANSACTION');
@@ -46,7 +46,7 @@ export const correctTransactionInfo = createAction<{
   idCard: number;
 }>('CORRECT_TRANSACTION_INFO');
 
-export const getCorrectTransaction = createAction<{
+export const addCorrectTransactionRequest = createAction<{
   item: WalletInfo;
   correctedTransaction: {
     keyTransaction: number;

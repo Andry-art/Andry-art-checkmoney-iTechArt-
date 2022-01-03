@@ -1,5 +1,8 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
-import {userLogInSuccess, userLogInFailed} from './logInActions';
+import {
+  userLogInSuccess,
+  userLogInFailed,
+} from '../reducers/actions/logInActions';
 import {Api} from '../Api';
 import {userLogIn} from '../actions/registration';
 

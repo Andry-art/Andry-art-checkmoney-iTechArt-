@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {WalletItems} from '../store/selectors/walletItems';
+import {walletsAmount} from '../store/selectors/walletItems';
 import {useSelector} from 'react-redux';
 
 const Balance = ({navigation}: any) => {
@@ -8,18 +8,13 @@ const Balance = ({navigation}: any) => {
     navigation.navigate('BalanceWallet');
   };
 
-  const receivedWalletItems = useSelector(WalletItems);
+  const receivedSum = useSelector(walletsAmount);
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.wallet} onPress={handleWalletPress}>
         <Text style={styles.title}>Wallet</Text>
-        <Text>
-          {receivedWalletItems.reduce((sum, cur) => {
-            return (sum * 100 + cur.walletAmount * 100) / 100;
-          }, 0)}
-          $
-        </Text>
+        <Text>{receivedSum}$</Text>
       </TouchableOpacity>
 
       <View style={styles.debits}>

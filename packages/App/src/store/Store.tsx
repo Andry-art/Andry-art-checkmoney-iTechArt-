@@ -2,11 +2,9 @@ import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import registration from './reducers/Registration';
 import wallet from './reducers/Wallet';
 import createSagaMiddleware from '@redux-saga/core';
-import {userIsLogIn} from './saga/userLogIn';
-import {WalletItems} from './saga/walletItemsRequest';
+import {RootSaga} from '../store/saga/RootSaga';
 
 const SagaMiddleware = createSagaMiddleware();
-const SagaMiddlewareWallet = createSagaMiddleware();
 
 const rootReducer = combineReducers({
   registration,
@@ -15,10 +13,9 @@ const rootReducer = combineReducers({
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: [SagaMiddleware, SagaMiddlewareWallet],
+  middleware: [SagaMiddleware],
 });
 
-SagaMiddleware.run(userIsLogIn);
-SagaMiddlewareWallet.run(WalletItems);
+SagaMiddleware.run(RootSaga);
 
 export type RootState = ReturnType<typeof rootReducer>;
