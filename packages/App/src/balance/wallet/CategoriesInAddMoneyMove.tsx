@@ -1,4 +1,4 @@
-import React, {Dispatch, FC, SetStateAction, useCallback, useMemo} from 'react';
+import React, {Dispatch, FC, SetStateAction, useMemo} from 'react';
 import {
   StyleSheet,
   View,
@@ -50,17 +50,14 @@ const CategoriesInAddMoneyMove: FC<Props> = ({picture, chosen, onPress}) => {
     [],
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const chosenCategory = (icon: string, category: string) => {
+  const chosenCategory = () => {
+    const category = title;
+    const icon = picture;
     onPress({icon, category});
   };
 
-  const chosenCategoryCallback = useCallback(() => {
-    chosenCategory(picture, title);
-  }, [chosenCategory, picture, title]);
-
   return (
-    <TouchableOpacity style={styles.container} onPress={chosenCategoryCallback}>
+    <TouchableOpacity style={styles.container} onPress={chosenCategory}>
       <View style={chosen.icon === picture ? chosenStyle : styles.icon}>
         <Image source={img} />
       </View>

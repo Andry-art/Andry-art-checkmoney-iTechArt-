@@ -31,6 +31,8 @@ const expenses: Expenses = [
   'iconRestaurantSource',
 ];
 
+const keyExtractor = (it: string) => it;
+
 interface Props {
   navigation: NativeStackNavigationProp<BalanceNavigatorList, 'BalanceMenu'>;
 }
@@ -139,7 +141,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
       <View>
         <FlatList
           data={transaction.type === 'income' ? income : expenses}
-          keyExtractor={it => it}
+          keyExtractor={keyExtractor}
           renderItem={it => (
             <CategoriesInAddMoneyMove
               picture={it.item}

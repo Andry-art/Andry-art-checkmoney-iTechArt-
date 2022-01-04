@@ -16,8 +16,6 @@ import {
   addTransactionFailed,
   deleteTransactionFailed,
   addCorrectTransactionFailed,
-} from './actions/walletActionsSaga';
-import {
   getAllItemWallet,
   filterInComeRequest,
   filterExpensesRequest,

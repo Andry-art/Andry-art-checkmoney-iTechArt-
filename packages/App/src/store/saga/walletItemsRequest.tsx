@@ -1,4 +1,6 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
+import {Api} from '../Api';
+import {WalletInfo} from '../../types/types';
 import {
   getWalletItemsSuccess,
   getWalletItemsFailed,
@@ -16,10 +18,6 @@ import {
   deleteTransactionFailed,
   addCorrectTransactionFailed,
   addTransactionFailed,
-} from '../reducers/actions/walletActionsSaga';
-import {Api} from '../Api';
-import {WalletInfo} from '../../types/types';
-import {
   filterInComeRequest,
   addNewCardRequest,
   deleteWalletCardRequest,
