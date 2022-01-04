@@ -1,5 +1,5 @@
 import {createReducer, PayloadAction} from '@reduxjs/toolkit';
-import {userLogInSuccess, userLogInFailed} from '../saga/logInActions';
+import {userLogInSuccess, userLogInFailed} from '../actions/registration';
 
 interface IRegistration {
   isLogIn: boolean;

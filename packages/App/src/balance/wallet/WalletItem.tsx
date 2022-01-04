@@ -1,4 +1,4 @@
-import React, {FC, useMemo} from 'react';
+import React, {FC, useCallback, useMemo} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,19 +8,37 @@ import {
   ViewStyle,
   useWindowDimensions,
   Image,
+  Platform,
+  UIManager,
+  Animated,
+  LayoutAnimation,
 } from 'react-native';
-
 import walletIconSource from '../../../Pics/balance/wallet.png';
+import {AmountInCents} from '../../types/types';
 
-type AmountInCents = number;
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 interface Props {
   title: string;
   amount: AmountInCents;
   color: string;
+  onLongPress: (id: number) => void;
+  keyCard: number;
+  onPress: (key: number, amount: number, title: string) => void;
 }
 
-const WalletItem: FC<Props> = ({title, amount, color}) => {
+const WalletItem: FC<Props> = ({
+  title,
+  amount,
+  color,
+  onLongPress,
+  keyCard,
+  onPress,
+}) => {
   const {width} = useWindowDimensions();
 
   const viewStyle = useMemo<StyleProp<ViewStyle>>(
@@ -33,9 +51,22 @@ const WalletItem: FC<Props> = ({title, amount, color}) => {
     [color],
   );
 
+  LayoutAnimation.easeInEaseOut();
+
+  const onLongPressCallBack = useCallback(() => {
+    onLongPress(keyCard);
+  }, [keyCard, onLongPress]);
+
+  const onPressCallBack = useCallback(() => {
+    onPress(keyCard, amount, title);
+  }, [amount, keyCard, onPress, title]);
+
   return (
-    <View style={viewStyle}>
-      <TouchableOpacity style={backgroundColor}>
+    <Animated.View style={viewStyle}>
+      <TouchableOpacity
+        style={backgroundColor}
+        onLongPress={onLongPressCallBack}
+        onPress={onPressCallBack}>
         <View style={styles.cardTitle}>
           <Image source={walletIconSource} />
           <Text style={styles.cardTitleText}>{title}</Text>
@@ -44,7 +75,7 @@ const WalletItem: FC<Props> = ({title, amount, color}) => {
           <Text style={styles.totalText}>{amount}$</Text>
         </View>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
