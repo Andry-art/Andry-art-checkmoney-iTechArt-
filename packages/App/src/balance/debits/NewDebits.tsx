@@ -32,20 +32,25 @@ interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
 }
 
+enum DebitType {
+  toYou = 'debit to you',
+  yourDebit = 'your debit',
+}
+
 const NewDebits: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const cards = useSelector(walletItems);
   const toYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
-  const [debitType, setDebitType] = useState<string>('debit to you');
+  const [debitType, setDebitType] = useState<string>(DebitType.toYou);
   const [keyCard, setKeyCard] = useState<number>(0);
 
   const setDebitToYou = () => {
-    setDebitType('debit to you');
+    setDebitType(DebitType.toYou);
   };
 
   const setYourDebit = () => {
-    setDebitType('your debit');
+    setDebitType(DebitType.yourDebit);
   };
 
   const formik = useFormik<{name: string; amount: string}>({
@@ -59,11 +64,11 @@ const NewDebits: FC<Props> = ({navigation}) => {
       const date = new Date().toLocaleDateString();
       const keyOfWallet = keyCard;
       const type = debitType;
-      if (type === 'debit to you') {
+      if (type === DebitType.toYou) {
         key = toYou[toYou.length - 1].key + 1;
         debitsArray = toYou;
       }
-      if (type === 'your debit') {
+      if (type === DebitType.yourDebit) {
         key = yourDebits[yourDebits.length - 1].key + 1;
         debitsArray = yourDebits;
       }
@@ -90,7 +95,7 @@ const NewDebits: FC<Props> = ({navigation}) => {
         <View style={styles.debtBTN}>
           <TouchableOpacity
             style={
-              debitType === 'debit to you'
+              debitType === DebitType.toYou
                 ? styles.activeBTNtoYou
                 : styles.inactiveBTNtoYou
             }
@@ -99,7 +104,7 @@ const NewDebits: FC<Props> = ({navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={
-              debitType === 'your debit'
+              debitType === DebitType.yourDebit
                 ? styles.activeBTNYour
                 : styles.inactiveBTNYour
             }
