@@ -18,12 +18,19 @@ export interface WalletInfo {
   transactions: Array<ITransactions>;
 }
 
-export type BalanceNavigatorList = {
+export type WalletNavigatorList = {
   BalanceMenu: undefined;
   BalanceWallet: undefined;
   NewCard: undefined;
   correctTransaction: undefined;
   addMonetaryMovements: undefined;
+};
+
+export type DebitNavigatorList = {
+  BalanceMenu: undefined;
+  Debits: undefined;
+  NewDebits: undefined;
+  DebitInfo: undefined;
 };
 
 export type ChosenCategory = {
@@ -65,3 +72,25 @@ export interface IWallet {
   errorAddNewCard: string;
   errorDeleteCard: string;
 }
+
+export type DebitInfo = {
+  type: string;
+  key: number;
+  date: string;
+  keyOfWallet: number;
+  amount: number;
+  person: string;
+};
+
+export type DebitsToYou = {
+  debitsToYou: Array<DebitInfo>;
+};
+
+export type YourDebits = {
+  yourDebits: Array<DebitInfo>;
+};
+
+export type Debits = [
+  {id: number; debitsToYou: Array<DebitInfo>},
+  {id: number; yourDebits: Array<DebitInfo>},
+];

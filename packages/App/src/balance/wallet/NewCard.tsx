@@ -14,7 +14,7 @@ import {addNewCardRequest} from '../../store/actions/walletActions';
 import {walletItems} from '../../store/selectors/walletItems';
 import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {BalanceNavigatorList} from '../../types/types';
+import {WalletNavigatorList} from '../../types/types';
 import ColorsNewCard from './ColorsNewCard';
 
 const colors = ['#8D45A7', '#DFE24A', '#56E24A', '#3FECEC', '#EA4953'];
@@ -29,7 +29,7 @@ const newCardSchema = yup.object({
 });
 
 interface Props {
-  navigation: NativeStackNavigationProp<BalanceNavigatorList, 'BalanceMenu'>;
+  navigation: NativeStackNavigationProp<WalletNavigatorList, 'BalanceMenu'>;
 }
 
 const NewCard: FC<Props> = ({navigation}) => {

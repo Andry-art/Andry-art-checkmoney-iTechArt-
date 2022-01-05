@@ -2,13 +2,20 @@ import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {walletsAmount} from '../store/selectors/walletItems';
 import {useSelector} from 'react-redux';
+import {sumDebitsToYou, sumOfYourDebits} from '../store/selectors/debits';
 
 const Balance = ({navigation}: any) => {
   const handleWalletPress = () => {
     navigation.navigate('BalanceWallet');
   };
 
+  const handleDebitsPress = () => {
+    navigation.navigate('Debits');
+  };
+
   const receivedSum = useSelector(walletsAmount);
+  const sumDebToYou = useSelector(sumDebitsToYou);
+  const sumOfYourDeb = useSelector(sumOfYourDebits);
 
   return (
     <View style={styles.container}>
@@ -17,13 +24,13 @@ const Balance = ({navigation}: any) => {
         <Text>{receivedSum}$</Text>
       </TouchableOpacity>
 
-      <View style={styles.debits}>
+      <TouchableOpacity style={styles.debits} onPress={handleDebitsPress}>
         <Text style={styles.title}>Debits</Text>
         <View style={styles.debitsNumbers}>
-          <Text style={styles.plus}>70$</Text>
-          <Text style={styles.minus}>30$</Text>
+          <Text style={styles.plus}>{sumDebToYou}$</Text>
+          <Text style={styles.minus}>{sumOfYourDeb}$</Text>
         </View>
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.credits}>
         <Text style={styles.title}>Credits</Text>

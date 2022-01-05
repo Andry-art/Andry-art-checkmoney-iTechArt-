@@ -1,10 +1,10 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
+import {Api} from '../Api';
 import {
+  userLogIn,
   userLogInSuccess,
   userLogInFailed,
-} from '../reducers/actions/logInActions';
-import {Api} from '../Api';
-import {userLogIn} from '../actions/registration';
+} from '../actions/registration';
 
 export function* userSendLogIn(
   action: ReturnType<typeof userLogIn>,
