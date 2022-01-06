@@ -149,6 +149,7 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
         state.walletContent = state.walletContent.map(it =>
           it.key === action.payload.key ? action.payload : it,
         );
+        state.isLoadingTransactions = false;
         return state;
       },
     )

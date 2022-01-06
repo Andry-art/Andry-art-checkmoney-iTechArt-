@@ -26,11 +26,11 @@ import {
 } from '../../store/actions/walletActions';
 import Loading from '../../components/Loading';
 import {
-  BalanceNavigatorList,
+  WalletNavigatorList,
   WalletInfo,
   ITransactions,
 } from '../../types/types';
-import CardModal from './CardModal';
+import CardModal from '../../components/CardModal';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const viewability: ViewabilityConfig = {
@@ -42,7 +42,7 @@ const keyExtractorForTransactions = (item: ITransactions) =>
   String(item.keyTransaction);
 
 interface Props {
-  navigation: NativeStackNavigationProp<BalanceNavigatorList>;
+  navigation: NativeStackNavigationProp<WalletNavigatorList>;
 }
 
 const Wallet: FC<Props> = ({navigation}) => {

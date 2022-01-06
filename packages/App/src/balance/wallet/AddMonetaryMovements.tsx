@@ -14,7 +14,7 @@ import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
 import {walletItems} from '../../store/selectors/walletItems';
 import {addTransactionRequest} from '../../store/actions/walletActions';
 import {
-  BalanceNavigatorList,
+  WalletNavigatorList,
   ChosenCategory,
   Expenses,
   Income,
@@ -32,13 +32,20 @@ const expenses: Expenses = [
 ];
 
 interface Props {
-  navigation: NativeStackNavigationProp<BalanceNavigatorList, 'BalanceMenu'>;
+  navigation: NativeStackNavigationProp<WalletNavigatorList, 'BalanceMenu'>;
+}
+
+enum TransactionType {
+  income = 'income',
+  expenses = 'expenses',
 }
 
 const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const {key, amount, title} = useSelector(monetaryMove);
-  const [isMoneyMove, setIsMoneyMove] = useState<boolean>(false);
+  const [isMoneyMove, setIsMoneyMove] = useState<string>(
+    TransactionType.expenses,
+  );
   const [categoryInfo, setCategoryInfo] = useState<ChosenCategory>({
     icon: '',
     category: '',
@@ -50,7 +57,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
 
   const addCategory = () => {
     const amountTransaction = Number(inputValue);
-    const type = isMoneyMove ? 'income' : 'expenses';
+    const type = isMoneyMove;
     const icon = categoryInfo.icon ? categoryInfo.icon : 'iconUnknownSource';
     const category = categoryInfo.category ? categoryInfo.category : 'Unknown';
     const chosenWallet = receivedWalletItems.find(it => it.key === key);
@@ -92,8 +99,12 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   };
 
   const changeMovements = useCallback(() => {
-    setIsMoneyMove(prev => !prev);
-  }, []);
+    if (isMoneyMove === TransactionType.expenses) {
+      setIsMoneyMove(TransactionType.income);
+    } else {
+      setIsMoneyMove(TransactionType.expenses);
+    }
+  }, [isMoneyMove]);
 
   return (
     <View style={styles.container}>
@@ -119,9 +130,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
       <TouchableOpacity
         style={styles.BtnIncomeExpenses}
         onPress={changeMovements}>
-        <Text style={styles.textIncomeExpenses}>
-          {isMoneyMove ? 'Income' : 'Expenses'}
-        </Text>
+        <Text style={styles.textIncomeExpenses}>{isMoneyMove}</Text>
       </TouchableOpacity>
       <View style={styles.inputArea}>
         <TextInput
@@ -134,7 +143,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
       </View>
       <View>
         <FlatList
-          data={isMoneyMove ? income : expenses}
+          data={isMoneyMove === TransactionType.income ? income : expenses}
           keyExtractor={it => it}
           renderItem={it => (
             <CategoriesInAddMoneyMove
@@ -151,9 +160,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         disabled={inputValue ? false : true}
         style={inputValue ? styles.confirm : styles.confirmDis}
         onPress={addCategory}>
-        <Text style={styles.confirmText}>
-          {isMoneyMove ? 'Add income' : 'Add expenses'}
-        </Text>
+        <Text style={styles.confirmText}>Add {isMoneyMove}</Text>
       </TouchableOpacity>
     </View>
   );

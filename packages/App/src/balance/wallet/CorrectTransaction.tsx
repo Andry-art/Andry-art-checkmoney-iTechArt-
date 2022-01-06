@@ -15,7 +15,7 @@ import {walletItems} from '../../store/selectors/walletItems';
 import {addCorrectTransactionRequest} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
-  BalanceNavigatorList,
+  WalletNavigatorList,
   ChosenCategory,
   Income,
   Expenses,
@@ -34,7 +34,7 @@ const expenses: Expenses = [
 const keyExtractor = (it: string) => it;
 
 interface Props {
-  navigation: NativeStackNavigationProp<BalanceNavigatorList, 'BalanceMenu'>;
+  navigation: NativeStackNavigationProp<WalletNavigatorList, 'BalanceMenu'>;
 }
 
 const CorrectTransaction: FC<Props> = ({navigation}) => {
