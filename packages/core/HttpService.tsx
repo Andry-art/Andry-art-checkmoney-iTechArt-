@@ -60,7 +60,10 @@ class HttpService {
         return await this.authGet(url, 0);
       }
       if (response.status === 401) {
-        throw new ErrorFetch('authGet error', response.status, false);
+        throw new ErrorFetch('Needs authorization', response.status, false);
+      }
+      if (response.status === 404) {
+        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
       }
       throw new ErrorFetch('authGet error', response.status, true);
     } catch (error) {
@@ -99,7 +102,10 @@ class HttpService {
         return await this.authPost(url, params, 0);
       }
       if (response.status === 401) {
-        throw new ErrorFetch('authPost error', response.status, false);
+        throw new ErrorFetch('Needs authorization', response.status, false);
+      }
+      if (response.status === 404) {
+        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
       }
 
       throw new ErrorFetch('authPost error', response.status, true);
@@ -139,7 +145,10 @@ class HttpService {
         return await this.authPut(url, params, limit - 1);
       }
       if (response.status === 401) {
-        throw new ErrorFetch('authPut error', response.status, false);
+        throw new ErrorFetch('Needs authorization', response.status, false);
+      }
+      if (response.status === 404) {
+        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
       }
 
       throw new ErrorFetch('authPut error', response.status, true);
@@ -176,7 +185,10 @@ class HttpService {
         return await this.authDelete(url, params, limit - 1);
       }
       if (response.status === 401) {
-        throw new ErrorFetch('authDelete error', response.status, false);
+        throw new ErrorFetch('Needs authorization', response.status, false);
+      }
+      if (response.status === 404) {
+        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
       }
 
       throw new ErrorFetch('authDelete error', response.status, true);
@@ -211,7 +223,7 @@ class HttpService {
         return responseData;
       }
       if (response.status === 401) {
-        throw new ErrorFetch('auth error', response.status, false);
+        throw new ErrorFetch('Wrong password or e-mail', response.status, false);
       }
 
       throw new ErrorFetch('auth error', response.status, true);

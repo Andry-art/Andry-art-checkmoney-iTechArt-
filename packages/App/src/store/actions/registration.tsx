@@ -7,3 +7,5 @@ export const userSignUp =
 
 export const userLogInSuccess = createAction<undefined>('userLogInSuccess');
 export const userLogInFailed = createAction<string>('userLogInFailed');
+
+export const logOutAction = createAction<undefined>('logOut');

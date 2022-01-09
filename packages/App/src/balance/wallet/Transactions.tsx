@@ -15,6 +15,9 @@ import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
 import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
 import iconSalarySource from '../../../Pics/categories/money.png';
 import {AmountInCents} from '../../types/types';
+import {useSelector} from 'react-redux';
+import {isLoadingTransactions} from '../../store/selectors/walletItems';
+import Loading from '../../components/Loading';
 
 interface Props {
   keyTransaction: number;
@@ -44,6 +47,8 @@ const Transactions: FC<Props> = ({
   onLongPress,
   onPress,
 }) => {
+  const isLoadingTransaction = useSelector(isLoadingTransactions);
+
   const imgSource: Record<string, ImageSourcePropType> = {
     iconCarSource: iconCarSource,
     iconHealthSource: iconHealthSource,
@@ -63,6 +68,10 @@ const Transactions: FC<Props> = ({
   const onPressCallBack = useCallback(() => {
     onPress(keyTransaction, category, date, amount, type, icon);
   }, [amount, category, date, icon, keyTransaction, onPress, type]);
+
+  if (isLoadingTransaction) {
+    return <Loading />;
+  }
 
   return (
     <TouchableOpacity
@@ -96,7 +105,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   iconBG: {
-    backgroundColor: '#32A7E9',
+    backgroundColor: '#EBEDF8',
     padding: 20,
     borderRadius: 100,
   },
@@ -119,6 +128,7 @@ const styles = StyleSheet.create({
   },
 
   date: {
+    width: '100%',
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '300',

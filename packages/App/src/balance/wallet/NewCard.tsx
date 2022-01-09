@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import walletIconSource from '../../../Pics/balance/wallet.png';
 import {useFormik} from 'formik';
@@ -24,33 +25,43 @@ const initialValues = {
 };
 
 const newCardSchema = yup.object({
-  cardName: yup.string().required().min(4),
-  amount: yup.string().required(),
+  cardName: yup.string().required('Title is required').min(4),
+  amount: yup.string().required('Amount is required'),
 });
 
 interface Props {
-  navigation: NativeStackNavigationProp<WalletNavigatorList, 'BalanceMenu'>;
+  navigation: NativeStackNavigationProp<WalletNavigatorList>;
 }
 
 const NewCard: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const receivedWalletItems = useSelector(walletItems);
   const [cardColor, setCardColor] = useState<string>('#56E24A');
+  const [placeholderTitle, setPlaceholderTitle] = useState<string>('Title');
+  const [placeholderAmount, setPlaceholderAmount] = useState<string>('Amount');
 
-  const {handleChange, handleSubmit, values, isValid, dirty} = useFormik<{
+  const {handleChange, handleSubmit, values, errors} = useFormik<{
     cardName: string;
     amount: string;
   }>({
-    enableReinitialize: true,
     initialValues: initialValues,
     validationSchema: newCardSchema,
     onSubmit: values => {
       const cardName = values.cardName;
-      const amount = values.amount;
+      const amount =
+        Math.round(
+          Number(
+            values.amount
+              .replace(/\,/g, '.')
+              .replace(/[^.\d]+/g, '')
+              .replace(/^([^\.]*\.)|\./g, '$1'),
+          ) * 100,
+        ) / 100;
       const color = cardColor;
       const key = receivedWalletItems[receivedWalletItems.length - 1].key + 1;
-
+      console.log(amount);
       dispatch(addNewCardRequest({cardName, amount, color, key}));
+
       navigation.goBack();
     },
   });
@@ -61,20 +72,25 @@ const NewCard: FC<Props> = ({navigation}) => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>New Card</Text>
       </View>
       <View style={cardColorMemo}>
         <View style={styles.titleCard}>
           <Image source={walletIconSource} />
-          <TextInput
-            textContentType="name"
-            style={styles.titleInput}
-            onChangeText={handleChange('cardName')}
-            value={values.cardName}
-            placeholder="name of your wallet"
-          />
+          <View style={styles.titleArea}>
+            <TextInput
+              textContentType="name"
+              style={styles.titleInput}
+              onChangeText={handleChange('cardName')}
+              value={values.cardName}
+              placeholder={placeholderTitle}
+              onFocus={() => setPlaceholderTitle('')}
+              onEndEditing={() => setPlaceholderTitle('Title')}
+            />
+            <Text style={styles.error}>{errors.cardName}</Text>
+          </View>
         </View>
         <View style={styles.amountArea}>
           <TextInput
@@ -82,8 +98,12 @@ const NewCard: FC<Props> = ({navigation}) => {
             keyboardType="number-pad"
             onChangeText={handleChange('amount')}
             value={values.amount}
-            placeholder="Amount of money"
+            placeholder={placeholderAmount}
+            onFocus={() => setPlaceholderAmount('')}
+            onEndEditing={() => setPlaceholderAmount('Amount')}
+            contextMenuHidden={true}
           />
+          <Text style={styles.error}>{errors.amount}</Text>
         </View>
       </View>
       <View style={styles.colorsArea}>
@@ -91,13 +111,10 @@ const NewCard: FC<Props> = ({navigation}) => {
           <ColorsNewCard key={it} color={it} onPress={setCardColor} />
         ))}
       </View>
-      <TouchableOpacity
-        disabled={!(isValid && dirty)}
-        onPress={handleSubmit}
-        style={!(isValid && dirty) ? styles.submitBtnDis : styles.submitBtn}>
+      <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
         <Text style={styles.textBtn}>Add card</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -117,9 +134,8 @@ const styles = StyleSheet.create({
 
   card: {
     justifyContent: 'flex-start',
-    backgroundColor: '#74EA8E',
     height: 200,
-    borderRadius: 10,
+    borderRadius: 30,
     padding: 20,
   },
 
@@ -162,10 +178,10 @@ const styles = StyleSheet.create({
 
   submitBtn: {
     marginTop: 40,
-    borderRadius: 10,
+    borderRadius: 30,
     height: 60,
     width: '100%',
-    backgroundColor: '#5EE1FE',
+    backgroundColor: '#7CD0FF',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -177,16 +193,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'black',
   },
+  error: {
+    marginHorizontal: 20,
+    color: 'black',
+  },
 
-  submitBtnDis: {
-    marginTop: 40,
-    borderRadius: 10,
-    height: 60,
+  titleArea: {
     width: '100%',
-    backgroundColor: '#BEF3FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    opacity: 0.8,
   },
 });
 

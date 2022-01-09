@@ -22,3 +22,19 @@ export const walletsAmount = createDraftSafeSelector(walletItems, state => {
 export const monetaryMove = (state: RootState) => {
   return state.wallet.monetaryMovements;
 };
+
+export const getError = (state: RootState) => {
+  return state.wallet.errorGet;
+};
+
+export const filtersError = (state: RootState) => {
+  return state.wallet.errorFilters;
+};
+
+export const addNewCardError = (state: RootState) => {
+  return state.wallet.errorAddNewCard;
+};
+
+export const deleteCardError = (state: RootState) => {
+  return state.wallet.errorDeleteCard;
+};

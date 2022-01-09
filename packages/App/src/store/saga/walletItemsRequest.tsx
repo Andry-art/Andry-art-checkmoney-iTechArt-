@@ -35,11 +35,13 @@ export function* getWalletItems(): Generator {
       'http://localhost:8000/wallet',
     )) as Array<WalletInfo>;
 
-    if (!response) {
-      return;
+    if (response) {
+      yield put(getWalletItemsSuccess(response));
     }
 
-    yield put(getWalletItemsSuccess(response));
+    if (!response) {
+      yield put(getWalletItemsFailed('Network isn`t working'));
+    }
   } catch (error) {
     console.log('getWallet', error);
     yield put(getWalletItemsFailed((error as Error).message));
@@ -57,7 +59,7 @@ export function* filterItems(
     )) as Array<WalletInfo>;
 
     if (!response) {
-      return;
+      yield put(filterFailed('Network isn`t working'));
     }
 
     if (action.type === 'FILTER_INCOME') {
@@ -80,7 +82,7 @@ export function* addCard(
       key: action.payload.key,
       color: action.payload.color,
       walletTitle: action.payload.cardName,
-      walletAmount: Number(action.payload.amount),
+      walletAmount: action.payload.amount,
       transactions: [],
     };
 
@@ -91,6 +93,10 @@ export function* addCard(
     )) as WalletInfo;
     if (response) {
       yield put(addNewCardSuccess(response));
+    }
+
+    if (!response) {
+      yield put(addNewCardFailed('Network isn`t working'));
     }
   } catch (error) {
     console.log('addCard', error);
@@ -109,6 +115,9 @@ export function* deleteCardRequest(
 
     if (response) {
       yield put(deleteCardSuccess(action.payload));
+    }
+    if (!response) {
+      yield put(deleteCardFailed('Network isn`t working'));
     }
   } catch (error) {
     console.log('Delete', error);
@@ -149,6 +158,9 @@ export function* addTransaction(
     )) as WalletInfo;
     if (response) {
       yield put(addTransactionSuccess(response));
+    }
+    if (!response) {
+      yield put(addTransactionFailed('Network isn`t working'));
     }
   } catch (error) {
     console.log('post', error);
@@ -191,6 +203,9 @@ export function* deleteTransaction(
     if (response) {
       yield put(deleteTransactionSuccess(response));
     }
+    if (!response) {
+      yield put(deleteTransactionFailed('Network isn`t working'));
+    }
   } catch (error) {
     console.log('deleteTransaction', error);
     yield put(deleteTransactionFailed((error as Error).message));
@@ -224,6 +239,10 @@ export function* correctTransactionChange(
     if (response) {
       yield put(addCorrectTransactionSuccess(response));
     }
+
+    if (!response) {
+      yield put(addCorrectTransactionFailed('Network isn`t working'));
+    }
   } catch (error) {
     console.log('correctTransactionToSend', error);
     yield put(addCorrectTransactionFailed((error as Error).message));
@@ -241,4 +260,5 @@ export function* WalletItems(): Generator {
   yield takeEvery('DELETE_TRANSACTION', deleteTransaction);
   yield takeEvery('CORRECT_TRANSACTION_INFO', correctTransaction);
   yield takeEvery('CORRECT_TRANSACTION', correctTransactionChange);
+  yield takeEvery('filterAllItemsRequest', getWalletItems);
 }

@@ -90,11 +90,12 @@ const debits = createReducer<IDebits>(initialState, builder => {
     .addCase(addNewDebitFailed, (state, action: PayloadAction<string>) => ({
       ...state,
       isLoading: false,
-      errorNewDebit: action.payload,
+      errorNewDebit: `Couldn't add debit.${action.payload}`,
     }))
     .addCase(deleteDebitRequest, state => ({
       ...state,
       isDeleteLoading: true,
+      errorDelete: '',
     }))
     .addCase(
       deleteDebitToYouSuccess,
@@ -115,7 +116,7 @@ const debits = createReducer<IDebits>(initialState, builder => {
     .addCase(deleteDebitFailed, (state, action: PayloadAction<string>) => ({
       ...state,
       isLoading: false,
-      errorDelete: action.payload,
+      errorDelete: `Couldn't delete debit.${action.payload}`,
     }));
 });
 

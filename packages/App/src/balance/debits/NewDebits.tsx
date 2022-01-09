@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
+  Image,
+  ScrollView,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ListOFCards from './ListOFCards';
@@ -17,10 +19,11 @@ import {addNewDebitRequest} from '../../store/actions/debitsActions';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
+import imgArrowSource from '../../../Pics/double-arrow.png';
 
 const newDebitSchema = yup.object({
-  name: yup.string().required(),
-  amount: yup.string().required(),
+  name: yup.string().required('Name is required'),
+  amount: yup.string().required('Amount is required'),
 });
 
 const initialValues = {
@@ -60,7 +63,15 @@ const NewDebits: FC<Props> = ({navigation}) => {
       let key = 0;
       let debitsArray;
       const person = value.name;
-      const amount = Number(value.amount);
+      const amount =
+        Math.round(
+          Number(
+            value.amount
+              .replace(/\,/g, '.')
+              .replace(/[^.\d]+/g, '')
+              .replace(/^([^\.]*\.)|\./g, '$1'),
+          ) * 100,
+        ) / 100;
       const date = new Date().toLocaleDateString();
       const keyOfWallet = keyCard;
       const type = debitType;
@@ -91,7 +102,7 @@ const NewDebits: FC<Props> = ({navigation}) => {
 
   return (
     <>
-      <View>
+      <ScrollView style={styles.container}>
         <View style={styles.debtBTN}>
           <TouchableOpacity
             style={
@@ -102,6 +113,7 @@ const NewDebits: FC<Props> = ({navigation}) => {
             onPress={setDebitToYou}>
             <Text style={styles.btnText}>To you</Text>
           </TouchableOpacity>
+          <Image source={imgArrowSource} />
           <TouchableOpacity
             style={
               debitType === DebitType.yourDebit
@@ -119,12 +131,16 @@ const NewDebits: FC<Props> = ({navigation}) => {
             value={formik.values.name}
             placeholder="Name"
           />
+          <Text style={styles.error}>{formik.errors.name}</Text>
           <TextInput
             style={styles.input}
+            keyboardType="number-pad"
             onChangeText={formik.handleChange('amount')}
             value={formik.values.amount}
             placeholder="Amount"
+            contextMenuHidden={true}
           />
+          <Text style={styles.error}>{formik.errors.amount}</Text>
         </View>
         <FlatList
           style={styles.listOfCards}
@@ -147,29 +163,34 @@ const NewDebits: FC<Props> = ({navigation}) => {
           onPress={formik.handleSubmit}>
           <Text style={styles.textConfirm}>Add new debit</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+
   debtBTN: {
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
     padding: 20,
     flexDirection: 'row',
   },
   activeBTNtoYou: {
-    width: '50%',
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    width: '40%',
+    borderRadius: 30,
     backgroundColor: '#0C547C',
     height: 55,
     justifyContent: 'center',
     alignItems: 'center',
   },
   inactiveBTNtoYou: {
-    width: '50%',
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    width: '40%',
+    borderRadius: 30,
     backgroundColor: '#D1EDFC',
     height: 55,
     justifyContent: 'center',
@@ -177,9 +198,8 @@ const styles = StyleSheet.create({
   },
 
   activeBTNYour: {
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    width: '50%',
+    borderRadius: 30,
+    width: '40%',
     backgroundColor: '#0C547C',
     height: 55,
     justifyContent: 'center',
@@ -187,9 +207,8 @@ const styles = StyleSheet.create({
   },
 
   inactiveBTNYour: {
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    width: '50%',
+    borderRadius: 30,
+    width: '40%',
     backgroundColor: '#D1EDFC',
     height: 55,
     justifyContent: 'center',
@@ -201,10 +220,13 @@ const styles = StyleSheet.create({
   },
 
   input: {
+    borderColor: '#32A7E9',
+    borderWidth: 1,
+    minHeight: 50,
     backgroundColor: 'white',
     height: 40,
-    marginBottom: 10,
-    borderRadius: 10,
+    marginTop: 10,
+    borderRadius: 30,
     paddingHorizontal: 20,
   },
   listOfCards: {
@@ -221,7 +243,7 @@ const styles = StyleSheet.create({
   btnConfirm: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 30,
     margin: 20,
     height: 55,
     backgroundColor: '#7CD0FF',
@@ -232,6 +254,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'black',
     fontSize: 16,
+  },
+
+  error: {
+    marginLeft: 10,
+    color: 'red',
   },
 });
 

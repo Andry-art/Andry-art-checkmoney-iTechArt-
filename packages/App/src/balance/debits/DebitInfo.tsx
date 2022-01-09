@@ -60,7 +60,7 @@ const DebitInfo: FC<Props> = ({navigation}) => {
         onPressDelete={deleteCard}
         onPressHide={hide}
       />
-      <View>
+      <View style={styles.container}>
         <Text style={styles.title}>Debit info</Text>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>
@@ -89,6 +89,11 @@ const DebitInfo: FC<Props> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+
   title: {
     textAlign: 'center',
     marginVertical: 20,
@@ -120,7 +125,7 @@ const styles = StyleSheet.create({
   btnDelete: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 30,
     margin: 20,
     height: 55,
     backgroundColor: '#F64242',

@@ -19,18 +19,16 @@ export interface WalletInfo {
 }
 
 export type WalletNavigatorList = {
-  BalanceMenu: undefined;
-  BalanceWallet: undefined;
-  NewCard: undefined;
-  correctTransaction: undefined;
-  addMonetaryMovements: undefined;
+  Balance: undefined;
+  'New Card': undefined;
+  'Correct Transaction': undefined;
+  'Add Transaction': undefined;
 };
 
 export type DebitNavigatorList = {
-  BalanceMenu: undefined;
   Debits: undefined;
-  NewDebits: undefined;
-  DebitInfo: undefined;
+  'Add New Debit': undefined;
+  'Debit Info': undefined;
 };
 
 export type ChosenCategory = {

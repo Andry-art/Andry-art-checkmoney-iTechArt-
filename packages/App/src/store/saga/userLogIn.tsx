@@ -17,11 +17,13 @@ export function* userSendLogIn(
       action.payload.password,
     )) as Response;
 
-    if (!response) {
-      return;
+    if (response) {
+      yield put(userLogInSuccess());
     }
 
-    yield put(userLogInSuccess());
+    if (!response) {
+      yield put(userLogInFailed('Network isn`t working'));
+    }
   } catch (error) {
     yield put(userLogInFailed((error as Error).message));
   }
@@ -37,11 +39,13 @@ export function* userSendSignUp(
       action.payload.email,
       action.payload.password,
     )) as Response;
-    if (!response) {
-      return;
+    if (response) {
+      yield put(userLogInSuccess());
     }
 
-    yield put(userLogInSuccess());
+    if (!response) {
+      yield put(userLogInFailed('Network isn`t working'));
+    }
   } catch (error) {
     yield put(userLogInFailed((error as Error).message));
   }

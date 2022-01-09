@@ -24,6 +24,10 @@ export function* getDebitsItems(): Generator {
     if (response) {
       yield put(getDebitsItemsSuccess(response));
     }
+
+    if (!response) {
+      yield put(getDebitsItemsFailed('Network isn`t working'));
+    }
   } catch (error) {
     console.log('getWallet', error);
     yield put(getDebitsItemsFailed((error as Error).message));
@@ -54,6 +58,10 @@ export function* addNewDebit(
       wallet,
     )) as WalletInfo;
 
+    if (!responseWallet) {
+      yield put(addNewDebitFailed('Network isn`t working'));
+    }
+
     if (action.payload.debit.type === 'debit to you' && responseWallet) {
       let debits = action.payload.array;
       debits = [...debits, action.payload.debit];
@@ -65,6 +73,9 @@ export function* addNewDebit(
       )) as {debitsToYou: Array<DebitInfo>};
       if (responseDebit) {
         yield put(addNewDebitToYouSuccess(responseDebit));
+      }
+      if (!responseDebit) {
+        yield put(addNewDebitFailed('Network isn`t working'));
       }
     }
 
@@ -80,6 +91,9 @@ export function* addNewDebit(
       if (responseDebit) {
         console.log(responseDebit);
         yield put(addNewYourDebitSuccess(responseDebit));
+      }
+      if (!responseDebit) {
+        yield put(addNewDebitFailed('Network isn`t working'));
       }
     }
   } catch (error) {
@@ -112,6 +126,10 @@ export function* deleteDebit(
       wallet,
     )) as WalletInfo;
 
+    if (!responseWallet) {
+      yield put(deleteDebitFailed('Network isn`t working'));
+    }
+
     if (action.payload.debit.type === 'debit to you' && responseWallet) {
       let debits = action.payload.array;
       debits = debits.filter(it => it.key !== action.payload.debit.key);
@@ -123,6 +141,9 @@ export function* deleteDebit(
       )) as {debitsToYou: Array<DebitInfo>};
       if (responseDebit) {
         yield put(deleteDebitToYouSuccess(responseDebit));
+      }
+      if (!responseDebit) {
+        yield put(deleteDebitFailed('Network isn`t working'));
       }
     }
 
@@ -136,8 +157,10 @@ export function* deleteDebit(
         {yourDebits: debits},
       )) as {yourDebits: Array<DebitInfo>};
       if (responseDebit) {
-        console.log(responseDebit);
         yield put(deleteYourDebitSuccess(responseDebit));
+      }
+      if (!responseDebit) {
+        yield put(deleteDebitFailed('Network isn`t working'));
       }
     }
   } catch (error) {

@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   TextInput,
   FlatList,
   Modal,
+  Image,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
@@ -20,6 +21,9 @@ import {
   Income,
 } from '../../types/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import imgArrowSource from '../../../Pics/double-arrow.png';
+import * as yup from 'yup';
+import {useFormik} from 'formik';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -32,13 +36,21 @@ const expenses: Expenses = [
 ];
 
 interface Props {
-  navigation: NativeStackNavigationProp<WalletNavigatorList, 'BalanceMenu'>;
+  navigation: NativeStackNavigationProp<WalletNavigatorList>;
 }
 
 enum TransactionType {
   income = 'income',
   expenses = 'expenses',
 }
+
+const initialValues = {
+  amount: '',
+};
+
+const transactionSchema = yup.object({
+  amount: yup.string().required('Amount is required'),
+});
 
 const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
@@ -47,64 +59,71 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
     TransactionType.expenses,
   );
   const [categoryInfo, setCategoryInfo] = useState<ChosenCategory>({
-    icon: '',
+    icon: 'iconUnknownSource',
     category: '',
   });
-  const [inputValue, setInputValue] = useState<string>('');
   const [modal, setModal] = useState<boolean>(false);
 
   const receivedWalletItems = useSelector(walletItems);
 
-  const addCategory = () => {
-    const amountTransaction = Number(inputValue);
-    const type = isMoneyMove;
-    const icon = categoryInfo.icon ? categoryInfo.icon : 'iconUnknownSource';
-    const category = categoryInfo.category ? categoryInfo.category : 'Unknown';
-    const chosenWallet = receivedWalletItems.find(it => it.key === key);
-    if (chosenWallet !== undefined) {
-      const keyTransaction =
-        chosenWallet.transactions.length === 0
-          ? 1
-          : chosenWallet.transactions[0].keyTransaction + 1;
+  const {handleChange, handleSubmit, values, errors} = useFormik<{
+    amount: string;
+  }>({
+    initialValues: initialValues,
+    validationSchema: transactionSchema,
+    onSubmit: values => {
+      const amountTransaction =
+        Math.round(
+          Number(
+            values.amount
+              .replace(/\,/g, '.')
+              .replace(/[^.\d]+/g, '')
+              .replace(/^([^\.]*\.)|\./g, '$1'),
+          ) * 100,
+        ) / 100;
+      const type = isMoneyMove;
+      const icon = categoryInfo.icon ? categoryInfo.icon : 'iconUnknownSource';
+      const category = categoryInfo.category
+        ? categoryInfo.category
+        : 'Unknown';
+      const chosenWallet = receivedWalletItems.find(it => it.key === key);
+      if (chosenWallet !== undefined) {
+        const keyTransaction =
+          chosenWallet.transactions.length === 0
+            ? 1
+            : chosenWallet.transactions[0].keyTransaction + 1;
 
-      const date = new Date().toLocaleDateString();
+        const date = new Date().toUTCString();
 
-      if (
-        type === 'expenses' &&
-        chosenWallet.walletAmount - amountTransaction < 0
-      ) {
-        setModal(true);
+        if (
+          type === 'expenses' &&
+          chosenWallet.walletAmount - amountTransaction < 0
+        ) {
+          setModal(true);
+        }
+
+        if (
+          type === 'income' ||
+          chosenWallet.walletAmount - amountTransaction >= 0
+        ) {
+          dispatch(
+            addTransactionRequest({
+              item: chosenWallet,
+              transaction: {
+                keyTransaction,
+                type,
+                amountTransaction,
+                category,
+                icon,
+                date,
+              },
+            }),
+          );
+          navigation.goBack();
+        }
       }
-
-      if (
-        type === 'income' ||
-        chosenWallet.walletAmount - amountTransaction >= 0
-      ) {
-        dispatch(
-          addTransactionRequest({
-            item: chosenWallet,
-            transaction: {
-              keyTransaction,
-              type,
-              amountTransaction,
-              category,
-              icon,
-              date,
-            },
-          }),
-        );
-        navigation.goBack();
-      }
-    }
-  };
-
-  const changeMovements = useCallback(() => {
-    if (isMoneyMove === TransactionType.expenses) {
-      setIsMoneyMove(TransactionType.income);
-    } else {
-      setIsMoneyMove(TransactionType.expenses);
-    }
-  }, [isMoneyMove]);
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -127,19 +146,37 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         <Text style={styles.textTitle}>{title}</Text>
         <Text style={styles.textAmount}>{amount}$</Text>
       </View>
-      <TouchableOpacity
-        style={styles.BtnIncomeExpenses}
-        onPress={changeMovements}>
-        <Text style={styles.textIncomeExpenses}>{isMoneyMove}</Text>
-      </TouchableOpacity>
+      <View style={styles.moneyMoves}>
+        <TouchableOpacity
+          style={
+            isMoneyMove === TransactionType.expenses
+              ? styles.BtnIncomeExpensesFocus
+              : styles.BtnIncomeExpenses
+          }
+          onPress={() => setIsMoneyMove(TransactionType.expenses)}>
+          <Text style={styles.textIncomeExpenses}>Expenses</Text>
+        </TouchableOpacity>
+        <Image source={imgArrowSource} />
+        <TouchableOpacity
+          style={
+            isMoneyMove === TransactionType.income
+              ? styles.BtnIncomeExpensesFocus
+              : styles.BtnIncomeExpenses
+          }
+          onPress={() => setIsMoneyMove(TransactionType.income)}>
+          <Text style={styles.textIncomeExpenses}>Income</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.inputArea}>
         <TextInput
-          value={inputValue}
-          onChangeText={setInputValue}
+          value={values.amount}
+          onChangeText={handleChange('amount')}
           style={styles.input}
           keyboardType="number-pad"
           placeholder="0"
+          contextMenuHidden={true}
         />
+        <Text style={styles.validation}>{errors.amount}</Text>
       </View>
       <View>
         <FlatList
@@ -156,10 +193,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
           showsHorizontalScrollIndicator={false}
         />
       </View>
-      <TouchableOpacity
-        disabled={inputValue ? false : true}
-        style={inputValue ? styles.confirm : styles.confirmDis}
-        onPress={addCategory}>
+      <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
         <Text style={styles.confirmText}>Add {isMoneyMove}</Text>
       </TouchableOpacity>
     </View>
@@ -168,7 +202,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   modal: {
-    borderRadius: 10,
+    borderRadius: 30,
     justifyContent: 'center',
     height: '25%',
     backgroundColor: '#23A7F1',
@@ -195,7 +229,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '40%',
     backgroundColor: 'red',
-    borderRadius: 10,
+    borderRadius: 30,
   },
 
   modalBtnCancel: {
@@ -204,7 +238,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '40%',
     backgroundColor: '#74EA8E',
-    borderRadius: 10,
+    borderRadius: 30,
   },
 
   modalBtnText: {
@@ -226,6 +260,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   title: {
     flexDirection: 'row',
@@ -255,6 +290,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#D0EEFF',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '40%',
+    borderRadius: 30,
   },
 
   textIncomeExpenses: {
@@ -265,12 +302,27 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 
-  inputArea: {
+  BtnIncomeExpensesFocus: {
     height: 50,
+    backgroundColor: '#32A7E9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '40%',
+    borderRadius: 30,
+  },
+
+  inputArea: {
+    height: 70,
+    marginBottom: 20,
   },
   input: {
     fontSize: 20,
     paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#32A7E9',
+    marginTop: 20,
+    marginHorizontal: 20,
+    borderRadius: 30,
   },
 
   confirm: {
@@ -278,7 +330,7 @@ const styles = StyleSheet.create({
     margin: 20,
     paddingVertical: 20,
     backgroundColor: '#7CD0FF',
-    borderRadius: 10,
+    borderRadius: 30,
   },
 
   confirmText: {
@@ -289,12 +341,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  confirmDis: {
+  moneyMoves: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    margin: 20,
-    paddingVertical: 20,
-    backgroundColor: '#BEF3FF',
-    borderRadius: 10,
+  },
+
+  validation: {
+    marginLeft: 30,
+    color: 'red',
   },
 });
 

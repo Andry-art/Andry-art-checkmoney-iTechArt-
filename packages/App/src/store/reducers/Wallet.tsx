@@ -24,12 +24,31 @@ import {
   addTransactionRequest,
   deleteTransactionRequest,
   addCorrectTransactionRequest,
+  filterAllItemsRequest,
 } from '../actions/walletActions';
 import {WalletInfo} from '../../types/types';
 import {IWallet} from '../../types/types';
 
 const initialState: IWallet = {
-  walletContent: [],
+  walletContent: [
+    {
+      walletAmount: 0,
+      id: 0,
+      key: 0,
+      color: '',
+      walletTitle: '',
+      transactions: [
+        {
+          keyTransaction: 0,
+          type: '',
+          amountTransaction: 0,
+          category: '',
+          date: '',
+          icon: '',
+        },
+      ],
+    },
+  ],
   monetaryMovements: {
     key: 0,
     amount: 0,
@@ -51,12 +70,17 @@ const initialState: IWallet = {
 
 const Wallet = createReducer<IWallet>(initialState, builder => {
   builder
-    .addCase(getAllItemWallet, state => ({...state, isLoading: true}))
+    .addCase(getAllItemWallet, state => ({
+      ...state,
+      isLoading: true,
+      errorGet: '',
+    }))
     .addCase(
       getWalletItemsSuccess,
       (state, action: PayloadAction<Array<WalletInfo>>) => ({
         ...state,
         isLoading: false,
+        isLoadingTransactions: false,
         walletContent: action.payload,
       }),
     )
@@ -68,10 +92,12 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     .addCase(filterInComeRequest, state => ({
       ...state,
       isLoadingTransactions: true,
+      errorFilters: '',
     }))
     .addCase(filterExpensesRequest, state => ({
       ...state,
       isLoadingTransactions: true,
+      errorFilters: '',
     }))
     .addCase(
       filterIncomeSuccess,
@@ -84,6 +110,7 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
             it => it.type === 'income',
           );
         state.isLoadingTransactions = false;
+        state.errorFilters = '';
         return state;
       },
     )
@@ -106,9 +133,15 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
         return state;
       },
     )
+    .addCase(filterAllItemsRequest, state => ({
+      ...state,
+      isLoadingTransactions: true,
+      errorFilters: '',
+    }))
     .addCase(addNewCardRequest, state => ({
       ...state,
       isLoadingNewCard: true,
+      errorAddNewCard: '',
     }))
     .addCase(addNewCardSuccess, (state, action) => {
       state.walletContent.push(action.payload);
@@ -118,22 +151,24 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     .addCase(addNewCardFailed, (state, action: PayloadAction<string>) => ({
       ...state,
       isLoadingNewCard: false,
-      errorAddNewCard: action.payload,
+      errorAddNewCard: `Couldn't add card.${action.payload}`,
     }))
     .addCase(deleteWalletCardRequest, state => ({
       ...state,
       isLoadingDeleteCard: true,
+      errorDeleteCard: '',
     }))
     .addCase(deleteCardSuccess, (state, action: PayloadAction<number>) => {
       state.walletContent = state.walletContent.filter(
         it => it.key !== action.payload,
       );
+      state.isLoadingDeleteCard = false;
       return state;
     })
     .addCase(deleteCardFailed, (state, action: PayloadAction<string>) => ({
       ...state,
       isLoadingDeleteCard: false,
-      errorDeleteCard: action.payload,
+      errorDeleteCard: `Couldn't delete card.${action.payload}`,
     }))
     .addCase(monetaryMove, (state, action) => ({
       ...state,
@@ -142,6 +177,7 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     .addCase(addTransactionRequest, state => ({
       ...state,
       isLoadingTransactions: true,
+      errorFilters: '',
     }))
     .addCase(
       addTransactionSuccess,
@@ -161,6 +197,7 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     .addCase(deleteTransactionRequest, state => ({
       ...state,
       isLoadingTransactions: true,
+      errorFilters: '',
     }))
     .addCase(
       deleteTransactionSuccess,
@@ -168,6 +205,7 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
         state.walletContent = state.walletContent.map(it =>
           it.key === action.payload.key ? action.payload : it,
         );
+        state.isLoadingTransactions = false;
         return state;
       },
     )
@@ -182,11 +220,13 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     .addCase(addCorrectTransactionRequest, state => ({
       ...state,
       isLoadingTransactions: true,
+      errorFilters: '',
     }))
     .addCase(addCorrectTransactionSuccess, (state, action) => {
       state.walletContent = state.walletContent.map(it =>
         it.key === action.payload.key ? action.payload : it,
       );
+      state.isLoadingTransactions = false;
       return state;
     })
     .addCase(

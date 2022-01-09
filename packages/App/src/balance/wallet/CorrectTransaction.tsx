@@ -20,6 +20,8 @@ import {
   Income,
   Expenses,
 } from '../../types/types';
+import * as yup from 'yup';
+import {useFormik} from 'formik';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -31,10 +33,14 @@ const expenses: Expenses = [
   'iconRestaurantSource',
 ];
 
+const transactionSchema = yup.object({
+  amount: yup.string().required('Amount is required'),
+});
+
 const keyExtractor = (it: string) => it;
 
 interface Props {
-  navigation: NativeStackNavigationProp<WalletNavigatorList, 'BalanceMenu'>;
+  navigation: NativeStackNavigationProp<WalletNavigatorList>;
 }
 
 const CorrectTransaction: FC<Props> = ({navigation}) => {
@@ -46,66 +52,77 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
     icon: transaction.icon || '',
     category: transaction.category || '',
   });
-  const [inputValue, setInputValue] = useState<string>(
-    String(transaction.amount),
-  );
 
   const [isModal, setIsModal] = useState<boolean>(false);
 
   const oldAmount = useRef(transaction.amount);
   const oldIcon = useRef(transaction.icon);
 
-  const changeTransaction = () => {
-    const keyTransaction = transaction.key;
-    const amountTransaction = Number(inputValue);
-    const category = transaction.category || '';
-    const date = transaction.date || '';
-    const type = transaction.type || '';
-    const icon = categoryInfo.icon || '';
-    let [item] = receivedWalletItems.filter(
-      it => it.key === transaction.idCard,
-    );
-    let difference = Math.abs(amountTransaction - oldAmount.current);
-
-    if (type === 'income' && oldAmount.current > amountTransaction) {
-      item = {...item, walletAmount: item.walletAmount - difference};
-    }
-    if (type === 'income' && oldAmount.current < amountTransaction) {
-      item = {...item, walletAmount: item.walletAmount + difference};
-    }
-
-    if (type === 'expenses' && oldAmount.current > amountTransaction) {
-      item = {...item, walletAmount: item.walletAmount + difference};
-    }
-    if (type === 'expenses' && oldAmount.current < amountTransaction) {
-      item = {...item, walletAmount: item.walletAmount - difference};
-    }
-
-    if (item.walletAmount < 0) {
-      setIsModal(true);
-    }
-
-    if (
-      (oldAmount.current !== amountTransaction || oldIcon.current !== icon) &&
-      (type === 'income' || item.walletAmount > 0)
-    ) {
-      dispatch(
-        addCorrectTransactionRequest({
-          item,
-          correctedTransaction: {
-            keyTransaction,
-            amountTransaction,
-            category,
-            date,
-            type,
-            icon,
-          },
-          difference,
-        }),
+  const {handleChange, handleSubmit, values} = useFormik<{
+    amount: string;
+  }>({
+    initialValues: {amount: String(transaction.amount)},
+    validationSchema: transactionSchema,
+    onSubmit: values => {
+      const keyTransaction = transaction.key;
+      const amountTransaction =
+        Math.round(
+          Number(
+            values.amount
+              .replace(/\,/g, '.')
+              .replace(/[^.\d]+/g, '')
+              .replace(/^([^\.]*\.)|\./g, '$1'),
+          ) * 100,
+        ) / 100;
+      const category = transaction.category || '';
+      const date = transaction.date || '';
+      const type = transaction.type || '';
+      const icon = categoryInfo.icon || '';
+      let [item] = receivedWalletItems.filter(
+        it => it.key === transaction.idCard,
       );
-      navigation.goBack();
-    }
-  };
+      let difference = Math.abs(amountTransaction - oldAmount.current);
+
+      if (type === 'income' && oldAmount.current > amountTransaction) {
+        item = {...item, walletAmount: item.walletAmount - difference};
+      }
+      if (type === 'income' && oldAmount.current < amountTransaction) {
+        item = {...item, walletAmount: item.walletAmount + difference};
+      }
+
+      if (type === 'expenses' && oldAmount.current > amountTransaction) {
+        item = {...item, walletAmount: item.walletAmount + difference};
+      }
+      if (type === 'expenses' && oldAmount.current < amountTransaction) {
+        item = {...item, walletAmount: item.walletAmount - difference};
+      }
+
+      if (item.walletAmount < 0) {
+        setIsModal(true);
+      }
+
+      if (
+        (oldAmount.current !== amountTransaction || oldIcon.current !== icon) &&
+        (type === 'income' || item.walletAmount > 0)
+      ) {
+        dispatch(
+          addCorrectTransactionRequest({
+            item,
+            correctedTransaction: {
+              keyTransaction,
+              amountTransaction,
+              category,
+              date,
+              type,
+              icon,
+            },
+            difference,
+          }),
+        );
+        navigation.goBack();
+      }
+    },
+  });
 
   const setModal = useCallback(() => {
     setIsModal(false);
@@ -131,11 +148,12 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
       </View>
       <View style={styles.inputArea}>
         <TextInput
-          value={inputValue}
-          onChangeText={setInputValue}
+          value={values.amount}
+          onChangeText={handleChange('amount')}
           style={styles.input}
           keyboardType="number-pad"
           placeholder="0"
+          contextMenuHidden={true}
         />
       </View>
       <View>
@@ -153,10 +171,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
           showsHorizontalScrollIndicator={false}
         />
       </View>
-      <TouchableOpacity
-        disabled={inputValue ? false : true}
-        style={inputValue ? styles.confirm : styles.confirmDis}
-        onPress={changeTransaction}>
+      <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
         <Text style={styles.confirmText}>Correct {transaction.type}</Text>
       </TouchableOpacity>
     </View>
@@ -223,6 +238,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
 
   textTitle: {
@@ -251,11 +267,17 @@ const styles = StyleSheet.create({
   },
 
   inputArea: {
-    height: 50,
+    height: 70,
+    marginBottom: 20,
   },
   input: {
     fontSize: 20,
     paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#32A7E9',
+    marginTop: 20,
+    marginHorizontal: 20,
+    borderRadius: 30,
   },
 
   confirm: {
@@ -263,7 +285,7 @@ const styles = StyleSheet.create({
     margin: 20,
     paddingVertical: 20,
     backgroundColor: '#7CD0FF',
-    borderRadius: 10,
+    borderRadius: 30,
   },
 
   confirmText: {
@@ -272,14 +294,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'black',
     fontSize: 16,
-  },
-
-  confirmDis: {
-    alignItems: 'center',
-    margin: 20,
-    paddingVertical: 20,
-    backgroundColor: '#BEF3FF',
-    borderRadius: 10,
   },
 });
 

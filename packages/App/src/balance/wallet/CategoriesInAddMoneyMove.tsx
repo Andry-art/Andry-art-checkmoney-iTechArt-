@@ -46,7 +46,7 @@ const CategoriesInAddMoneyMove: FC<Props> = ({picture, chosen, onPress}) => {
   const img = imgSource[picture];
   const title = text[picture];
   const chosenStyle = useMemo(
-    () => [styles.icon, {backgroundColor: '#0096E9'}],
+    () => [styles.icon, {backgroundColor: '#EBEDF8'}],
     [],
   );
 
@@ -74,11 +74,11 @@ const CategoriesInAddMoneyMove: FC<Props> = ({picture, chosen, onPress}) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   icon: {
     margin: 10,
     marginBottom: 0,
-    backgroundColor: '#7CD0FF',
     padding: 15,
     borderRadius: 100,
   },

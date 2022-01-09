@@ -7,3 +7,7 @@ export const IsLoadingUser = (state: RootState) => {
 export const userIsLogIn = (state: RootState) => {
   return state.registration.isLogIn;
 };
+
+export const logInError = (state: RootState) => {
+  return state.registration.error;
+};
