@@ -8,6 +8,7 @@ import {
   FlatList,
   Modal,
   Image,
+  ScrollView,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
@@ -126,7 +127,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   });
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Modal animationType="fade" transparent={true} visible={modal}>
         <View style={styles.modal}>
           <View style={styles.modalTitle}>
@@ -196,7 +197,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
       <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
         <Text style={styles.confirmText}>Add {isMoneyMove}</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -331,6 +332,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     backgroundColor: '#7CD0FF',
     borderRadius: 30,
+    marginBottom: 80,
   },
 
   confirmText: {

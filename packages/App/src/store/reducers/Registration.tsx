@@ -34,6 +34,7 @@ const userIsLogIn = createReducer<IRegistration>(initialState, builder => {
     }))
     .addCase(logOutAction, state => {
       state.isLogIn = false;
+      state.error = '';
       return state;
     });
 });

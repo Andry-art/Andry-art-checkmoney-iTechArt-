@@ -20,6 +20,7 @@ import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
 import imgArrowSource from '../../../Pics/double-arrow.png';
+import ModalNewDebit from '../../components/ModalNewDebit';
 
 const newDebitSchema = yup.object({
   name: yup.string().required('Name is required'),
@@ -47,6 +48,11 @@ const NewDebits: FC<Props> = ({navigation}) => {
   const yourDebits = useSelector(getYourDebits);
   const [debitType, setDebitType] = useState<string>(DebitType.toYou);
   const [keyCard, setKeyCard] = useState<number>(0);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  const hide = () => {
+    setModalVisible(false);
+  };
 
   const setDebitToYou = () => {
     setDebitType(DebitType.toYou);
@@ -84,9 +90,27 @@ const NewDebits: FC<Props> = ({navigation}) => {
         debitsArray = yourDebits;
       }
 
-      const wallet = cards.find(it => it.key === keyOfWallet);
+      let wallet = cards.find(it => it.key === keyOfWallet);
 
-      if (wallet && key && debitsArray) {
+      if (wallet) {
+        if (type === 'debit to you') {
+          wallet = {
+            ...wallet,
+            walletAmount: wallet.walletAmount - amount,
+          };
+        }
+        if (type === 'your debit') {
+          wallet = {
+            ...wallet,
+            walletAmount: wallet.walletAmount + amount,
+          };
+        }
+        if (wallet.walletAmount < 0) {
+          setModalVisible(true);
+        }
+      }
+
+      if (wallet && key && debitsArray && wallet?.walletAmount > 0) {
         dispatch(
           addNewDebitRequest({
             wallet: wallet,
@@ -103,6 +127,12 @@ const NewDebits: FC<Props> = ({navigation}) => {
   return (
     <>
       <ScrollView style={styles.container}>
+        <ModalNewDebit
+          title="You cant give debit, try another wallet"
+          isVisible={modalVisible}
+          onPressHide={hide}
+        />
+
         <View style={styles.debtBTN}>
           <TouchableOpacity
             style={
@@ -247,6 +277,7 @@ const styles = StyleSheet.create({
     margin: 20,
     height: 55,
     backgroundColor: '#7CD0FF',
+    marginBottom: 90,
   },
 
   textConfirm: {

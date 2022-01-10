@@ -25,6 +25,7 @@ const Navigation = () => {
   const isLoading = useSelector(IsLoadingUser);
   const getErrorInfo = useSelector(getError);
   const debitsError = useSelector(getErrorDebits);
+  console.log(isLogIn);
 
   if (getErrorInfo || debitsError) {
     Alert.alert(getErrorInfo || debitsError);
@@ -119,11 +120,13 @@ const styles = StyleSheet.create({
   },
 
   title: {
+    textAlign: 'center',
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '500',
     color: 'black',
     fontSize: 14,
+    width: 50,
   },
 
   iconArea: {

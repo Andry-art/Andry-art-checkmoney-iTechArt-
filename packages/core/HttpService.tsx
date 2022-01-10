@@ -217,7 +217,7 @@ class HttpService {
         }),
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         const responseData = await response.json();
         this.saveToken(responseData);
         return responseData;

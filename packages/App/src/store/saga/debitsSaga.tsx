@@ -39,18 +39,6 @@ export function* addNewDebit(
 ): Generator {
   try {
     let wallet = action.payload.wallet;
-    if (action.payload.debit.type === 'debit to you') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount - action.payload.debit.amount,
-      };
-    }
-    if (action.payload.debit.type === 'your debit') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount + action.payload.debit.amount,
-      };
-    }
 
     const responseWallet = (yield call(
       Api.authPut.bind(Api),
@@ -107,18 +95,6 @@ export function* deleteDebit(
 ): Generator {
   try {
     let wallet = action.payload.wallet;
-    if (action.payload.debit.type === 'debit to you') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount + action.payload.debit.amount,
-      };
-    }
-    if (action.payload.debit.type === 'your debit') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount - action.payload.debit.amount,
-      };
-    }
 
     const responseWallet = (yield call(
       Api.authPut.bind(Api),

@@ -20,10 +20,11 @@ interface Props {
 const DebitInfo: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const info = useSelector(debitInfo);
-  const wallet = useSelector(walletName);
+  let wallet = useSelector(walletName);
   const toYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisibleMinus, setModalVisibleMinus] = useState<boolean>(false);
 
   const showModal = () => {
     setModalVisible(true);
@@ -31,9 +32,10 @@ const DebitInfo: FC<Props> = ({navigation}) => {
 
   const hide = useCallback(() => {
     setModalVisible(false);
+    setModalVisibleMinus(false);
   }, []);
 
-  const deleteCard = useCallback(() => {
+  const deleteDebitMinus = () => {
     let debitsArray;
     if (info.type === 'your debit') {
       debitsArray = yourDebits;
@@ -50,14 +52,58 @@ const DebitInfo: FC<Props> = ({navigation}) => {
       navigation.goBack();
       dispatch(getAllItemWallet());
     }
-  }, [dispatch, info, navigation, toYou, wallet, yourDebits]);
+  };
+
+  const deleteDebit = () => {
+    let debitsArray;
+    if (info.type === 'your debit') {
+      debitsArray = yourDebits;
+    }
+
+    if (info.type === 'debit to you') {
+      debitsArray = toYou;
+    }
+
+    if (wallet) {
+      if (info.type === 'debit to you') {
+        wallet = {
+          ...wallet,
+          walletAmount: wallet.walletAmount + info.amount,
+        };
+      }
+      if (info.type === 'your debit') {
+        wallet = {
+          ...wallet,
+          walletAmount: wallet.walletAmount - info.amount,
+        };
+      }
+
+      if (wallet?.walletAmount < 0) {
+        setModalVisibleMinus(true);
+      }
+    }
+
+    if (wallet && debitsArray && wallet?.walletAmount > 0) {
+      dispatch(
+        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
+      );
+      navigation.goBack();
+      dispatch(getAllItemWallet());
+    }
+  };
 
   return (
     <>
       <CardModal
         title=" Would you like to delete debit?"
         isVisible={modalVisible}
-        onPressDelete={deleteCard}
+        onPressDelete={deleteDebit}
+        onPressHide={hide}
+      />
+      <CardModal
+        title="Going to be minus?"
+        isVisible={modalVisibleMinus}
+        onPressDelete={deleteDebitMinus}
         onPressHide={hide}
       />
       <View style={styles.container}>

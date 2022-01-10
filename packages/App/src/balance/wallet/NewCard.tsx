@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#7CD0FF',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 80,
   },
 
   textBtn: {
