@@ -1,6 +1,6 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import {Api} from '../Api';
-import {DebitInfo, Debits, WalletInfo} from '../../types/types';
+import {DebitInfo, Debits, ErrorFetch, WalletInfo} from '../../types/types';
 import {
   getDebitsItemsSuccess,
   getDebitsItemsFailed,
@@ -13,6 +13,7 @@ import {
   deleteYourDebitSuccess,
   deleteDebitFailed,
 } from '../actions/debitsActions';
+import {logOutAction} from '../actions/registration';
 
 export function* getDebitsItems(): Generator {
   try {
@@ -24,9 +25,16 @@ export function* getDebitsItems(): Generator {
     if (response) {
       yield put(getDebitsItemsSuccess(response));
     }
+
+    if (!response) {
+      yield put(getDebitsItemsFailed('Network isn`t working'));
+    }
   } catch (error) {
     console.log('getWallet', error);
     yield put(getDebitsItemsFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutAction());
+    }
   }
 }
 
@@ -35,24 +43,16 @@ export function* addNewDebit(
 ): Generator {
   try {
     let wallet = action.payload.wallet;
-    if (action.payload.debit.type === 'debit to you') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount - action.payload.debit.amount,
-      };
-    }
-    if (action.payload.debit.type === 'your debit') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount + action.payload.debit.amount,
-      };
-    }
 
     const responseWallet = (yield call(
       Api.authPut.bind(Api),
       `http://localhost:8000/wallet/${action.payload.wallet.id}`,
       wallet,
     )) as WalletInfo;
+
+    if (!responseWallet) {
+      yield put(addNewDebitFailed('Network isn`t working'));
+    }
 
     if (action.payload.debit.type === 'debit to you' && responseWallet) {
       let debits = action.payload.array;
@@ -65,6 +65,9 @@ export function* addNewDebit(
       )) as {debitsToYou: Array<DebitInfo>};
       if (responseDebit) {
         yield put(addNewDebitToYouSuccess(responseDebit));
+      }
+      if (!responseDebit) {
+        yield put(addNewDebitFailed('Network isn`t working'));
       }
     }
 
@@ -81,10 +84,16 @@ export function* addNewDebit(
         console.log(responseDebit);
         yield put(addNewYourDebitSuccess(responseDebit));
       }
+      if (!responseDebit) {
+        yield put(addNewDebitFailed('Network isn`t working'));
+      }
     }
   } catch (error) {
     console.log('newDebits', error);
     yield put(addNewDebitFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutAction());
+    }
   }
 }
 
@@ -93,24 +102,16 @@ export function* deleteDebit(
 ): Generator {
   try {
     let wallet = action.payload.wallet;
-    if (action.payload.debit.type === 'debit to you') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount + action.payload.debit.amount,
-      };
-    }
-    if (action.payload.debit.type === 'your debit') {
-      wallet = {
-        ...wallet,
-        walletAmount: wallet.walletAmount - action.payload.debit.amount,
-      };
-    }
 
     const responseWallet = (yield call(
       Api.authPut.bind(Api),
       `http://localhost:8000/wallet/${action.payload.wallet.id}`,
       wallet,
     )) as WalletInfo;
+
+    if (!responseWallet) {
+      yield put(deleteDebitFailed('Network isn`t working'));
+    }
 
     if (action.payload.debit.type === 'debit to you' && responseWallet) {
       let debits = action.payload.array;
@@ -124,6 +125,9 @@ export function* deleteDebit(
       if (responseDebit) {
         yield put(deleteDebitToYouSuccess(responseDebit));
       }
+      if (!responseDebit) {
+        yield put(deleteDebitFailed('Network isn`t working'));
+      }
     }
 
     if (action.payload.debit.type === 'your debit' && responseWallet) {
@@ -136,13 +140,18 @@ export function* deleteDebit(
         {yourDebits: debits},
       )) as {yourDebits: Array<DebitInfo>};
       if (responseDebit) {
-        console.log(responseDebit);
         yield put(deleteYourDebitSuccess(responseDebit));
+      }
+      if (!responseDebit) {
+        yield put(deleteDebitFailed('Network isn`t working'));
       }
     }
   } catch (error) {
     console.log('newDebits', error);
     yield put(deleteDebitFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutAction());
+    }
   }
 }
 

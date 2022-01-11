@@ -14,6 +14,11 @@ export const filterIncomeSuccess =
   createAction<{response: Array<WalletInfo>; page: number}>(
     'filterIncomeItems',
   );
+
+export const filterAllItemsRequest = createAction<undefined>(
+  'FILTER_ALL_ITEMS_REQUEST',
+);
+
 export const filterExpensesRequest = createAction<number>('FILTER_EXPENSES');
 export const filterExpensesSuccess = createAction<{
   response: Array<WalletInfo>;
@@ -22,7 +27,7 @@ export const filterExpensesSuccess = createAction<{
 export const filterFailed = createAction<string>('filterIncomeItemsFailed');
 
 export const addNewCardRequest =
-  createAction<{cardName: string; amount: string; color: string; key: number}>(
+  createAction<{cardName: string; amount: number; color: string; key: number}>(
     'ADD_CARD',
   );
 export const addNewCardSuccess = createAction<WalletInfo>('addCard');

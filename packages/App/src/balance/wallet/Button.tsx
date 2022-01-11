@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,17 +7,36 @@ import {
   TouchableOpacity,
   ImageURISource,
 } from 'react-native';
+import {useSelector} from 'react-redux';
+import {filtersError} from '../../store/selectors/walletItems';
 
 interface Props {
   title: string;
   picture: ImageURISource;
-  onPress: () => void;
+  onPress: (title: string) => void;
+  chosen: string;
 }
 
-const Button: FC<Props> = ({title, picture, onPress}) => {
+const Button: FC<Props> = ({title, picture, onPress, chosen}) => {
+  const chooseBtn = () => {
+    onPress(title);
+  };
+
+  const errorFilters = useSelector(filtersError);
+
+  if (errorFilters) {
+    chosen = 'All actions';
+  }
+
+  const chosenColor = useMemo(() => {
+    return [styles.button, {backgroundColor: '#EBEDF8'}];
+  }, []);
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={onPress}>
+      <TouchableOpacity
+        style={chosen === title ? chosenColor : styles.button}
+        onPress={chooseBtn}>
         <Image source={picture} />
       </TouchableOpacity>
       <Text>{title}</Text>
@@ -35,9 +54,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    backgroundColor: '#C7F8FF',
+
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 100,
   },
 });
 

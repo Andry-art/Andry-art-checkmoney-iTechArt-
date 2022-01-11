@@ -42,3 +42,9 @@ export const wallets = (state: RootState) => {
 export const walletName = createDraftSafeSelector(wallets, state => {
   return state.wallets.find(it => it.key === state.debit.keyOfWallet);
 });
+
+export const getErrorDebits = (state: RootState) => state.debits.errorGet;
+
+export const newDebitError = (state: RootState) => state.debits.errorNewDebit;
+
+export const deleteDebitError = (state: RootState) => state.debits.errorDelete;

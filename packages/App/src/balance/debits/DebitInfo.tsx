@@ -11,7 +11,7 @@ import CardModal from '../../components/CardModal';
 import {deleteDebitRequest} from '../../store/actions/debitsActions';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {DebitNavigatorList} from '../../types/types';
+import {DebitNavigatorList, DebitType} from '../../types/types';
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
@@ -20,10 +20,11 @@ interface Props {
 const DebitInfo: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const info = useSelector(debitInfo);
-  const wallet = useSelector(walletName);
+  let wallet = useSelector(walletName);
   const toYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisibleMinus, setModalVisibleMinus] = useState<boolean>(false);
 
   const showModal = () => {
     setModalVisible(true);
@@ -31,15 +32,16 @@ const DebitInfo: FC<Props> = ({navigation}) => {
 
   const hide = useCallback(() => {
     setModalVisible(false);
+    setModalVisibleMinus(false);
   }, []);
 
-  const deleteCard = useCallback(() => {
+  const deleteDebitMinus = () => {
     let debitsArray;
-    if (info.type === 'your debit') {
+    if (info.type === DebitType.yourDebit) {
       debitsArray = yourDebits;
     }
 
-    if (info.type === 'debit to you') {
+    if (info.type === DebitType.toYou) {
       debitsArray = toYou;
     }
 
@@ -50,21 +52,65 @@ const DebitInfo: FC<Props> = ({navigation}) => {
       navigation.goBack();
       dispatch(getAllItemWallet());
     }
-  }, [dispatch, info, navigation, toYou, wallet, yourDebits]);
+  };
+
+  const deleteDebit = () => {
+    let debitsArray;
+    if (info.type === DebitType.yourDebit) {
+      debitsArray = yourDebits;
+    }
+
+    if (info.type === DebitType.toYou) {
+      debitsArray = toYou;
+    }
+
+    if (wallet) {
+      if (info.type === DebitType.toYou) {
+        wallet = {
+          ...wallet,
+          walletAmount: wallet.walletAmount + info.amount,
+        };
+      }
+      if (info.type === DebitType.yourDebit) {
+        wallet = {
+          ...wallet,
+          walletAmount: wallet.walletAmount - info.amount,
+        };
+      }
+
+      if (wallet?.walletAmount < 0) {
+        setModalVisibleMinus(true);
+      }
+    }
+
+    if (wallet && debitsArray && wallet?.walletAmount > 0) {
+      dispatch(
+        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
+      );
+      navigation.goBack();
+      dispatch(getAllItemWallet());
+    }
+  };
 
   return (
     <>
       <CardModal
         title=" Would you like to delete debit?"
         isVisible={modalVisible}
-        onPressDelete={deleteCard}
+        onPressDelete={deleteDebit}
         onPressHide={hide}
       />
-      <View>
+      <CardModal
+        title="Going to be minus?"
+        isVisible={modalVisibleMinus}
+        onPressDelete={deleteDebitMinus}
+        onPressHide={hide}
+      />
+      <View style={styles.container}>
         <Text style={styles.title}>Debit info</Text>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>
-            {info.type === 'debit to you' ? 'Debit to you from' : 'You own to'}
+            {info.type === DebitType.toYou ? 'Debit to you from' : 'You own to'}
           </Text>
           <Text style={styles.textAmount}>{info.person}</Text>
         </View>
@@ -89,6 +135,11 @@ const DebitInfo: FC<Props> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+
   title: {
     textAlign: 'center',
     marginVertical: 20,
@@ -120,7 +171,7 @@ const styles = StyleSheet.create({
   btnDelete: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 30,
     margin: 20,
     height: 55,
     backgroundColor: '#F64242',

@@ -19,18 +19,21 @@ export interface WalletInfo {
 }
 
 export type WalletNavigatorList = {
-  BalanceMenu: undefined;
-  BalanceWallet: undefined;
-  NewCard: undefined;
-  correctTransaction: undefined;
-  addMonetaryMovements: undefined;
+  Balance: undefined;
+  'New Card': undefined;
+  'Correct Transaction': undefined;
+  'Add Transaction': undefined;
 };
 
 export type DebitNavigatorList = {
-  BalanceMenu: undefined;
   Debits: undefined;
-  NewDebits: undefined;
-  DebitInfo: undefined;
+  'Add New Debit': undefined;
+  'Debit Info': undefined;
+};
+
+export type RegistrationNavigation = {
+  LogIn: undefined;
+  SignIn: undefined;
 };
 
 export type ChosenCategory = {
@@ -94,3 +97,13 @@ export type Debits = [
   {id: number; debitsToYou: Array<DebitInfo>},
   {id: number; yourDebits: Array<DebitInfo>},
 ];
+
+export type ErrorFetch = {
+  code: number;
+  message: string;
+};
+
+export enum DebitType {
+  toYou = 'debit to you',
+  yourDebit = 'your debit',
+}

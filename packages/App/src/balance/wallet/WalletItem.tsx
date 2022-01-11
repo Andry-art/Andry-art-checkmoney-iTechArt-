@@ -82,14 +82,14 @@ const WalletItem: FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-start',
-    backgroundColor: '#CBE5F2',
+    backgroundColor: '#D0EEFF',
   },
 
   card: {
     justifyContent: 'flex-start',
     backgroundColor: '#74EA8E',
     height: '100%',
-    borderRadius: 10,
+    borderRadius: 30,
     margin: 20,
     padding: 20,
   },
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     flexDirection: 'row',
     alignItems: 'center',
+    opacity: 1,
   },
 
   cardTitleText: {

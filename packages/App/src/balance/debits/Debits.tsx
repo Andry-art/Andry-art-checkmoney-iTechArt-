@@ -1,13 +1,13 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {
-  View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
   Platform,
   UIManager,
   LayoutAnimation,
+  Alert,
+  ScrollView,
 } from 'react-native';
 import ListOfDebits from './ListOfDebits';
 import {
@@ -17,9 +17,11 @@ import {
   sumOfYourDebits,
   debitInfo,
   walletName,
+  newDebitError,
+  deleteDebitError,
 } from '../../store/selectors/debits';
 import {useDispatch, useSelector} from 'react-redux';
-import {DebitInfo, DebitNavigatorList} from '../../types/types';
+import {DebitInfo, DebitNavigatorList, DebitType} from '../../types/types';
 import {
   addDebitInfo,
   deleteDebitRequest,
@@ -34,9 +36,6 @@ if (Platform.OS === 'android') {
   }
 }
 
-const keyExtractorDebitToYou = (it: DebitInfo) => String(it.key);
-const keyExtractorYourDebit = (it: DebitInfo) => String(it.key);
-
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
 }
@@ -46,13 +45,25 @@ const Debits: FC<Props> = ({navigation}) => {
   const [debitsVisible, setDebitsVisible] = useState<boolean>(false);
   const [myDebitsVisible, setMyDebitsVisible] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisibleMinus, setModalVisibleMinus] = useState<boolean>(false);
 
   const toYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
   const sumDebToYou = useSelector(sumDebitsToYou);
   const sumOfYourDeb = useSelector(sumOfYourDebits);
   const info = useSelector(debitInfo);
-  const wallet = useSelector(walletName);
+  let wallet = useSelector(walletName);
+  const addDebitError = useSelector(newDebitError);
+  const deleteError = useSelector(deleteDebitError);
+
+  useEffect(() => {
+    if (addDebitError) {
+      Alert.alert(addDebitError);
+    }
+    if (deleteError) {
+      Alert.alert(deleteError);
+    }
+  }, [addDebitError, deleteError]);
 
   const DebitsToYou = useCallback(() => {
     setDebitsVisible(prev => !prev);
@@ -65,7 +76,7 @@ const Debits: FC<Props> = ({navigation}) => {
   };
 
   const toNewDebits = () => {
-    navigation.navigate('NewDebits');
+    navigation.navigate('Add New Debit');
   };
 
   const showModal = useCallback(
@@ -87,15 +98,16 @@ const Debits: FC<Props> = ({navigation}) => {
 
   const hide = useCallback(() => {
     setModalVisible(false);
+    setModalVisibleMinus(false);
   }, []);
 
-  const deleteDebit = useCallback(() => {
+  const deleteDebitMinus = () => {
     let debitsArray;
-    if (info.type === 'your debit') {
+    if (info.type === DebitType.yourDebit) {
       debitsArray = yourDebits;
     }
 
-    if (info.type === 'debit to you') {
+    if (info.type === DebitType.toYou) {
       debitsArray = toYou;
     }
 
@@ -103,10 +115,48 @@ const Debits: FC<Props> = ({navigation}) => {
       dispatch(
         deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
       );
+      navigation.goBack();
+      dispatch(getAllItemWallet());
+    }
+  };
+
+  const deleteDebit = () => {
+    let debitsArray;
+    if (info.type === DebitType.yourDebit) {
+      debitsArray = yourDebits;
+    }
+
+    if (info.type === DebitType.toYou) {
+      debitsArray = toYou;
+    }
+
+    if (wallet) {
+      if (info.type === DebitType.toYou) {
+        wallet = {
+          ...wallet,
+          walletAmount: wallet.walletAmount + info.amount,
+        };
+      }
+      if (info.type === DebitType.yourDebit) {
+        wallet = {
+          ...wallet,
+          walletAmount: wallet.walletAmount - info.amount,
+        };
+      }
+
+      if (wallet?.walletAmount < 0) {
+        setModalVisibleMinus(true);
+      }
+    }
+
+    if (wallet && debitsArray && wallet?.walletAmount > 0) {
+      dispatch(
+        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
+      );
       setModalVisible(false);
       dispatch(getAllItemWallet());
     }
-  }, [dispatch, info, toYou, wallet, yourDebits]);
+  };
 
   const toDebitInfo = useCallback(
     ({type, keyOfWallet, key, date, person, amount}: DebitInfo) => {
@@ -120,86 +170,104 @@ const Debits: FC<Props> = ({navigation}) => {
           amount,
         }),
       );
-      navigation.navigate('DebitInfo');
+      navigation.navigate('Debit Info');
     },
     [dispatch, navigation],
   );
 
   LayoutAnimation.easeInEaseOut();
+
   return (
-    <View style={styles.container}>
+    <ScrollView nestedScrollEnabled={true} style={styles.container}>
       <CardModal
         title=" Would you like to delete debit?"
         isVisible={modalVisible}
         onPressDelete={deleteDebit}
         onPressHide={hide}
       />
-      <TouchableOpacity style={styles.debits} onPress={DebitsToYou}>
+
+      <CardModal
+        title="Going to be minus?"
+        isVisible={modalVisibleMinus}
+        onPressDelete={deleteDebitMinus}
+        onPressHide={hide}
+      />
+
+      <TouchableOpacity
+        style={debitsVisible ? styles.debitsActive : styles.debits}
+        onPress={DebitsToYou}>
         <Text style={styles.title}>Debits to you</Text>
         <Text style={styles.titleAmount}>{sumDebToYou}$</Text>
       </TouchableOpacity>
       {debitsVisible && (
-        <View style={styles.listContainer}>
-          <FlatList
-            data={toYou}
-            keyExtractor={keyExtractorDebitToYou}
-            renderItem={({item}) => (
-              <ListOfDebits
-                type={item.type}
-                keyOfWallet={item.keyOfWallet}
-                keyDeb={item.key}
-                date={item.date}
-                person={item.person}
-                amount={item.amount}
-                color="#1B824A"
-                onPress={toDebitInfo}
-                onLongPress={showModal}
-              />
-            )}
-          />
-        </View>
+        <ScrollView>
+          {toYou.map(item => (
+            <ListOfDebits
+              key={item.key}
+              type={item.type}
+              keyOfWallet={item.keyOfWallet}
+              keyDeb={item.key}
+              date={item.date}
+              person={item.person}
+              amount={item.amount}
+              color="#1B824A"
+              onPress={toDebitInfo}
+              onLongPress={showModal}
+            />
+          ))}
+        </ScrollView>
       )}
 
-      <TouchableOpacity style={styles.yourDebits} onPress={myDebits}>
-        <Text style={styles.title}>Your debits</Text>
-        <Text style={styles.titleAmount}>{sumOfYourDeb}$</Text>
+      <TouchableOpacity
+        style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
+        onPress={myDebits}>
+        <Text style={styles.titleYourDeb}>Your debits</Text>
+        <Text style={styles.titleAmountYourDeb}>{sumOfYourDeb}$</Text>
       </TouchableOpacity>
+
       {myDebitsVisible && (
-        <View style={styles.listContainer}>
-          <FlatList
-            data={yourDebits}
-            keyExtractor={keyExtractorYourDebit}
-            renderItem={({item}) => (
-              <ListOfDebits
-                type={item.type}
-                keyOfWallet={item.keyOfWallet}
-                keyDeb={item.key}
-                date={item.date}
-                person={item.person}
-                amount={item.amount}
-                color="red"
-                onPress={toDebitInfo}
-                onLongPress={showModal}
-              />
-            )}
-          />
-        </View>
+        <ScrollView>
+          {yourDebits.map(item => (
+            <ListOfDebits
+              key={item.key}
+              type={item.type}
+              keyOfWallet={item.keyOfWallet}
+              keyDeb={item.key}
+              date={item.date}
+              person={item.person}
+              amount={item.amount}
+              color="#1B824A"
+              onPress={toDebitInfo}
+              onLongPress={showModal}
+            />
+          ))}
+        </ScrollView>
       )}
 
       <TouchableOpacity style={styles.addNewDebit} onPress={toNewDebits}>
         <Text style={styles.titleAddNew}>Add New</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
+    backgroundColor: 'white',
+    flex: 1,
   },
 
-  listContainer: {
-    maxHeight: '50%',
+  debitsActive: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: 55,
+    backgroundColor: '#7CD0FF',
+    borderRadius: 30,
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
 
   debits: {
@@ -208,8 +276,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 55,
-    backgroundColor: '#74EA8E',
-    borderRadius: 10,
+    borderRadius: 30,
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+
+  yourDebitsActive: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: 55,
+    backgroundColor: '#7CD0FF',
+    borderRadius: 30,
     paddingHorizontal: 20,
     marginTop: 20,
   },
@@ -220,8 +299,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 55,
-    backgroundColor: '#EF624F',
-    borderRadius: 10,
+    borderRadius: 30,
     paddingHorizontal: 20,
     marginTop: 20,
   },
@@ -229,13 +307,28 @@ const styles = StyleSheet.create({
   title: {
     fontStyle: 'normal',
     fontWeight: '700',
-    color: 'black',
+    color: 'green',
     fontSize: 18,
   },
+
+  titleYourDeb: {
+    fontStyle: 'normal',
+    fontWeight: '700',
+    color: 'red',
+    fontSize: 18,
+  },
+
   titleAmount: {
     fontStyle: 'normal',
     fontWeight: '500',
-    color: 'black',
+    color: 'green',
+    fontSize: 18,
+  },
+
+  titleAmountYourDeb: {
+    fontStyle: 'normal',
+    fontWeight: '500',
+    color: 'red',
     fontSize: 18,
   },
   listDebits: {
@@ -254,9 +347,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     height: 55,
-    borderRadius: 10,
+    borderRadius: 30,
     borderColor: '#23A7F1',
     marginTop: 20,
+    width: '100%',
+    marginBottom: 80,
   },
 });
 

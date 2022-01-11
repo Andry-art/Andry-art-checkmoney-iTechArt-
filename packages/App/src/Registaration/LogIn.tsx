@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import BG from '../../Pics/Group32.png';
@@ -15,8 +16,11 @@ import PasswordVisibleSource from '../../Pics/passwordVisible.png';
 import ButtonApp from '../components/ButtonApp';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {userLogIn} from '../store/actions/registration';
+import {logInError} from '../store/selectors/registration';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RegistrationNavigation} from '../types/types';
 
 const logInSchema = yup.object({
   email: yup.string().required().email(),
@@ -25,9 +29,15 @@ const logInSchema = yup.object({
 
 const initialValues = {email: '', password: ''};
 
-const LogIn: FC = ({navigation}: any) => {
+interface Props {
+  navigation: NativeStackNavigationProp<RegistrationNavigation>;
+}
+
+const LogIn: FC<Props> = ({navigation}) => {
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
   const dispatch = useDispatch();
+
+  const error = useSelector(logInError);
 
   const passwordVisibility = useCallback(() => {
     setVisiblePass(prev => !prev);
@@ -45,6 +55,10 @@ const LogIn: FC = ({navigation}: any) => {
     },
     [dispatch],
   );
+
+  if (error) {
+    Alert.alert(error);
+  }
 
   return (
     <ImageBackground style={styles.backGround} source={BG}>
