@@ -21,7 +21,6 @@ const BalanceNavigation = () => {
     dispatch(getAllItemWallet());
     dispatch(getDebitsItemsRequest());
   }, [dispatch, isLogIn]);
-  console.log(isLogIn);
 
   const [isVisible, setIsVisible] = useState(false);
 

@@ -19,6 +19,8 @@ import * as yup from 'yup';
 import {useDispatch, useSelector} from 'react-redux';
 import {userLogIn} from '../store/actions/registration';
 import {logInError} from '../store/selectors/registration';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RegistrationNavigation} from '../types/types';
 
 const logInSchema = yup.object({
   email: yup.string().required().email(),
@@ -27,13 +29,15 @@ const logInSchema = yup.object({
 
 const initialValues = {email: '', password: ''};
 
-const LogIn: FC = ({navigation}: any) => {
+interface Props {
+  navigation: NativeStackNavigationProp<RegistrationNavigation>;
+}
+
+const LogIn: FC<Props> = ({navigation}) => {
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
   const dispatch = useDispatch();
 
   const error = useSelector(logInError);
-
-  console.log('123123', error);
 
   const passwordVisibility = useCallback(() => {
     setVisiblePass(prev => !prev);

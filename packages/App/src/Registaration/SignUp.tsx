@@ -17,6 +17,8 @@ import {Formik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch} from 'react-redux';
 import {userSignUp} from '../store/actions/registration';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RegistrationNavigation} from '../types/types';
 
 const signUpSchema = yup.object({
   email: yup.string().required().email(),
@@ -27,9 +29,13 @@ const signUpSchema = yup.object({
     .oneOf([yup.ref('password')], 'Password is not the same'),
 });
 
+interface Props {
+  navigation: NativeStackNavigationProp<RegistrationNavigation>;
+}
+
 const initialValues = {email: '', password: '', repeatPassword: ''};
 
-const LogIn: FC = ({navigation}: any) => {
+const LogIn: FC<Props> = ({navigation}) => {
   const [visiblePass, setVisiblePass] = useState<boolean>(true);
   const [visibleRepeatPass, setVisibleRepeatPass] = useState<boolean>(true);
   const dispatch = useDispatch();

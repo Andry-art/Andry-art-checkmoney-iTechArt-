@@ -31,6 +31,11 @@ export type DebitNavigatorList = {
   'Debit Info': undefined;
 };
 
+export type RegistrationNavigation = {
+  LogIn: undefined;
+  SignIn: undefined;
+};
+
 export type ChosenCategory = {
   icon: string;
   category: string;
@@ -92,3 +97,8 @@ export type Debits = [
   {id: number; debitsToYou: Array<DebitInfo>},
   {id: number; yourDebits: Array<DebitInfo>},
 ];
+
+export type ErrorFetch = {
+  code: number;
+  message: string;
+};

@@ -1,6 +1,5 @@
 import React, {Dispatch, FC, SetStateAction} from 'react';
 import {TouchableOpacity, Modal, View, Text, StyleSheet} from 'react-native';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import {useDispatch} from 'react-redux';
 import {logOutAction} from '../store/actions/registration';
 
@@ -17,11 +16,6 @@ const LogOutModal: FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const logOut = async () => {
-    try {
-      await EncryptedStorage.removeItem('user_session');
-    } catch (error) {
-      console.log(error);
-    }
     setIsVisible(false);
     dispatch(logOutAction());
   };

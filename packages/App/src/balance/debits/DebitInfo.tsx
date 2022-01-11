@@ -17,6 +17,11 @@ interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
 }
 
+enum DebitType {
+  toYou = 'debit to you',
+  yourDebit = 'your debit',
+}
+
 const DebitInfo: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const info = useSelector(debitInfo);
@@ -37,11 +42,11 @@ const DebitInfo: FC<Props> = ({navigation}) => {
 
   const deleteDebitMinus = () => {
     let debitsArray;
-    if (info.type === 'your debit') {
+    if (info.type === DebitType.yourDebit) {
       debitsArray = yourDebits;
     }
 
-    if (info.type === 'debit to you') {
+    if (info.type === DebitType.toYou) {
       debitsArray = toYou;
     }
 
@@ -56,22 +61,22 @@ const DebitInfo: FC<Props> = ({navigation}) => {
 
   const deleteDebit = () => {
     let debitsArray;
-    if (info.type === 'your debit') {
+    if (info.type === DebitType.yourDebit) {
       debitsArray = yourDebits;
     }
 
-    if (info.type === 'debit to you') {
+    if (info.type === DebitType.toYou) {
       debitsArray = toYou;
     }
 
     if (wallet) {
-      if (info.type === 'debit to you') {
+      if (info.type === DebitType.toYou) {
         wallet = {
           ...wallet,
           walletAmount: wallet.walletAmount + info.amount,
         };
       }
-      if (info.type === 'your debit') {
+      if (info.type === DebitType.yourDebit) {
         wallet = {
           ...wallet,
           walletAmount: wallet.walletAmount - info.amount,
@@ -110,7 +115,7 @@ const DebitInfo: FC<Props> = ({navigation}) => {
         <Text style={styles.title}>Debit info</Text>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>
-            {info.type === 'debit to you' ? 'Debit to you from' : 'You own to'}
+            {info.type === DebitType.toYou ? 'Debit to you from' : 'You own to'}
           </Text>
           <Text style={styles.textAmount}>{info.person}</Text>
         </View>

@@ -63,7 +63,7 @@ class HttpService {
         throw new ErrorFetch('Needs authorization', response.status, false);
       }
       if (response.status === 404) {
-        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
+        throw new ErrorFetch('Something went wrong :(', response.status, false);
       }
       throw new ErrorFetch('authGet error', response.status, true);
     } catch (error) {
@@ -105,7 +105,7 @@ class HttpService {
         throw new ErrorFetch('Needs authorization', response.status, false);
       }
       if (response.status === 404) {
-        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
+        throw new ErrorFetch('Something went wrong :(', response.status, false);
       }
 
       throw new ErrorFetch('authPost error', response.status, true);
@@ -148,7 +148,7 @@ class HttpService {
         throw new ErrorFetch('Needs authorization', response.status, false);
       }
       if (response.status === 404) {
-        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
+        throw new ErrorFetch('Something went wrong :(', response.status, false);
       }
 
       throw new ErrorFetch('authPut error', response.status, true);
@@ -188,7 +188,7 @@ class HttpService {
         throw new ErrorFetch('Needs authorization', response.status, false);
       }
       if (response.status === 404) {
-        throw new ErrorFetch('Something is wrong with the server ', response.status, false);
+        throw new ErrorFetch('Something went wrong :(', response.status, false);
       }
 
       throw new ErrorFetch('authDelete error', response.status, true);

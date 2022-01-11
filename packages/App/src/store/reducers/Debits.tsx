@@ -48,29 +48,31 @@ const initialState: IDebits = {
 
 const debits = createReducer<IDebits>(initialState, builder => {
   builder
-    .addCase(getDebitsItemsRequest, state => ({
-      ...state,
-      isLoading: true,
-    }))
+    .addCase(getDebitsItemsRequest, state => {
+      state.isLoading = true;
+      state.errorGet = '';
+      return state;
+    })
     .addCase(getDebitsItemsSuccess, (state, action: PayloadAction<Debits>) => {
       state.toYou = action.payload[0].debitsToYou;
       state.yourDebit = action.payload[1].yourDebits;
       state.isLoading = false;
+      state.errorGet = '';
       return state;
     })
-    .addCase(getDebitsItemsFailed, (state, action: PayloadAction<string>) => ({
-      ...state,
-      isLoading: false,
-      errorGet: action.payload,
-    }))
-    .addCase(addDebitInfo, (state, action: PayloadAction<DebitInfo>) => ({
-      ...state,
-      debInfo: action.payload,
-    }))
-    .addCase(addNewDebitRequest, state => ({
-      ...state,
-      isNewDebitLoading: true,
-    }))
+    .addCase(getDebitsItemsFailed, (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.errorGet = action.payload;
+      return state;
+    })
+    .addCase(addDebitInfo, (state, action: PayloadAction<DebitInfo>) => {
+      state.debInfo = action.payload;
+      return state;
+    })
+    .addCase(addNewDebitRequest, state => {
+      state.isNewDebitLoading = true;
+      return state;
+    })
     .addCase(
       addNewDebitToYouSuccess,
       (state, action: PayloadAction<{debitsToYou: Array<DebitInfo>}>) => {
@@ -87,16 +89,16 @@ const debits = createReducer<IDebits>(initialState, builder => {
         return state;
       },
     )
-    .addCase(addNewDebitFailed, (state, action: PayloadAction<string>) => ({
-      ...state,
-      isLoading: false,
-      errorNewDebit: `Couldn't add debit.${action.payload}`,
-    }))
-    .addCase(deleteDebitRequest, state => ({
-      ...state,
-      isDeleteLoading: true,
-      errorDelete: '',
-    }))
+    .addCase(addNewDebitFailed, (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.errorNewDebit = `Couldn't add debit.${action.payload}`;
+      return state;
+    })
+    .addCase(deleteDebitRequest, state => {
+      state.isDeleteLoading = true;
+      state.errorDelete = '';
+      return state;
+    })
     .addCase(
       deleteDebitToYouSuccess,
       (state, action: PayloadAction<{debitsToYou: Array<DebitInfo>}>) => {
@@ -113,11 +115,11 @@ const debits = createReducer<IDebits>(initialState, builder => {
         return state;
       },
     )
-    .addCase(deleteDebitFailed, (state, action: PayloadAction<string>) => ({
-      ...state,
-      isLoading: false,
-      errorDelete: `Couldn't delete debit.${action.payload}`,
-    }));
+    .addCase(deleteDebitFailed, (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.errorDelete = `Couldn't delete debit.${action.payload}`;
+      return state;
+    });
 });
 
 export default debits;

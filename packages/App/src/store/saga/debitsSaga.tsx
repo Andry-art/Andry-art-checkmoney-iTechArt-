@@ -1,6 +1,6 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import {Api} from '../Api';
-import {DebitInfo, Debits, WalletInfo} from '../../types/types';
+import {DebitInfo, Debits, ErrorFetch, WalletInfo} from '../../types/types';
 import {
   getDebitsItemsSuccess,
   getDebitsItemsFailed,
@@ -13,6 +13,7 @@ import {
   deleteYourDebitSuccess,
   deleteDebitFailed,
 } from '../actions/debitsActions';
+import {logOutActionSuccess} from '../actions/registration';
 
 export function* getDebitsItems(): Generator {
   try {
@@ -87,6 +88,9 @@ export function* addNewDebit(
   } catch (error) {
     console.log('newDebits', error);
     yield put(addNewDebitFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -142,6 +146,9 @@ export function* deleteDebit(
   } catch (error) {
     console.log('newDebits', error);
     yield put(deleteDebitFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 

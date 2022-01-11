@@ -40,6 +40,11 @@ interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
 }
 
+enum DebitType {
+  toYou = 'debit to you',
+  yourDebit = 'your debit',
+}
+
 const Debits: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const [debitsVisible, setDebitsVisible] = useState<boolean>(false);
@@ -103,11 +108,11 @@ const Debits: FC<Props> = ({navigation}) => {
 
   const deleteDebitMinus = () => {
     let debitsArray;
-    if (info.type === 'your debit') {
+    if (info.type === DebitType.yourDebit) {
       debitsArray = yourDebits;
     }
 
-    if (info.type === 'debit to you') {
+    if (info.type === DebitType.toYou) {
       debitsArray = toYou;
     }
 
@@ -122,22 +127,22 @@ const Debits: FC<Props> = ({navigation}) => {
 
   const deleteDebit = () => {
     let debitsArray;
-    if (info.type === 'your debit') {
+    if (info.type === DebitType.yourDebit) {
       debitsArray = yourDebits;
     }
 
-    if (info.type === 'debit to you') {
+    if (info.type === DebitType.toYou) {
       debitsArray = toYou;
     }
 
     if (wallet) {
-      if (info.type === 'debit to you') {
+      if (info.type === DebitType.toYou) {
         wallet = {
           ...wallet,
           walletAmount: wallet.walletAmount + info.amount,
         };
       }
-      if (info.type === 'your debit') {
+      if (info.type === DebitType.yourDebit) {
         wallet = {
           ...wallet,
           walletAmount: wallet.walletAmount - info.amount,

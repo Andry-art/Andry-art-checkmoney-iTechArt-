@@ -16,7 +16,7 @@ export const filterIncomeSuccess =
   );
 
 export const filterAllItemsRequest = createAction<undefined>(
-  'filterAllItemsRequest',
+  'FILTER_ALL_ITEMS_REQUEST',
 );
 
 export const filterExpensesRequest = createAction<number>('FILTER_EXPENSES');

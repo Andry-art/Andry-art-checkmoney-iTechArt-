@@ -1,6 +1,6 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import {Api} from '../Api';
-import {WalletInfo} from '../../types/types';
+import {WalletInfo, ErrorFetch} from '../../types/types';
 import {
   getWalletItemsSuccess,
   getWalletItemsFailed,
@@ -27,6 +27,7 @@ import {
   correctTransactionInfo,
   addCorrectTransactionRequest,
 } from '../actions/walletActions';
+import {logOutActionSuccess} from '../actions/registration';
 
 export function* getWalletItems(): Generator {
   try {
@@ -45,6 +46,9 @@ export function* getWalletItems(): Generator {
   } catch (error) {
     console.log('getWallet', error);
     yield put(getWalletItemsFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -57,6 +61,8 @@ export function* filterItems(
       Api.authGet.bind(Api),
       'http://localhost:8000/wallet',
     )) as Array<WalletInfo>;
+
+    console.log('rrrrrr', response);
 
     if (!response) {
       yield put(filterFailed('Network isn`t working'));
@@ -71,6 +77,9 @@ export function* filterItems(
   } catch (error) {
     console.log('filterErrorIncome', error);
     yield put(filterFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -101,6 +110,9 @@ export function* addCard(
   } catch (error) {
     console.log('addCard', error);
     yield put(addNewCardFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -122,6 +134,9 @@ export function* deleteCardRequest(
   } catch (error) {
     console.log('Delete', error);
     yield put(deleteCardFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -165,6 +180,9 @@ export function* addTransaction(
   } catch (error) {
     console.log('post', error);
     yield put(addTransactionFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -209,6 +227,9 @@ export function* deleteTransaction(
   } catch (error) {
     console.log('deleteTransaction', error);
     yield put(deleteTransactionFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -246,6 +267,9 @@ export function* correctTransactionChange(
   } catch (error) {
     console.log('correctTransactionToSend', error);
     yield put(addCorrectTransactionFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutActionSuccess());
+    }
   }
 }
 
@@ -260,5 +284,5 @@ export function* WalletItems(): Generator {
   yield takeEvery('DELETE_TRANSACTION', deleteTransaction);
   yield takeEvery('CORRECT_TRANSACTION_INFO', correctTransaction);
   yield takeEvery('CORRECT_TRANSACTION', correctTransactionChange);
-  yield takeEvery('filterAllItemsRequest', getWalletItems);
+  yield takeEvery('FILTER_ALL_ITEMS_REQUEST', getWalletItems);
 }

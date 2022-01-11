@@ -93,13 +93,13 @@ const NewDebits: FC<Props> = ({navigation}) => {
       let wallet = cards.find(it => it.key === keyOfWallet);
 
       if (wallet) {
-        if (type === 'debit to you') {
+        if (type === DebitType.toYou) {
           wallet = {
             ...wallet,
             walletAmount: wallet.walletAmount - amount,
           };
         }
-        if (type === 'your debit') {
+        if (type === DebitType.yourDebit) {
           wallet = {
             ...wallet,
             walletAmount: wallet.walletAmount + amount,

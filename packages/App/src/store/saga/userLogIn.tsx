@@ -4,7 +4,9 @@ import {
   userLogIn,
   userLogInSuccess,
   userLogInFailed,
+  logOutActionSuccess,
 } from '../actions/registration';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export function* userSendLogIn(
   action: ReturnType<typeof userLogIn>,
@@ -51,7 +53,17 @@ export function* userSendSignUp(
   }
 }
 
+export function* userLogOut(): Generator {
+  try {
+    yield EncryptedStorage.removeItem('user_session');
+    yield put(logOutActionSuccess());
+  } catch (error) {
+    yield put(userLogInFailed((error as Error).message));
+  }
+}
+
 export function* userIsLogIn(): Generator {
   yield takeEvery('USER_LOG_IN', userSendLogIn);
   yield takeEvery('USER_SIGN_UP', userSendSignUp);
+  yield takeEvery('LOGOUT', userLogOut);
 }
