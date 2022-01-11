@@ -102,3 +102,8 @@ export type ErrorFetch = {
   code: number;
   message: string;
 };
+
+export enum DebitType {
+  toYou = 'debit to you',
+  yourDebit = 'your debit',
+}

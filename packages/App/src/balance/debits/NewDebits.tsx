@@ -21,6 +21,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
 import imgArrowSource from '../../../Pics/double-arrow.png';
 import ModalNewDebit from '../../components/ModalNewDebit';
+import {DebitType} from '../../types/types';
 
 const newDebitSchema = yup.object({
   name: yup.string().required('Name is required'),
@@ -34,11 +35,6 @@ const initialValues = {
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
-}
-
-enum DebitType {
-  toYou = 'debit to you',
-  yourDebit = 'your debit',
 }
 
 const NewDebits: FC<Props> = ({navigation}) => {

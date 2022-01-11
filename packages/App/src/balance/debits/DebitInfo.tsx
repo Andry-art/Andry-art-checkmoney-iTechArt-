@@ -11,15 +11,10 @@ import CardModal from '../../components/CardModal';
 import {deleteDebitRequest} from '../../store/actions/debitsActions';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {DebitNavigatorList} from '../../types/types';
+import {DebitNavigatorList, DebitType} from '../../types/types';
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
-}
-
-enum DebitType {
-  toYou = 'debit to you',
-  yourDebit = 'your debit',
 }
 
 const DebitInfo: FC<Props> = ({navigation}) => {

@@ -21,7 +21,7 @@ import {
   deleteDebitError,
 } from '../../store/selectors/debits';
 import {useDispatch, useSelector} from 'react-redux';
-import {DebitInfo, DebitNavigatorList} from '../../types/types';
+import {DebitInfo, DebitNavigatorList, DebitType} from '../../types/types';
 import {
   addDebitInfo,
   deleteDebitRequest,
@@ -38,11 +38,6 @@ if (Platform.OS === 'android') {
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
-}
-
-enum DebitType {
-  toYou = 'debit to you',
-  yourDebit = 'your debit',
 }
 
 const Debits: FC<Props> = ({navigation}) => {

@@ -7,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Button,
 } from 'react-native';
 import walletIconSource from '../../../Pics/balance/wallet.png';
 import {useFormik} from 'formik';
@@ -18,7 +17,6 @@ import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletNavigatorList} from '../../types/types';
 import ColorsNewCard from './ColorsNewCard';
-import EncryptedStorage from 'react-native-encrypted-storage';
 
 const colors = ['#8D45A7', '#DFE24A', '#56E24A', '#3FECEC', '#EA4953'];
 const initialValues = {
@@ -73,13 +71,8 @@ const NewCard: FC<Props> = ({navigation}) => {
     [cardColor],
   );
 
-  const cleanee = async () => {
-    await EncryptedStorage.removeItem('user_session');
-  };
-
   return (
     <ScrollView style={styles.container}>
-      <Button title="ddddd" onPress={cleanee} />
       <View style={styles.titleContainer}>
         <Text style={styles.title}>New Card</Text>
       </View>

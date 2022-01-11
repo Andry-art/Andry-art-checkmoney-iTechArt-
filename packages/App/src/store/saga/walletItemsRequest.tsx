@@ -27,7 +27,7 @@ import {
   correctTransactionInfo,
   addCorrectTransactionRequest,
 } from '../actions/walletActions';
-import {logOutActionSuccess} from '../actions/registration';
+import {logOutAction} from '../actions/registration';
 
 export function* getWalletItems(): Generator {
   try {
@@ -47,7 +47,7 @@ export function* getWalletItems(): Generator {
     console.log('getWallet', error);
     yield put(getWalletItemsFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
@@ -61,8 +61,6 @@ export function* filterItems(
       Api.authGet.bind(Api),
       'http://localhost:8000/wallet',
     )) as Array<WalletInfo>;
-
-    console.log('rrrrrr', response);
 
     if (!response) {
       yield put(filterFailed('Network isn`t working'));
@@ -78,7 +76,7 @@ export function* filterItems(
     console.log('filterErrorIncome', error);
     yield put(filterFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
@@ -111,7 +109,7 @@ export function* addCard(
     console.log('addCard', error);
     yield put(addNewCardFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
@@ -135,7 +133,7 @@ export function* deleteCardRequest(
     console.log('Delete', error);
     yield put(deleteCardFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
@@ -181,7 +179,7 @@ export function* addTransaction(
     console.log('post', error);
     yield put(addTransactionFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
@@ -228,7 +226,7 @@ export function* deleteTransaction(
     console.log('deleteTransaction', error);
     yield put(deleteTransactionFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
@@ -268,7 +266,7 @@ export function* correctTransactionChange(
     console.log('correctTransactionToSend', error);
     yield put(addCorrectTransactionFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }

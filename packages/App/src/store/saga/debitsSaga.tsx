@@ -13,7 +13,7 @@ import {
   deleteYourDebitSuccess,
   deleteDebitFailed,
 } from '../actions/debitsActions';
-import {logOutActionSuccess} from '../actions/registration';
+import {logOutAction} from '../actions/registration';
 
 export function* getDebitsItems(): Generator {
   try {
@@ -32,6 +32,9 @@ export function* getDebitsItems(): Generator {
   } catch (error) {
     console.log('getWallet', error);
     yield put(getDebitsItemsFailed((error as Error).message));
+    if ((error as ErrorFetch).code === 401) {
+      yield put(logOutAction());
+    }
   }
 }
 
@@ -89,7 +92,7 @@ export function* addNewDebit(
     console.log('newDebits', error);
     yield put(addNewDebitFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
@@ -147,7 +150,7 @@ export function* deleteDebit(
     console.log('newDebits', error);
     yield put(deleteDebitFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
-      yield put(logOutActionSuccess());
+      yield put(logOutAction());
     }
   }
 }
