@@ -124,3 +124,8 @@ export enum Months {
   November = 10,
   December = 11,
 }
+
+export enum TransactionType {
+  income = 'income',
+  expenses = 'expenses',
+}

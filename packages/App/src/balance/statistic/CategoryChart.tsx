@@ -1,13 +1,9 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
-import {walletItems} from '../../store/selectors/walletItems';
+import {allTransactionsArray} from '../../store/selectors/walletItems';
 import {VictoryPie} from 'victory-native';
-
-enum TransactionType {
-  income = 'income',
-  expenses = 'expenses',
-}
+import {TransactionType} from '../../types/types';
 
 enum Category {
   Car = 'Car',
@@ -23,58 +19,68 @@ interface Props {
 }
 
 const CategoryChart: FC<Props> = ({month}) => {
-  const trans = useSelector(walletItems);
-
-  const allTransactions = trans.map(it => it.transactions).flat();
-  const allTransactionsByMonth = allTransactions.filter(
-    it => new Date(it.date).getMonth() === month,
-  );
-  const allTransactionExpenses = allTransactionsByMonth.filter(
-    it => it.type === TransactionType.expenses,
-  );
-
-  const allTransactionExpensesSum = allTransactionExpenses.reduce(
-    (sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    },
-    0,
-  );
-
-  const categoryUnknownSum = allTransactionExpenses
-    .filter(it => it.category === Category.Unknown)
-    .reduce((sum, cur) => {
+  const allTransactions = useSelector(allTransactionsArray);
+  const allTransactionsByMonth = useMemo(() => {
+    return allTransactions.filter(it => new Date(it.date).getMonth() === month);
+  }, [allTransactions, month]);
+  const allTransactionExpenses = useMemo(() => {
+    return allTransactionsByMonth.filter(
+      it => it.type === TransactionType.expenses,
+    );
+  }, [allTransactionsByMonth]);
+  const allTransactionExpensesSum = useMemo(() => {
+    return allTransactionExpenses.reduce((sum, cur) => {
       return (sum * 100 + cur.amountTransaction * 100) / 100;
     }, 0);
+  }, [allTransactionExpenses]);
 
-  const categoryGrocerySum = allTransactionExpenses
-    .filter(it => it.category === Category.Grocery)
-    .reduce((sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    }, 0);
+  const categoryUnknownSum = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.category === Category.Unknown)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionExpenses]);
 
-  const categoryHealthSum = allTransactionExpenses
-    .filter(it => it.category === Category.Health)
-    .reduce((sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    }, 0);
+  const categoryGrocerySum = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.category === Category.Grocery)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionExpenses]);
 
-  const categoryRestaurantSum = allTransactionExpenses
-    .filter(it => it.category === Category.Restaurant)
-    .reduce((sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    }, 0);
+  const categoryHealthSum = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.category === Category.Health)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionExpenses]);
 
-  const categoryShoppingSum = allTransactionExpenses
-    .filter(it => it.category === Category.Shopping)
-    .reduce((sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    }, 0);
+  const categoryRestaurantSum = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.category === Category.Restaurant)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionExpenses]);
 
-  const categoryCarSum = allTransactionExpenses
-    .filter(it => it.category === Category.Car)
-    .reduce((sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    }, 0);
+  const categoryShoppingSum = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.category === Category.Shopping)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionExpenses]);
+
+  const categoryCarSum = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.category === Category.Car)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionExpenses]);
 
   const allCategoriesData = [
     {x: Category.Car, y: categoryCarSum},
@@ -94,8 +100,6 @@ const CategoryChart: FC<Props> = ({month}) => {
     };
   });
 
-  console.log(allTransactionExpensesSum);
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Category expenses</Text>
@@ -104,7 +108,6 @@ const CategoryChart: FC<Props> = ({month}) => {
         padding={100}
         innerRadius={40}
         labelRadius={120}
-        categories={{x: ['Unknown', 'Grocery', 'car', '222']}}
         colorScale={['#03045e', '#0077b6', '#00b4d8', '#90e0ef', '#caf0f8']}
         style={{data: {width: '100%'}}}
         data={CategoriesWasUsed}

@@ -12,7 +12,7 @@ import MoneyFlow from './MoneyFlow';
 import WeeklyChart from './WeeklyChart';
 import CategoryChart from './CategoryChart';
 import {useSelector} from 'react-redux';
-import {walletItems} from '../../store/selectors/walletItems';
+import {allTransactionsArray} from '../../store/selectors/walletItems';
 import smileSource from '../../../Pics/smile.png';
 
 const months = [
@@ -31,10 +31,9 @@ const months = [
 ];
 
 const MainStatistic: FC = () => {
-  const [chosenMonth, setChosenMonth] = useState<number>(0);
+  const [chosenMonth, setChosenMonth] = useState<number>(new Date().getMonth());
 
-  const trans = useSelector(walletItems);
-  const allTransactions = trans.map(it => it.transactions).flat();
+  const allTransactions = useSelector(allTransactionsArray);
   const allTransactionsByMonth = allTransactions.filter(
     it => new Date(it.date).getMonth() === chosenMonth,
   );

@@ -46,3 +46,7 @@ export const filteredIncome = (state: RootState) => {
 export const filteredExp = (state: RootState) => {
   return state.wallet.filteredExpenses;
 };
+
+export const allTransactionsArray = (state: RootState) => {
+  return state.wallet.walletContent.map(it => it.transactions).flat();
+};

@@ -1,14 +1,10 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useMemo, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
-import {walletItems} from '../../store/selectors/walletItems';
+import {allTransactionsArray} from '../../store/selectors/walletItems';
 import {VictoryChart, VictoryBar, VictoryTheme} from 'victory-native';
 import {useDeviceOrientation} from '@react-native-community/hooks';
-
-enum TransactionType {
-  income = 'income',
-  expenses = 'expenses',
-}
+import {TransactionType} from '../../types/types';
 
 enum DayOfWeek {
   Mon = 1,
@@ -25,37 +21,47 @@ interface Props {
 }
 
 const WeeklyChart: FC<Props> = ({month}) => {
-  const trans = useSelector(walletItems);
   const orientation = useDeviceOrientation();
+  const allTransactions = useSelector(allTransactionsArray);
+  const allTransactionsByMonth = useMemo(() => {
+    return allTransactions.filter(it => new Date(it.date).getMonth() === month);
+  }, [allTransactions, month]);
 
-  const allTransactions = trans.map(it => it.transactions).flat();
-  const allTransactionsByMonth = allTransactions.filter(
-    it => new Date(it.date).getMonth() === month,
-  );
+  const allTransactionExpenses = useMemo(() => {
+    return allTransactionsByMonth
+      .filter(it => it.type === TransactionType.expenses)
+      .reverse()
+      .map(it => ({
+        x:
+          `${DayOfWeek[new Date(it.date).getDay()]}` +
+          ` ${new Date(it.date).getDate()}`,
+        day: new Date(it.date).getDate(),
+        DayOfWeek: DayOfWeek[new Date(it.date).getDay()],
+        y: it.amountTransaction,
+      }));
+  }, [allTransactionsByMonth]);
 
-  const allTransactionExpenses = allTransactionsByMonth
-    .filter(it => it.type === TransactionType.expenses)
-    .reverse()
-    .map(it => ({
-      x:
-        `${DayOfWeek[new Date(it.date).getDay()]}` +
-        ` ${new Date(it.date).getDate()}`,
-      day: new Date(it.date).getDate(),
-      DayOfWeek: DayOfWeek[new Date(it.date).getDay()],
-      y: it.amountTransaction,
-    }));
-
-  const firstChart = allTransactionExpenses.filter(it => it.day <= 6);
-  const secondChart = allTransactionExpenses
-    .filter(it => it.day > 6)
-    .filter(it => it.day <= 12);
-  const thirdChart = allTransactionExpenses
-    .filter(it => it.day > 12)
-    .filter(it => it.day <= 18);
-  const fourthChart = allTransactionExpenses
-    .filter(it => it.day > 18)
-    .filter(it => it.day <= 24);
-  const fifthChart = allTransactionExpenses.filter(it => it.day > 24);
+  const firstChart = useMemo(() => {
+    return allTransactionExpenses.filter(it => it.day <= 6);
+  }, [allTransactionExpenses]);
+  const secondChart = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.day > 6)
+      .filter(it => it.day <= 12);
+  }, [allTransactionExpenses]);
+  const thirdChart = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.day > 12)
+      .filter(it => it.day <= 18);
+  }, [allTransactionExpenses]);
+  const fourthChart = useMemo(() => {
+    return allTransactionExpenses
+      .filter(it => it.day > 18)
+      .filter(it => it.day <= 24);
+  }, [allTransactionExpenses]);
+  const fifthChart = useMemo(() => {
+    return allTransactionExpenses.filter(it => it.day > 24);
+  }, [allTransactionExpenses]);
 
   const arrayOfCharts = [
     firstChart,

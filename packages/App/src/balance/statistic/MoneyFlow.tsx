@@ -1,35 +1,33 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
-import {walletItems} from '../../store/selectors/walletItems';
-
-enum TransactionType {
-  income = 'income',
-  expenses = 'expenses',
-}
+import {allTransactionsArray} from '../../store/selectors/walletItems';
+import {TransactionType} from '../../types/types';
 
 interface Props {
   month: number;
 }
 
 const MoneyFlow: FC<Props> = ({month}) => {
-  const trans = useSelector(walletItems);
+  const allTransactions = useSelector(allTransactionsArray);
+  const allTransactionsByMonth = useMemo(() => {
+    return allTransactions.filter(it => new Date(it.date).getMonth() === month);
+  }, [allTransactions, month]);
+  const allIncomeSum = useMemo(() => {
+    return allTransactionsByMonth
+      .filter(it => it.type === TransactionType.income)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionsByMonth]);
 
-  const allTransactions = trans.map(it => it.transactions).flat();
-  const allTransactionsByMonth = allTransactions.filter(
-    it => new Date(it.date).getMonth() === month,
-  );
-  const allIncomeSum = allTransactionsByMonth
-    .filter(it => it.type === TransactionType.income)
-    .reduce((sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    }, 0);
-
-  const allExpensesSum = allTransactionsByMonth
-    .filter(it => it.type === TransactionType.expenses)
-    .reduce((sum, cur) => {
-      return (sum * 100 + cur.amountTransaction * 100) / 100;
-    }, 0);
+  const allExpensesSum = useMemo(() => {
+    return allTransactionsByMonth
+      .filter(it => it.type === TransactionType.expenses)
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  }, [allTransactionsByMonth]);
 
   let left;
   let OverExpenses;
