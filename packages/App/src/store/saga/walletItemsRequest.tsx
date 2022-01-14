@@ -56,21 +56,11 @@ export function* filterItems(
   action: ReturnType<typeof filterInComeRequest>,
 ): Generator {
   try {
-    const page = action.payload;
-    const response = (yield call(
-      Api.authGet.bind(Api),
-      'http://localhost:8000/wallet',
-    )) as Array<WalletInfo>;
-
-    if (!response) {
-      yield put(filterFailed('Network isn`t working'));
-    }
-
     if (action.type === 'FILTER_INCOME') {
-      yield put(filterIncomeSuccess({response, page}));
+      yield put(filterIncomeSuccess());
     }
     if (action.type === 'FILTER_EXPENSES') {
-      yield put(filterExpensesSuccess({response, page}));
+      yield put(filterExpensesSuccess());
     }
   } catch (error) {
     console.log('filterErrorIncome', error);

@@ -38,3 +38,11 @@ export const addNewCardError = (state: RootState) => {
 export const deleteCardError = (state: RootState) => {
   return state.wallet.errorDeleteCard;
 };
+
+export const filteredIncome = (state: RootState) => {
+  return state.wallet.filteredIncome;
+};
+
+export const filteredExp = (state: RootState) => {
+  return state.wallet.filteredExpenses;
+};

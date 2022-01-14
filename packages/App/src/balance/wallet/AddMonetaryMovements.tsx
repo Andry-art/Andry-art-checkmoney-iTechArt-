@@ -94,7 +94,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
             ? 1
             : chosenWallet.transactions[0].keyTransaction + 1;
 
-        const date = new Date().toUTCString();
+        const date = new Date(Date.now());
 
         if (
           type === 'expenses' &&

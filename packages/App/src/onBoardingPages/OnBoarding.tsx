@@ -40,7 +40,7 @@ const OnBoarding: FC<Props> = ({setViewOnBoarding}) => {
 
   const viewableItemsChanged = useCallback(({viewableItems}) => {
     console.log(viewableItems[0].index);
-    // setItemVisible(viewableItems[0].index);
+    setItemVisible(viewableItems[0].index);
   }, []);
 
   const slideRef = useRef<FlatList>(null);
