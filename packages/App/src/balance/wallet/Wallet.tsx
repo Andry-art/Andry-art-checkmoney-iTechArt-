@@ -15,6 +15,8 @@ import {
   filtersError,
   deleteCardError,
   addNewCardError,
+  filteredIncome,
+  filteredExp,
 } from '../../store/selectors/walletItems';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -51,6 +53,8 @@ const Wallet: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
 
   const receivedWalletItems = useSelector(walletItems);
+  const filterIncome = useSelector(filteredIncome);
+  const filteredExpenses = useSelector(filteredExp);
   const receivedSum = useSelector(walletsAmount);
   const isLoading = useSelector(isLoadingWallet);
   const errorFilters = useSelector(filtersError);
@@ -69,20 +73,31 @@ const Wallet: FC<Props> = ({navigation}) => {
   }>({keyTransaction: 0, amount: 0, type: ''});
   const [refItem, setRefItem] = useState<FlatList<WalletInfo> | null>();
   const [chosenBtn, setChosenBtn] = useState<string>('All actions');
+  const [categoryShows, setCategoryShows] =
+    useState<Array<WalletInfo>>(receivedWalletItems);
 
   const filterInCome = (title: string) => {
     setChosenBtn(title);
-    dispatch(filterInComeRequest(itemVisible));
+    dispatch(filterInComeRequest());
+    if (filterIncome[itemVisible].transactions) {
+      setCategoryShows(filterIncome);
+    }
   };
 
   const filterExpenses = (title: string) => {
     setChosenBtn(title);
-    dispatch(filterExpensesRequest(itemVisible));
+    dispatch(filterExpensesRequest());
+    if (filteredExpenses[itemVisible].transactions) {
+      setCategoryShows(filteredExpenses);
+    }
   };
 
   const allCategories = (title: string) => {
     setChosenBtn(title);
     dispatch(filterAllItemsRequest());
+    if (receivedWalletItems[itemVisible].transactions) {
+      setCategoryShows(receivedWalletItems);
+    }
   };
 
   const newCard = () => {
@@ -246,7 +261,11 @@ const Wallet: FC<Props> = ({navigation}) => {
               </View>
             </>
           }
-          data={receivedWalletItems[itemVisible].transactions}
+          data={
+            chosenBtn === 'All actions'
+              ? receivedWalletItems[itemVisible].transactions
+              : categoryShows[itemVisible].transactions
+          }
           keyExtractor={keyExtractorForTransactions}
           renderItem={({item}) => (
             <Transactions
@@ -271,6 +290,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: '#FFFFFF',
+    paddingBottom: 70,
   },
 
   list: {

@@ -65,6 +65,8 @@ export interface MonetaryMovements {
 
 export interface IWallet {
   walletContent: Array<WalletInfo>;
+  filteredIncome: Array<WalletInfo>;
+  filteredExpenses: Array<WalletInfo>;
   monetaryMovements: MonetaryMovements;
   isLoading: boolean;
   isLoadingTransactions: boolean;
@@ -106,4 +108,24 @@ export type ErrorFetch = {
 export enum DebitType {
   toYou = 'debit to you',
   yourDebit = 'your debit',
+}
+
+export enum Months {
+  January = 0,
+  February = 1,
+  March = 2,
+  April = 3,
+  May = 4,
+  June = 5,
+  July = 6,
+  August = 7,
+  September = 8,
+  October = 9,
+  November = 10,
+  December = 11,
+}
+
+export enum TransactionType {
+  income = 'income',
+  expenses = 'expenses',
 }

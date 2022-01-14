@@ -21,6 +21,8 @@
       "**/react-native-screens/**",
       "**/react-native-svg",
       "**/react-native-svg/**",
+      "**/victory-native/**",
+      "**/victory-native",
       "**/jetifier",
       "**/react-native-sensitive-info/**",
       "**/react-native-sensitive-info",
