@@ -76,7 +76,7 @@ const CategoryChart: FC<Props> = ({month}) => {
       return (sum * 100 + cur.amountTransaction * 100) / 100;
     }, 0);
 
-  const data = [
+  const allCategoriesData = [
     {x: Category.Car, y: categoryCarSum},
     {x: Category.Grocery, y: categoryGrocerySum},
     {x: Category.Health, y: categoryHealthSum},
@@ -85,9 +85,9 @@ const CategoryChart: FC<Props> = ({month}) => {
     {x: Category.Shopping, y: categoryShoppingSum},
   ];
 
-  const finalData = data.filter(it => it.y > 0);
+  const CategoriesWasUsed = allCategoriesData.filter(it => it.y > 0);
 
-  const list = finalData.map(it => {
+  const list = CategoriesWasUsed.map(it => {
     return {
       category: it.x,
       pro: `${Math.round((it.y / allTransactionExpensesSum) * 100)}%`,
@@ -107,7 +107,7 @@ const CategoryChart: FC<Props> = ({month}) => {
         categories={{x: ['Unknown', 'Grocery', 'car', '222']}}
         colorScale={['#03045e', '#0077b6', '#00b4d8', '#90e0ef', '#caf0f8']}
         style={{data: {width: '100%'}}}
-        data={finalData}
+        data={CategoriesWasUsed}
       />
       <View style={styles.listContainer}>
         {list.map(it => (
