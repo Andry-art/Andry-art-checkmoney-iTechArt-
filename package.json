@@ -32,7 +32,10 @@
       "**/formik",
       "**/yup/**",
       "**/react-redux/**",
-      "**/react-redux"
+      "**/react-redux",
+      "**/react-native-linear-gradient/**",
+      "**/react-native-linear-gradient",
+      "**/@react-native-segmented-control/segmented-control/**"
     ]
   },
   "scripts": {

@@ -25,6 +25,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import imgArrowSource from '../../../Pics/double-arrow.png';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
+import {TransactionType} from '../../types/types';
+import addTransactionSource from '../../../Pics/balance/income.png';
+import {useDeviceOrientation} from '@react-native-community/hooks/lib/useDeviceOrientation';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -40,11 +43,6 @@ interface Props {
   navigation: NativeStackNavigationProp<WalletNavigatorList>;
 }
 
-enum TransactionType {
-  income = 'income',
-  expenses = 'expenses',
-}
-
 const initialValues = {
   amount: '',
 };
@@ -54,6 +52,7 @@ const transactionSchema = yup.object({
 });
 
 const AddMonetaryMovements: FC<Props> = ({navigation}) => {
+  const orientation = useDeviceOrientation();
   const dispatch = useDispatch();
   const {key, amount, title} = useSelector(monetaryMove);
   const [isMoneyMove, setIsMoneyMove] = useState<string>(
@@ -129,24 +128,30 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <Modal animationType="fade" transparent={true} visible={modal}>
-        <View style={styles.modal}>
-          <View style={styles.modalTitle}>
-            <Text style={styles.modalTextTitle}>Not enough money</Text>
-          </View>
-          <View style={styles.modalBtnArea}>
-            <TouchableOpacity
-              style={styles.modalBtnCancel}
-              onPress={() => setModal(false)}>
-              <Text style={styles.modalBtnText}>Ok</Text>
-            </TouchableOpacity>
+        <View style={styles.backGroundModal}>
+          <View
+            style={
+              orientation.landscape ? styles.modalLandscape : styles.modal
+            }>
+            <View style={styles.modalTitle}>
+              <Text style={styles.modalTextTitle}>Not enough money</Text>
+            </View>
+            <View style={styles.modalBtnArea}>
+              <TouchableOpacity
+                style={styles.modalBtnCancel}
+                onPress={() => setModal(false)}>
+                <Text style={styles.modalBtnText}>Ok</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
 
       <View style={styles.title}>
-        <Text style={styles.textTitle}>{title}</Text>
+        <Text style={styles.textTitle}>{title?.toUpperCase()}</Text>
         <Text style={styles.textAmount}>{amount}$</Text>
       </View>
+
       <View style={styles.moneyMoves}>
         <TouchableOpacity
           style={
@@ -179,7 +184,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         />
         <Text style={styles.validation}>{errors.amount}</Text>
       </View>
-      <View>
+      <View style={styles.categoriesList}>
         <FlatList
           data={isMoneyMove === TransactionType.income ? income : expenses}
           keyExtractor={it => it}
@@ -194,7 +199,9 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
           showsHorizontalScrollIndicator={false}
         />
       </View>
+
       <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
+        <Image source={addTransactionSource} style={styles.img} />
         <Text style={styles.confirmText}>Add {isMoneyMove}</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -202,14 +209,29 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  backGroundModal: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+
   modal: {
-    borderRadius: 30,
+    borderRadius: 10,
     justifyContent: 'center',
     height: '25%',
-    backgroundColor: '#23A7F1',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     marginHorizontal: 40,
     marginVertical: 200,
+  },
+
+  modalLandscape: {
+    borderRadius: 10,
+    justifyContent: 'center',
+    height: 200,
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginHorizontal: 40,
+    marginVertical: 100,
   },
 
   modalTitle: {
@@ -224,29 +246,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
-  modalBtnDelete: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    width: '40%',
-    backgroundColor: 'red',
-    borderRadius: 30,
-  },
-
   modalBtnCancel: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
     width: '40%',
-    backgroundColor: '#74EA8E',
-    borderRadius: 30,
+    backgroundColor: '#404CB2',
+    borderRadius: 12,
   },
 
   modalBtnText: {
     fontFamily: 'Poppins',
     fontStyle: 'normal',
-    fontWeight: '600',
-    color: 'black',
+    fontWeight: '700',
+    color: 'white',
     fontSize: 16,
   },
 
@@ -261,55 +274,55 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
+    padding: 10,
   },
+
   title: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingTop: 10,
+    paddingBottom: 20,
+    backgroundColor: '#FFFFFF',
   },
 
   textTitle: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
-    color: 'black',
-    fontSize: 18,
+    color: '#A8ADDD',
+    fontSize: 14,
   },
 
   textAmount: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
     fontWeight: '600',
+    fontSize: 32,
     color: 'black',
-    fontSize: 16,
   },
 
   BtnIncomeExpenses: {
-    height: 50,
-    backgroundColor: '#D0EEFF',
+    height: 40,
+    backgroundColor: '#C0C0C0',
     justifyContent: 'center',
     alignItems: 'center',
     width: '40%',
-    borderRadius: 30,
+    borderRadius: 10,
   },
 
   textIncomeExpenses: {
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
-    color: 'black',
+    color: 'white',
     fontSize: 18,
   },
 
   BtnIncomeExpensesFocus: {
-    height: 50,
-    backgroundColor: '#32A7E9',
+    height: 40,
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
     width: '40%',
-    borderRadius: 30,
+    borderRadius: 10,
   },
 
   inputArea: {
@@ -320,39 +333,58 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingHorizontal: 20,
     borderWidth: 2,
-    borderColor: '#32A7E9',
+    borderColor: '#404CB2',
     marginTop: 20,
-    marginHorizontal: 20,
-    borderRadius: 30,
+    borderRadius: 10,
+    textAlign: 'center',
   },
 
   confirm: {
+    flexDirection: 'row',
+    marginTop: 20,
+    borderRadius: 10,
+    height: 100,
+    width: '100%',
+    backgroundColor: '#404CB2',
+    justifyContent: 'center',
     alignItems: 'center',
-    margin: 20,
-    paddingVertical: 20,
-    backgroundColor: '#7CD0FF',
-    borderRadius: 30,
-    marginBottom: 80,
+    marginBottom: 40,
+    elevation: 7,
   },
 
   confirmText: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
-    fontWeight: '600',
-    color: 'black',
+    fontWeight: '700',
     fontSize: 16,
+    color: '#FFFFFF',
   },
 
   moneyMoves: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
+
     alignItems: 'center',
   },
 
   validation: {
     marginLeft: 30,
     color: 'red',
+  },
+
+  categoriesList: {
+    backgroundColor: '#F6F6F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: 3,
+    borderRadius: 8,
+  },
+
+  img: {
+    position: 'absolute',
+    left: 20,
+    tintColor: 'white',
   },
 });
 

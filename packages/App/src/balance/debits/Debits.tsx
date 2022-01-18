@@ -8,6 +8,8 @@ import {
   LayoutAnimation,
   Alert,
   ScrollView,
+  Image,
+  View,
 } from 'react-native';
 import ListOfDebits from './ListOfDebits';
 import {
@@ -19,6 +21,7 @@ import {
   walletName,
   newDebitError,
   deleteDebitError,
+  getErrorDebits,
 } from '../../store/selectors/debits';
 import {useDispatch, useSelector} from 'react-redux';
 import {DebitInfo, DebitNavigatorList, DebitType} from '../../types/types';
@@ -29,6 +32,8 @@ import {
 import CardModal from '../../components/CardModal';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import arrowSource from '../../../Pics/debt/up-arrow.png';
+import plusSource from '../../../Pics/debt/plus.png';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -55,6 +60,7 @@ const Debits: FC<Props> = ({navigation}) => {
   let wallet = useSelector(walletName);
   const addDebitError = useSelector(newDebitError);
   const deleteError = useSelector(deleteDebitError);
+  const debitsError = useSelector(getErrorDebits);
 
   useEffect(() => {
     if (addDebitError) {
@@ -63,7 +69,10 @@ const Debits: FC<Props> = ({navigation}) => {
     if (deleteError) {
       Alert.alert(deleteError);
     }
-  }, [addDebitError, deleteError]);
+    if (debitsError) {
+      Alert.alert(debitsError);
+    }
+  }, [addDebitError, deleteError, debitsError]);
 
   const DebitsToYou = useCallback(() => {
     setDebitsVisible(prev => !prev);
@@ -196,11 +205,19 @@ const Debits: FC<Props> = ({navigation}) => {
       <TouchableOpacity
         style={debitsVisible ? styles.debitsActive : styles.debits}
         onPress={DebitsToYou}>
-        <Text style={styles.title}>Debits to you</Text>
-        <Text style={styles.titleAmount}>{sumDebToYou}$</Text>
+        <View style={styles.arrowUp}>
+          <Image source={arrowSource} style={styles.img} />
+        </View>
+        <Text style={debitsVisible ? styles.titleActive : styles.title}>
+          Debits to you
+        </Text>
+        <Text
+          style={debitsVisible ? styles.titleAmountActive : styles.titleAmount}>
+          {sumDebToYou}$
+        </Text>
       </TouchableOpacity>
       {debitsVisible && (
-        <ScrollView>
+        <ScrollView style={styles.listDebits}>
           {toYou.map(item => (
             <ListOfDebits
               key={item.key}
@@ -221,12 +238,22 @@ const Debits: FC<Props> = ({navigation}) => {
       <TouchableOpacity
         style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
         onPress={myDebits}>
-        <Text style={styles.titleYourDeb}>Your debits</Text>
-        <Text style={styles.titleAmountYourDeb}>{sumOfYourDeb}$</Text>
+        <View style={styles.arrowDown}>
+          <Image source={arrowSource} style={styles.img} />
+        </View>
+        <Text style={myDebitsVisible ? styles.titleActive : styles.title}>
+          Your debits
+        </Text>
+        <Text
+          style={
+            myDebitsVisible ? styles.titleAmountActive : styles.titleAmount
+          }>
+          {sumOfYourDeb}$
+        </Text>
       </TouchableOpacity>
 
       {myDebitsVisible && (
-        <ScrollView>
+        <ScrollView style={styles.listDebits}>
           {yourDebits.map(item => (
             <ListOfDebits
               key={item.key}
@@ -245,7 +272,8 @@ const Debits: FC<Props> = ({navigation}) => {
       )}
 
       <TouchableOpacity style={styles.addNewDebit} onPress={toNewDebits}>
-        <Text style={styles.titleAddNew}>Add New</Text>
+        <Image source={plusSource} style={styles.imgBtn} />
+        <Text style={styles.titleAddNew}>ADD NEW</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -263,10 +291,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    backgroundColor: '#7CD0FF',
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    height: 85,
+    backgroundColor: '#404CB2',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
@@ -275,9 +304,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#E9E9E9',
+    height: 85,
+    borderRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
@@ -286,10 +317,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    backgroundColor: '#7CD0FF',
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    height: 85,
+    backgroundColor: '#404CB2',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
@@ -298,60 +330,90 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#E9E9E9',
+    height: 85,
+    borderRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
   title: {
     fontStyle: 'normal',
     fontWeight: '700',
-    color: 'green',
+    color: '#94AFB6',
     fontSize: 18,
   },
 
-  titleYourDeb: {
+  titleActive: {
     fontStyle: 'normal',
     fontWeight: '700',
-    color: 'red',
+    color: '#FFFFFF',
     fontSize: 18,
   },
 
   titleAmount: {
     fontStyle: 'normal',
     fontWeight: '500',
-    color: 'green',
+    color: '#3D6670',
     fontSize: 18,
   },
 
-  titleAmountYourDeb: {
+  titleAmountActive: {
     fontStyle: 'normal',
     fontWeight: '500',
-    color: 'red',
+    color: '#FFFFFF',
     fontSize: 18,
   },
+
   listDebits: {
-    padding: 0,
+    borderWidth: 2,
+    borderColor: '#E9E9E9',
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
   },
 
   titleAddNew: {
     fontStyle: 'normal',
     fontWeight: '700',
-    fontSize: 18,
-    color: '#23A7F1',
+    fontSize: 16,
+    color: '#FFFFFF',
   },
 
   addNewDebit: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    height: 100,
+    width: '100%',
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    height: 55,
-    borderRadius: 30,
-    borderColor: '#23A7F1',
-    marginTop: 20,
-    width: '100%',
+    elevation: 7,
+    marginTop: 75,
     marginBottom: 80,
+  },
+
+  arrowUp: {
+    padding: 15,
+    backgroundColor: '#41BE06',
+    borderRadius: 100,
+  },
+
+  img: {
+    tintColor: 'white',
+  },
+
+  arrowDown: {
+    padding: 15,
+    backgroundColor: '#EB1F39',
+    borderRadius: 100,
+    rotation: 180,
+  },
+
+  imgBtn: {
+    position: 'absolute',
+    left: 20,
+    tintColor: 'white',
   },
 });
 

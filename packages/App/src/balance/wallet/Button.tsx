@@ -1,12 +1,5 @@
 import React, {FC, useMemo} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ImageURISource,
-} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, ImageURISource} from 'react-native';
 import {useSelector} from 'react-redux';
 import {filtersError} from '../../store/selectors/walletItems';
 
@@ -17,7 +10,7 @@ interface Props {
   chosen: string;
 }
 
-const Button: FC<Props> = ({title, picture, onPress, chosen}) => {
+const Button: FC<Props> = ({title, onPress, chosen}) => {
   const chooseBtn = () => {
     onPress(title);
   };
@@ -29,34 +22,47 @@ const Button: FC<Props> = ({title, picture, onPress, chosen}) => {
   }
 
   const chosenColor = useMemo(() => {
-    return [styles.button, {backgroundColor: '#EBEDF8'}];
+    return [styles.button, {backgroundColor: '#FFFFFF'}];
   }, []);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={chosen === title ? chosenColor : styles.button}
-        onPress={chooseBtn}>
-        <Image source={picture} />
-      </TouchableOpacity>
-      <Text>{title}</Text>
-    </View>
+    <TouchableOpacity
+      style={chosen === title ? chosenColor : styles.buttonNotActive}
+      onPress={chooseBtn}>
+      <Text style={chosen === title ? styles.chosenText : styles.notchosenText}>
+        {title}
+      </Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-  },
-
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
 
-    padding: 20,
-    borderRadius: 100,
+  buttonNotActive: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+
+  chosenText: {
+    fontWeight: '700',
+    fontSize: 14,
+    color: 'black',
+  },
+
+  notchosenText: {
+    fontWeight: '700',
+    fontSize: 14,
+    color: '#C0C0C0',
   },
 });
 

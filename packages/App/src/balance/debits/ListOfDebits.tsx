@@ -57,16 +57,14 @@ const ListOfDebits: FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
   },
   listItem: {
     flexDirection: 'row',
-
     padding: 20,
-    backgroundColor: '#C7EBFF',
     justifyContent: 'space-between',
     borderBottomWidth: 2,
-    borderBottomColor: '#E6F6FF',
+    borderBottomColor: '#404CB2',
   },
 
   textName: {

@@ -25,6 +25,7 @@ import {
   deleteTransactionRequest,
   addCorrectTransactionRequest,
   filterAllItemsRequest,
+  cleanErrorsWallet,
 } from '../actions/walletActions';
 import {WalletInfo} from '../../types/types';
 import {IWallet} from '../../types/types';
@@ -35,7 +36,7 @@ const initialState: IWallet = {
       walletAmount: 0,
       id: 0,
       key: 0,
-      color: '',
+      color: ['#F39034', '#FF2727'],
       walletTitle: '',
       transactions: [
         {
@@ -254,7 +255,14 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
         state.errorFilters = action.payload;
         return state;
       },
-    );
+    )
+    .addCase(cleanErrorsWallet, state => {
+      state.errorGet = '';
+      state.errorFilters = '';
+      state.errorDeleteCard = '';
+      state.errorAddNewCard = '';
+      return state;
+    });
 });
 
 export default Wallet;

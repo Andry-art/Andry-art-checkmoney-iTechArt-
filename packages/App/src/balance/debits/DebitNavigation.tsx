@@ -31,7 +31,7 @@ const DebitNavigation = () => {
         name="Debits"
         component={Debits}
         options={{
-          headerStyle: {backgroundColor: '#7CD0FF'},
+          headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
@@ -48,7 +48,7 @@ const DebitNavigation = () => {
         name="Add New Debit"
         component={NewDebits}
         options={{
-          headerStyle: {backgroundColor: '#7CD0FF'},
+          headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
@@ -60,7 +60,7 @@ const DebitNavigation = () => {
         name="Debit Info"
         component={DebitInfo}
         options={{
-          headerStyle: {backgroundColor: '#7CD0FF'},
+          headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />

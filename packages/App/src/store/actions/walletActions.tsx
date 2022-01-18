@@ -22,10 +22,12 @@ export const filterExpensesSuccess = createAction<undefined>(
 );
 export const filterFailed = createAction<string>('filterIncomeItemsFailed');
 
-export const addNewCardRequest =
-  createAction<{cardName: string; amount: number; color: string; key: number}>(
-    'ADD_CARD',
-  );
+export const addNewCardRequest = createAction<{
+  cardName: string;
+  amount: number;
+  color: Array<string>;
+  key: number;
+}>('ADD_CARD');
 export const addNewCardSuccess = createAction<WalletInfo>('addCard');
 export const addNewCardFailed = createAction<string>('addCardFailed');
 
@@ -103,3 +105,5 @@ export const monetaryMove = createAction<{
   icon?: string;
   idCard?: number;
 }>('monetaryMovements');
+
+export const cleanErrorsWallet = createAction<undefined>('cleanErrors');

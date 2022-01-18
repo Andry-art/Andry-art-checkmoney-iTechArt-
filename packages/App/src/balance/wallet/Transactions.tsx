@@ -15,9 +15,7 @@ import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
 import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
 import iconSalarySource from '../../../Pics/categories/money.png';
 import {AmountInCents} from '../../types/types';
-import {useSelector} from 'react-redux';
-import {isLoadingTransactions} from '../../store/selectors/walletItems';
-import Loading from '../../components/Loading';
+import {TransactionType} from '../../types/types';
 
 interface Props {
   keyTransaction: number;
@@ -47,8 +45,6 @@ const Transactions: FC<Props> = ({
   onLongPress,
   onPress,
 }) => {
-  const isLoadingTransaction = useSelector(isLoadingTransactions);
-
   const imgSource: Record<string, ImageSourcePropType> = {
     iconCarSource: iconCarSource,
     iconHealthSource: iconHealthSource,
@@ -69,25 +65,33 @@ const Transactions: FC<Props> = ({
     onPress(keyTransaction, category, date, amount, type, icon);
   }, [amount, category, date, icon, keyTransaction, onPress, type]);
 
-  if (isLoadingTransaction) {
-    return <Loading />;
-  }
-
   return (
     <TouchableOpacity
       style={styles.container}
       onLongPress={onLongPressCallBack}
       onPress={onPressCallBack}>
       <View style={styles.iconsInfo}>
-        <View style={styles.iconBG}>
-          <Image source={img} />
+        <View
+          style={
+            type === TransactionType.income
+              ? styles.iconBGIncome
+              : styles.iconBGExpens
+          }>
+          <Image
+            source={img}
+            style={
+              type === TransactionType.income
+                ? styles.imgIncome
+                : styles.imgExpenses
+            }
+          />
         </View>
         <View style={styles.info}>
           <Text style={styles.title}>{category}</Text>
           <Text style={styles.date}>{date}</Text>
         </View>
       </View>
-      {type === 'income' ? (
+      {type === TransactionType.income ? (
         <Text style={styles.sumPlus}>+{amount}$</Text>
       ) : (
         <Text style={styles.sumMinus}>-{amount}$</Text>
@@ -98,16 +102,25 @@ const Transactions: FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 20,
-    marginVertical: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    minHeight: 100,
+    width: '100%',
   },
-  iconBG: {
-    backgroundColor: '#EBEDF8',
-    padding: 20,
-    borderRadius: 100,
+  iconBGExpens: {
+    backgroundColor: '#FFE9E6',
+    padding: 15,
+    borderRadius: 20,
+  },
+
+  iconBGIncome: {
+    backgroundColor: '#D8FFE5',
+    padding: 15,
+    borderRadius: 20,
   },
 
   info: {
@@ -140,7 +153,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: 18,
-    color: 'red',
+    color: '#F6543E',
   },
 
   sumPlus: {
@@ -148,7 +161,15 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: 18,
-    color: 'green',
+    color: '#2FBC5F',
+  },
+
+  imgExpenses: {
+    tintColor: '#F6543E',
+  },
+
+  imgIncome: {
+    tintColor: '#2FBC5F',
   },
 });
 

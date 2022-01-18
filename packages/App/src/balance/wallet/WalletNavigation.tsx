@@ -34,7 +34,7 @@ const BalanceNavigation = () => {
         name="Wallets"
         component={Wallet}
         options={{
-          headerStyle: {backgroundColor: '#7CD0FF'},
+          headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
@@ -51,7 +51,7 @@ const BalanceNavigation = () => {
         name="New Card"
         component={NewCard}
         options={{
-          headerStyle: {backgroundColor: '#7CD0FF'},
+          headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
@@ -63,7 +63,7 @@ const BalanceNavigation = () => {
         name="Add Transaction"
         component={AddMonetaryMovements}
         options={{
-          headerStyle: {backgroundColor: '#7CD0FF'},
+          headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
@@ -75,7 +75,7 @@ const BalanceNavigation = () => {
         name="Correct Transaction"
         component={CorrectTransaction}
         options={{
-          headerStyle: {backgroundColor: '#7CD0FF'},
+          headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
@@ -90,6 +90,11 @@ const BalanceNavigation = () => {
 const styles = StyleSheet.create({
   logOut: {
     paddingRight: 10,
+  },
+
+  title: {
+    fontSize: 20,
+    textAlign: 'center',
   },
 });
 

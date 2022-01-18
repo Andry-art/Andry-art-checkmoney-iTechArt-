@@ -12,7 +12,7 @@ export interface ITransactions {
 export interface WalletInfo {
   id: number;
   key: number;
-  color: string;
+  color: Array<string>;
   walletTitle: string;
   walletAmount: AmountInCents;
   transactions: Array<ITransactions>;

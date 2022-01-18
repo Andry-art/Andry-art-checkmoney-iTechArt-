@@ -17,6 +17,7 @@ import {
   addNewCardError,
   filteredIncome,
   filteredExp,
+  getError,
 } from '../../store/selectors/walletItems';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -36,9 +37,10 @@ import {
 } from '../../types/types';
 import CardModal from '../../components/CardModal';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useDeviceOrientation} from '@react-native-community/hooks/lib/useDeviceOrientation';
 
 const viewability: ViewabilityConfig = {
-  viewAreaCoveragePercentThreshold: 50,
+  viewAreaCoveragePercentThreshold: 10,
 };
 
 const keyExtractorForCards = (item: WalletInfo) => String(item.id);
@@ -51,7 +53,7 @@ interface Props {
 
 const Wallet: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
-
+  const orientation = useDeviceOrientation();
   const receivedWalletItems = useSelector(walletItems);
   const filterIncome = useSelector(filteredIncome);
   const filteredExpenses = useSelector(filteredExp);
@@ -60,6 +62,7 @@ const Wallet: FC<Props> = ({navigation}) => {
   const errorFilters = useSelector(filtersError);
   const errorDeleteCard = useSelector(deleteCardError);
   const errorAddCard = useSelector(addNewCardError);
+  const getErrorInfo = useSelector(getError);
 
   const [itemVisible, setItemVisible] = useState<number>(0);
   const [isModalCardVisible, setIsModalCardVisible] = useState<boolean>(false);
@@ -171,7 +174,10 @@ const Wallet: FC<Props> = ({navigation}) => {
     if (errorAddCard) {
       Alert.alert(errorAddCard);
     }
-  }, [errorDeleteCard, errorAddCard]);
+    if (getErrorInfo) {
+      Alert.alert(getErrorInfo);
+    }
+  }, [errorDeleteCard, errorAddCard, getErrorInfo]);
 
   if (isLoading) {
     <Loading />;
@@ -193,9 +199,10 @@ const Wallet: FC<Props> = ({navigation}) => {
         onPressHide={setIsModalCardVisible}
       />
 
-      <View style={styles.wallet}>
-        <Text style={styles.title}>Total</Text>
-        <Text>{receivedSum}$</Text>
+      <View
+        style={orientation.landscape ? styles.walletLandscape : styles.wallet}>
+        <Text style={styles.title}>TOTAL BALANCE</Text>
+        <Text style={styles.titleAmount}>{receivedSum}$</Text>
       </View>
 
       {isLoading ? (
@@ -228,35 +235,34 @@ const Wallet: FC<Props> = ({navigation}) => {
                 />
               </View>
 
-              <View style={styles.buttonArea}>
-                <Button
-                  title="All actions"
-                  picture={allCategoriesIconSource}
-                  onPress={allCategories}
-                  chosen={chosenBtn}
-                />
-                <Button
-                  title="Incoming"
-                  picture={incomeIconSource}
-                  onPress={filterInCome}
-                  chosen={chosenBtn}
-                />
-                <Button
-                  title="Expenses"
-                  picture={expensesIconSource}
-                  onPress={filterExpenses}
-                  chosen={chosenBtn}
-                />
-
-                <Button
-                  title="New card"
-                  picture={addNewIconSource}
-                  onPress={newCard}
-                  chosen={chosenBtn}
-                />
-              </View>
-
               <View style={styles.categoriesListTitle}>
+                <View style={styles.buttonArea}>
+                  <Button
+                    title="All actions"
+                    picture={allCategoriesIconSource}
+                    onPress={allCategories}
+                    chosen={chosenBtn}
+                  />
+                  <Button
+                    title="Incoming"
+                    picture={incomeIconSource}
+                    onPress={filterInCome}
+                    chosen={chosenBtn}
+                  />
+                  <Button
+                    title="Expenses"
+                    picture={expensesIconSource}
+                    onPress={filterExpenses}
+                    chosen={chosenBtn}
+                  />
+
+                  <Button
+                    title="New card"
+                    picture={addNewIconSource}
+                    onPress={newCard}
+                    chosen={chosenBtn}
+                  />
+                </View>
                 <Text style={styles.categoriesListText}>All categories</Text>
               </View>
             </>
@@ -289,36 +295,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#FFFFFF',
-    paddingBottom: 70,
+    backgroundColor: 'white',
   },
 
   list: {
-    height: 180,
+    height: 100,
   },
 
   wallet: {
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: 20,
+    backgroundColor: '#FFFFFF',
+  },
+
+  walletLandscape: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    paddingHorizontal: 20,
-    backgroundColor: '#D0EEFF',
+    paddingVertical: 10,
+    backgroundColor: '#FFFFFF',
   },
 
   title: {
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
+    color: '#A8ADDD',
+    fontSize: 14,
+  },
+
+  titleAmount: {
+    fontWeight: '600',
+    fontSize: 32,
     color: 'black',
-    fontSize: 18,
   },
 
   buttonArea: {
+    backgroundColor: '#F6F6F6',
+    justifyContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
-    margin: 20,
-    height: 70,
+    padding: 3,
+    borderRadius: 8,
+    marginTop: 20,
   },
   categoriesList: {
     flex: 1,
@@ -327,8 +348,16 @@ const styles = StyleSheet.create({
   },
 
   categoriesListTitle: {
-    justifyContent: 'center',
+    paddingTop: 10,
     alignItems: 'center',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    elevation: 10,
+  },
+
+  categoriesListTitleBack: {
+    backgroundColor: '#EDEFFE',
   },
 
   categoriesListText: {

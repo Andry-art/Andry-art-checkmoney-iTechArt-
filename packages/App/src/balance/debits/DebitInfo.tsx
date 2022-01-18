@@ -1,5 +1,12 @@
 import React, {FC, useCallback, useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   debitInfo,
@@ -12,6 +19,7 @@ import {deleteDebitRequest} from '../../store/actions/debitsActions';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
+import minusSource from '../../../Pics/debt/minus.png';
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
@@ -101,13 +109,12 @@ const DebitInfo: FC<Props> = ({navigation}) => {
         onPressHide={hide}
       />
       <CardModal
-        title="Going to be minus?"
+        title="Going to be minus, delete?"
         isVisible={modalVisibleMinus}
         onPressDelete={deleteDebitMinus}
         onPressHide={hide}
       />
-      <View style={styles.container}>
-        <Text style={styles.title}>Debit info</Text>
+      <ScrollView style={styles.container}>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>
             {info.type === DebitType.toYou ? 'Debit to you from' : 'You own to'}
@@ -127,9 +134,10 @@ const DebitInfo: FC<Props> = ({navigation}) => {
           <Text style={styles.textAmount}>{wallet?.walletTitle}</Text>
         </View>
         <TouchableOpacity style={styles.btnDelete} onPress={showModal}>
-          <Text style={styles.textDelete}>Delete debit</Text>
+          <Image source={minusSource} style={styles.imgBtn} />
+          <Text style={styles.textDelete}>DELETE DEBT</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </>
   );
 };
@@ -138,6 +146,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    padding: 20,
   },
 
   title: {
@@ -151,10 +160,10 @@ const styles = StyleSheet.create({
   debitInfo: {
     flexDirection: 'row',
     padding: 20,
+    marginHorizontal: 10,
     justifyContent: 'space-between',
-    backgroundColor: '#C7EBFF',
     borderBottomWidth: 2,
-    borderBottomColor: '#E6F6FF',
+    borderBottomColor: '#404CB2',
   },
   textName: {
     fontStyle: 'normal',
@@ -169,18 +178,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   btnDelete: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    height: 100,
+    width: '100%',
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30,
-    margin: 20,
-    height: 55,
-    backgroundColor: '#F64242',
+    elevation: 7,
+    marginTop: 75,
+    marginBottom: 80,
   },
   textDelete: {
     fontStyle: 'normal',
     fontWeight: '500',
-    color: 'black',
+    color: 'white',
     fontSize: 16,
+  },
+
+  imgBtn: {
+    position: 'absolute',
+    left: 20,
+    tintColor: 'white',
   },
 });
 

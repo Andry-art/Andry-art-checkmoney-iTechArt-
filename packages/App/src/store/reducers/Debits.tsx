@@ -12,6 +12,7 @@ import {
   deleteDebitToYouSuccess,
   deleteYourDebitSuccess,
   deleteDebitFailed,
+  cleanErrorsDebits,
 } from '../actions/debitsActions';
 import {DebitInfo, Debits} from '../../types/types';
 
@@ -51,6 +52,8 @@ const debits = createReducer<IDebits>(initialState, builder => {
     .addCase(getDebitsItemsRequest, state => {
       state.isLoading = true;
       state.errorGet = '';
+      state.errorNewDebit = '';
+      state.errorDelete = '';
       return state;
     })
     .addCase(getDebitsItemsSuccess, (state, action: PayloadAction<Debits>) => {
@@ -118,6 +121,12 @@ const debits = createReducer<IDebits>(initialState, builder => {
     .addCase(deleteDebitFailed, (state, action: PayloadAction<string>) => {
       state.isLoading = false;
       state.errorDelete = `Couldn't delete debit.${action.payload}`;
+      return state;
+    })
+    .addCase(cleanErrorsDebits, state => {
+      state.errorGet = '';
+      state.errorNewDebit = '';
+      state.errorDelete = '';
       return state;
     });
 });

@@ -7,7 +7,7 @@ interface Props {
   onPressHide: Dispatch<SetStateAction<boolean>>;
 }
 
-const ModalNewDebit: FC<Props> = ({title, isVisible, onPressHide}) => {
+const ModalError: FC<Props> = ({title, isVisible, onPressHide}) => {
   const hide = useCallback(() => {
     onPressHide(false);
   }, [onPressHide]);
@@ -21,7 +21,7 @@ const ModalNewDebit: FC<Props> = ({title, isVisible, onPressHide}) => {
           </View>
           <View style={styles.modalBtnArea}>
             <TouchableOpacity onPress={hide} style={styles.modalBtnCancel}>
-              <Text style={styles.modalBtnText}>Cancel</Text>
+              <Text style={styles.modalBtnText}>Ok</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -87,4 +87,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalNewDebit;
+export default ModalError;

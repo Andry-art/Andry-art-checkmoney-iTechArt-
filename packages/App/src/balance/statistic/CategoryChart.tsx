@@ -108,7 +108,7 @@ const CategoryChart: FC<Props> = ({month}) => {
         padding={100}
         innerRadius={40}
         labelRadius={120}
-        colorScale={['#03045e', '#0077b6', '#00b4d8', '#90e0ef', '#caf0f8']}
+        colorScale={['#240046', '#3c096c', '#7b2cbf', '#9d4edd', '#e0aaff']}
         style={{data: {width: '100%'}}}
         data={CategoriesWasUsed}
       />

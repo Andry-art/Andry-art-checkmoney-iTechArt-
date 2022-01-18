@@ -16,8 +16,4 @@ const ButtonApp: FC<Props> = ({label, styleBtn, styleTxt, onPress}) => {
   );
 };
 
-// const styles = StyleSheet.create({
-
-// });
-
 export default ButtonApp;
