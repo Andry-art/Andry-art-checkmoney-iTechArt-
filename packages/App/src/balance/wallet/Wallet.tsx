@@ -76,31 +76,20 @@ const Wallet: FC<Props> = ({navigation}) => {
   }>({keyTransaction: 0, amount: 0, type: ''});
   const [refItem, setRefItem] = useState<FlatList<WalletInfo> | null>();
   const [chosenBtn, setChosenBtn] = useState<string>('All actions');
-  const [categoryShows, setCategoryShows] =
-    useState<Array<WalletInfo>>(receivedWalletItems);
 
   const filterInCome = (title: string) => {
     setChosenBtn(title);
     dispatch(filterInComeRequest());
-    if (filterIncome[itemVisible].transactions) {
-      setCategoryShows(filterIncome);
-    }
   };
 
   const filterExpenses = (title: string) => {
     setChosenBtn(title);
     dispatch(filterExpensesRequest());
-    if (filteredExpenses[itemVisible].transactions) {
-      setCategoryShows(filteredExpenses);
-    }
   };
 
   const allCategories = (title: string) => {
     setChosenBtn(title);
     dispatch(filterAllItemsRequest());
-    if (receivedWalletItems[itemVisible].transactions) {
-      setCategoryShows(receivedWalletItems);
-    }
   };
 
   const newCard = () => {
@@ -270,7 +259,9 @@ const Wallet: FC<Props> = ({navigation}) => {
           data={
             chosenBtn === 'All actions'
               ? receivedWalletItems[itemVisible].transactions
-              : categoryShows[itemVisible].transactions
+              : chosenBtn === 'Incoming'
+              ? filterIncome[itemVisible].transactions
+              : filteredExpenses[itemVisible].transactions
           }
           keyExtractor={keyExtractorForTransactions}
           renderItem={({item}) => (

@@ -204,6 +204,24 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
         state.walletContent = state.walletContent.map(it =>
           it.key === action.payload.key ? action.payload : it,
         );
+        state.filteredIncome = state.walletContent.map(
+          it =>
+            (it = {
+              ...it,
+              transactions: it.transactions.filter(
+                item => item.type === 'income',
+              ),
+            }),
+        );
+        state.filteredExpenses = state.walletContent.map(
+          it =>
+            (it = {
+              ...it,
+              transactions: it.transactions.filter(
+                item => item.type === 'expenses',
+              ),
+            }),
+        );
         state.isLoadingTransactions = false;
         return state;
       },
@@ -223,6 +241,24 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
       (state, action: PayloadAction<WalletInfo>) => {
         state.walletContent = state.walletContent.map(it =>
           it.key === action.payload.key ? action.payload : it,
+        );
+        state.filteredIncome = state.walletContent.map(
+          it =>
+            (it = {
+              ...it,
+              transactions: it.transactions.filter(
+                item => item.type === 'income',
+              ),
+            }),
+        );
+        state.filteredExpenses = state.walletContent.map(
+          it =>
+            (it = {
+              ...it,
+              transactions: it.transactions.filter(
+                item => item.type === 'expenses',
+              ),
+            }),
         );
         state.isLoadingTransactions = false;
         return state;

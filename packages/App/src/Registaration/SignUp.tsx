@@ -159,7 +159,7 @@ const LogIn: FC<Props> = ({navigation}) => {
       </Formik>
 
       <ButtonApp
-        label="Sign Up"
+        label="Log In"
         styleBtn={styles.logIn}
         styleTxt={styles.logInText}
         onPress={goToLogInScreen}
