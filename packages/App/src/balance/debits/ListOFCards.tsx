@@ -32,7 +32,9 @@ const ListOFCards: FC<Props> = ({
         onPress={getCardKey}>
         <View style={styles.titleCard}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.textAmount}>{amount}$</Text>
+          <Text style={styles.textAmount}>
+            {Math.round(amount * 100) / 100}$
+          </Text>
         </View>
         <Image source={dollarImgSource} style={styles.img} />
       </TouchableOpacity>

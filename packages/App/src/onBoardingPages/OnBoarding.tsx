@@ -17,6 +17,7 @@ import slides from '../../slides';
 import OnBoardingItem from './OnBoardingItem';
 import Paginator from './Paginator';
 import NextButton from './NextButton';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export interface OnBoardingInfo {
   id: number;
@@ -45,14 +46,18 @@ const OnBoarding: FC<Props> = ({setViewOnBoarding}) => {
 
   const slideRef = useRef<FlatList>(null);
 
-  const scrollToNext = useCallback(async () => {
+  const scrollToNext = async () => {
     if (itemVisible < slides.length - 1) {
       slideRef.current?.scrollToIndex({index: itemVisible + 1});
     } else {
-      setViewOnBoarding(true);
-      console.log('we are done');
+      try {
+        await AsyncStorage.setItem('@viewedOnBoarding', 'true');
+        setViewOnBoarding(true);
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }, [itemVisible, setViewOnBoarding]);
+  };
 
   return (
     <View style={styles.container}>

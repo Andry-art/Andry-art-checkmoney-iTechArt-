@@ -3,13 +3,11 @@ import {
   View,
   StyleSheet,
   TextInput,
-  ImageBackground,
   Text,
   TouchableOpacity,
   Image,
 } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-import BG from '../../Pics/Group32.png';
 import PasswordInvisibleSource from '../../Pics/passwordUnvisible.png';
 import PasswordVisibleSource from '../../Pics/passwordVisible.png';
 import ButtonApp from '../components/ButtonApp';
@@ -22,7 +20,7 @@ import {RegistrationNavigation} from '../types/types';
 
 const signUpSchema = yup.object({
   email: yup.string().required().email(),
-  password: yup.string().required().min(6),
+  password: yup.string().required().min(5),
   repeatPassword: yup
     .string()
     .required()
@@ -62,8 +60,8 @@ const LogIn: FC<Props> = ({navigation}) => {
   );
 
   return (
-    <ImageBackground style={styles.backGround} source={BG}>
-      <Text style={styles.welcome}>Sign Up</Text>
+    <View style={styles.backGround}>
+      <Text style={styles.welcome}>SIGN UP</Text>
 
       <Formik
         initialValues={initialValues}
@@ -152,19 +150,19 @@ const LogIn: FC<Props> = ({navigation}) => {
                 !(isValid && dirty) ? styles.signUpDisabled : styles.signUp
               }
               onPress={handleSubmit}>
-              <Text style={styles.signUpText}> Sign Up </Text>
+              <Text style={styles.signUpText}> SIGN UP </Text>
             </TouchableOpacity>
           </>
         )}
       </Formik>
 
       <ButtonApp
-        label="Log In"
+        label="LOG IN"
         styleBtn={styles.logIn}
         styleTxt={styles.logInText}
         onPress={goToLogInScreen}
       />
-    </ImageBackground>
+    </View>
   );
 };
 
@@ -173,6 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
+    backgroundColor: 'white',
   },
 
   welcome: {
@@ -180,8 +179,9 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: 'bold',
     fontSize: 24,
-    color: '#FDFDFD',
+    color: 'black',
     marginBottom: 10,
+    textAlign: 'center',
   },
 
   labels: {
@@ -189,11 +189,13 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: 'normal',
     fontSize: 14,
-    color: '#FDFDFD',
+    color: 'black',
     marginBottom: 3,
   },
   inputs: {
-    backgroundColor: '#EFF3F3',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: '#404CB2',
     padding: 10,
     borderRadius: 8,
   },
@@ -205,9 +207,9 @@ const styles = StyleSheet.create({
 
   signUp: {
     width: '100%',
-    height: 50,
-    backgroundColor: '#BDE7FD',
-    borderRadius: 8,
+    height: 80,
+    backgroundColor: '#404CB2',
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 24,
@@ -215,9 +217,9 @@ const styles = StyleSheet.create({
 
   signUpDisabled: {
     width: '100%',
-    height: 50,
-    backgroundColor: '#BDE7FD',
-    borderRadius: 8,
+    height: 80,
+    backgroundColor: '#404CB2',
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 24,
@@ -229,15 +231,12 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: 16,
-    color: '#1D424F',
+    color: '#FFFFFF',
   },
 
   logIn: {
     width: '100%',
     height: 50,
-    borderRadius: 8,
-    borderColor: '#FFFFFF',
-    borderWidth: 2,
     marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -256,7 +255,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: 16,
-    color: '#FFFFFF',
+    color: '#404CB2',
   },
   passwordIcon: {
     position: 'absolute',

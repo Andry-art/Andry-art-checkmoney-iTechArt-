@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ListOFCards from './ListOFCards';
@@ -20,7 +21,6 @@ import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
 import imgArrowSource from '../../../Pics/double-arrow.png';
-import ModalNewDebit from '../../components/ModalNewDebit';
 import {DebitType} from '../../types/types';
 import plusSource from '../../../Pics/debt/plus.png';
 
@@ -45,11 +45,6 @@ const NewDebits: FC<Props> = ({navigation}) => {
   const yourDebits = useSelector(getYourDebits);
   const [debitType, setDebitType] = useState<string>(DebitType.toYou);
   const [keyCard, setKeyCard] = useState<number>(0);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-
-  const hide = () => {
-    setModalVisible(false);
-  };
 
   const setDebitToYou = () => {
     setDebitType(DebitType.toYou);
@@ -75,15 +70,18 @@ const NewDebits: FC<Props> = ({navigation}) => {
               .replace(/^([^\.]*\.)|\./g, '$1'),
           ) * 100,
         ) / 100;
-      const date = new Date().toLocaleDateString();
+      const date = String(new Date(Date.now()));
       const keyOfWallet = keyCard;
       const type = debitType;
       if (type === DebitType.toYou) {
-        key = toYou[toYou.length - 1].key + 1;
+        key = toYou.length === 0 ? 1 : toYou[toYou.length - 1].key + 1;
         debitsArray = toYou;
       }
       if (type === DebitType.yourDebit) {
-        key = yourDebits[yourDebits.length - 1].key + 1;
+        key =
+          yourDebits.length === 0
+            ? 1
+            : yourDebits[yourDebits.length - 1].key + 1;
         debitsArray = yourDebits;
       }
 
@@ -103,8 +101,12 @@ const NewDebits: FC<Props> = ({navigation}) => {
           };
         }
         if (wallet.walletAmount < 0) {
-          setModalVisible(true);
+          Alert.alert('You can`t give debit, try another wallet');
         }
+      }
+
+      if (!wallet) {
+        Alert.alert('Choose wallet');
       }
 
       if (wallet && key && debitsArray && wallet?.walletAmount > 0) {
@@ -124,12 +126,6 @@ const NewDebits: FC<Props> = ({navigation}) => {
   return (
     <>
       <ScrollView style={styles.container}>
-        <ModalNewDebit
-          title="You can`t give debit, try another wallet"
-          isVisible={modalVisible}
-          onPressHide={hide}
-        />
-
         <View style={styles.debtBTN}>
           <TouchableOpacity
             style={

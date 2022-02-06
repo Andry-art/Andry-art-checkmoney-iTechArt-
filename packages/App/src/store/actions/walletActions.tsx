@@ -9,19 +9,6 @@ export const getWalletItemsFailed = createAction<string>(
   'getWalletItemsFailed',
 );
 
-export const filterInComeRequest = createAction<undefined>('FILTER_INCOME');
-export const filterIncomeSuccess = createAction<undefined>('filterIncomeItems');
-
-export const filterAllItemsRequest = createAction<undefined>(
-  'FILTER_ALL_ITEMS_REQUEST',
-);
-
-export const filterExpensesRequest = createAction<undefined>('FILTER_EXPENSES');
-export const filterExpensesSuccess = createAction<undefined>(
-  'filterExpensesItems',
-);
-export const filterFailed = createAction<string>('filterIncomeItemsFailed');
-
 export const addNewCardRequest = createAction<{
   cardName: string;
   amount: number;

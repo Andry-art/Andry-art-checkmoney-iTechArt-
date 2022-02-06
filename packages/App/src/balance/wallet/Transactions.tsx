@@ -16,6 +16,7 @@ import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
 import iconSalarySource from '../../../Pics/categories/money.png';
 import {AmountInCents} from '../../types/types';
 import {TransactionType} from '../../types/types';
+import dayjs from 'dayjs';
 
 interface Props {
   keyTransaction: number;
@@ -88,7 +89,7 @@ const Transactions: FC<Props> = ({
         </View>
         <View style={styles.info}>
           <Text style={styles.title}>{category}</Text>
-          <Text style={styles.date}>{date}</Text>
+          <Text style={styles.date}>{dayjs(date).format('DD/MM/YY')}</Text>
         </View>
       </View>
       {type === TransactionType.income ? (

@@ -2,9 +2,6 @@ import {createReducer, PayloadAction} from '@reduxjs/toolkit';
 import {
   getWalletItemsSuccess,
   getWalletItemsFailed,
-  filterIncomeSuccess,
-  filterFailed,
-  filterExpensesSuccess,
   monetaryMove,
   deleteTransactionSuccess,
   addNewCardSuccess,
@@ -17,14 +14,11 @@ import {
   deleteTransactionFailed,
   addCorrectTransactionFailed,
   getAllItemWallet,
-  filterInComeRequest,
-  filterExpensesRequest,
   addNewCardRequest,
   deleteWalletCardRequest,
   addTransactionRequest,
   deleteTransactionRequest,
   addCorrectTransactionRequest,
-  filterAllItemsRequest,
   cleanErrorsWallet,
 } from '../actions/walletActions';
 import {WalletInfo} from '../../types/types';
@@ -83,6 +77,10 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
       (state, action: PayloadAction<Array<WalletInfo>>) => {
         state.isLoading = false;
         state.isLoadingTransactions = false;
+        state.errorGet = '';
+        state.errorFilters = '';
+        state.errorDeleteCard = '';
+        state.errorAddNewCard = '';
         state.walletContent = action.payload;
         state.filteredIncome = action.payload.map(
           it =>
@@ -108,53 +106,6 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     .addCase(getWalletItemsFailed, (state, action: PayloadAction<string>) => {
       state.isLoading = false;
       state.errorGet = action.payload;
-      return state;
-    })
-    .addCase(filterInComeRequest, state => {
-      state.isLoadingTransactions = true;
-      state.errorFilters = '';
-      return state;
-    })
-    .addCase(filterExpensesRequest, state => {
-      state.isLoadingTransactions = true;
-      state.errorFilters = '';
-      return state;
-    })
-    .addCase(filterIncomeSuccess, state => {
-      state.filteredIncome = state.walletContent.map(
-        it =>
-          (it = {
-            ...it,
-            transactions: it.transactions.filter(
-              item => item.type === 'income',
-            ),
-          }),
-      );
-      state.isLoadingTransactions = false;
-      state.errorFilters = '';
-      return state;
-    })
-    .addCase(filterFailed, (state, action: PayloadAction<string>) => ({
-      ...state,
-      isLoadingTransactions: false,
-      errorFilters: action.payload,
-    }))
-    .addCase(filterExpensesSuccess, state => {
-      state.filteredExpenses = state.walletContent.map(
-        it =>
-          (it = {
-            ...it,
-            transactions: it.transactions.filter(
-              item => item.type === 'expenses',
-            ),
-          }),
-      );
-      state.isLoadingTransactions = false;
-      return state;
-    })
-    .addCase(filterAllItemsRequest, state => {
-      state.isLoadingTransactions = true;
-      state.errorFilters = '';
       return state;
     })
     .addCase(addNewCardRequest, state => {

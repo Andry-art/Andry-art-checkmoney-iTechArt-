@@ -5,10 +5,9 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  FlatList,
-  Modal,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
@@ -27,7 +26,6 @@ import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {TransactionType} from '../../types/types';
 import addTransactionSource from '../../../Pics/balance/income.png';
-import {useDeviceOrientation} from '@react-native-community/hooks/lib/useDeviceOrientation';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -52,7 +50,6 @@ const transactionSchema = yup.object({
 });
 
 const AddMonetaryMovements: FC<Props> = ({navigation}) => {
-  const orientation = useDeviceOrientation();
   const dispatch = useDispatch();
   const {key, amount, title} = useSelector(monetaryMove);
   const [isMoneyMove, setIsMoneyMove] = useState<string>(
@@ -62,7 +59,6 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
     icon: 'iconUnknownSource',
     category: '',
   });
-  const [modal, setModal] = useState<boolean>(false);
 
   const receivedWalletItems = useSelector(walletItems);
 
@@ -99,7 +95,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
           type === 'expenses' &&
           chosenWallet.walletAmount - amountTransaction < 0
         ) {
-          setModal(true);
+          Alert.alert('Not enough money');
         }
 
         if (
@@ -127,29 +123,9 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Modal animationType="fade" transparent={true} visible={modal}>
-        <View style={styles.backGroundModal}>
-          <View
-            style={
-              orientation.landscape ? styles.modalLandscape : styles.modal
-            }>
-            <View style={styles.modalTitle}>
-              <Text style={styles.modalTextTitle}>Not enough money</Text>
-            </View>
-            <View style={styles.modalBtnArea}>
-              <TouchableOpacity
-                style={styles.modalBtnCancel}
-                onPress={() => setModal(false)}>
-                <Text style={styles.modalBtnText}>Ok</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
       <View style={styles.title}>
         <Text style={styles.textTitle}>{title?.toUpperCase()}</Text>
-        <Text style={styles.textAmount}>{amount}$</Text>
+        <Text style={styles.textAmount}>{Math.round(amount * 100) / 100}$</Text>
       </View>
 
       <View style={styles.moneyMoves}>
@@ -185,19 +161,23 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         <Text style={styles.validation}>{errors.amount}</Text>
       </View>
       <View style={styles.categoriesList}>
-        <FlatList
-          data={isMoneyMove === TransactionType.income ? income : expenses}
-          keyExtractor={it => it}
-          renderItem={it => (
-            <CategoriesInAddMoneyMove
-              picture={it.item}
-              onPress={setCategoryInfo}
-              chosen={categoryInfo}
-            />
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
+        {isMoneyMove === TransactionType.income
+          ? income.map(it => (
+              <CategoriesInAddMoneyMove
+                key={it}
+                picture={it}
+                onPress={setCategoryInfo}
+                chosen={categoryInfo}
+              />
+            ))
+          : expenses.map(it => (
+              <CategoriesInAddMoneyMove
+                key={it}
+                picture={it}
+                onPress={setCategoryInfo}
+                chosen={categoryInfo}
+              />
+            ))}
       </View>
 
       <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
@@ -209,69 +189,6 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  backGroundModal: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-  },
-
-  modal: {
-    borderRadius: 10,
-    justifyContent: 'center',
-    height: '25%',
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginHorizontal: 40,
-    marginVertical: 200,
-  },
-
-  modalLandscape: {
-    borderRadius: 10,
-    justifyContent: 'center',
-    height: 200,
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginHorizontal: 40,
-    marginVertical: 100,
-  },
-
-  modalTitle: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  modalBtnArea: {
-    marginVertical: 30,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-
-  modalBtnCancel: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    width: '40%',
-    backgroundColor: '#404CB2',
-    borderRadius: 12,
-  },
-
-  modalBtnText: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    color: 'white',
-    fontSize: 16,
-  },
-
-  modalTextTitle: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    color: 'black',
-    fontSize: 18,
-  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -374,9 +291,10 @@ const styles = StyleSheet.create({
 
   categoriesList: {
     backgroundColor: '#F6F6F6',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     padding: 3,
     borderRadius: 8,
   },

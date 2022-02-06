@@ -29,7 +29,6 @@ import {
   addDebitInfo,
   deleteDebitRequest,
 } from '../../store/actions/debitsActions';
-import CardModal from '../../components/CardModal';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import arrowSource from '../../../Pics/debt/up-arrow.png';
@@ -49,8 +48,6 @@ const Debits: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const [debitsVisible, setDebitsVisible] = useState<boolean>(false);
   const [myDebitsVisible, setMyDebitsVisible] = useState<boolean>(false);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [modalVisibleMinus, setModalVisibleMinus] = useState<boolean>(false);
 
   const toYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
@@ -88,27 +85,37 @@ const Debits: FC<Props> = ({navigation}) => {
     navigation.navigate('Add New Debit');
   };
 
-  const showModal = useCallback(
-    ({type, keyOfWallet, key, date, person, amount}: DebitInfo) => {
-      setModalVisible(true);
-      dispatch(
-        addDebitInfo({
-          type,
-          keyOfWallet,
-          key,
-          date,
-          person,
-          amount,
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const hide = useCallback(() => {
-    setModalVisible(false);
-    setModalVisibleMinus(false);
-  }, []);
+  const showModal = ({
+    type,
+    keyOfWallet,
+    key,
+    date,
+    person,
+    amount,
+  }: DebitInfo) => {
+    dispatch(
+      addDebitInfo({
+        type,
+        keyOfWallet,
+        key,
+        date,
+        person,
+        amount,
+      }),
+    );
+    Alert.alert(' Would you like to delete debt?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => {
+          deleteDebit();
+        },
+      },
+    ]);
+  };
 
   const deleteDebitMinus = () => {
     let debitsArray;
@@ -124,7 +131,6 @@ const Debits: FC<Props> = ({navigation}) => {
       dispatch(
         deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
       );
-      navigation.goBack();
       dispatch(getAllItemWallet());
     }
   };
@@ -154,7 +160,18 @@ const Debits: FC<Props> = ({navigation}) => {
       }
 
       if (wallet?.walletAmount < 0) {
-        setModalVisibleMinus(true);
+        Alert.alert('Going to be minus, delete?', '', [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Delete',
+            onPress: () => {
+              deleteDebitMinus();
+            },
+          },
+        ]);
       }
     }
 
@@ -162,7 +179,6 @@ const Debits: FC<Props> = ({navigation}) => {
       dispatch(
         deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
       );
-      setModalVisible(false);
       dispatch(getAllItemWallet());
     }
   };
@@ -188,20 +204,6 @@ const Debits: FC<Props> = ({navigation}) => {
 
   return (
     <ScrollView nestedScrollEnabled={true} style={styles.container}>
-      <CardModal
-        title=" Would you like to delete debit?"
-        isVisible={modalVisible}
-        onPressDelete={deleteDebit}
-        onPressHide={hide}
-      />
-
-      <CardModal
-        title="Going to be minus?"
-        isVisible={modalVisibleMinus}
-        onPressDelete={deleteDebitMinus}
-        onPressHide={hide}
-      />
-
       <TouchableOpacity
         style={debitsVisible ? styles.debitsActive : styles.debits}
         onPress={DebitsToYou}>
@@ -230,6 +232,7 @@ const Debits: FC<Props> = ({navigation}) => {
               color="#1B824A"
               onPress={toDebitInfo}
               onLongPress={showModal}
+              lastKey={toYou[toYou.length - 1].key}
             />
           ))}
         </ScrollView>
@@ -266,6 +269,7 @@ const Debits: FC<Props> = ({navigation}) => {
               color="#1B824A"
               onPress={toDebitInfo}
               onLongPress={showModal}
+              lastKey={yourDebits[yourDebits.length - 1].key}
             />
           ))}
         </ScrollView>

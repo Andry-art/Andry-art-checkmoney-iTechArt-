@@ -17,12 +17,13 @@ const Stack = createNativeStackNavigator();
 const BalanceNavigation = () => {
   const dispatch = useDispatch();
   const isLogIn = useSelector(userIsLogIn);
+
+  const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
     dispatch(getAllItemWallet());
     dispatch(getDebitsItemsRequest());
   }, [dispatch, isLogIn]);
-
-  const [isVisible, setIsVisible] = useState(false);
 
   const logOutRequest = () => {
     setIsVisible(prev => !prev);

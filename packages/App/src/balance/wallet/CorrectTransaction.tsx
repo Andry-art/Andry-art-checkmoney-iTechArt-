@@ -1,14 +1,13 @@
-import React, {FC, useCallback, useRef, useState} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   TextInput,
-  FlatList,
-  Modal,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
@@ -25,7 +24,7 @@ import {
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import confirmSource from '../../../Pics/balance/basic-tick.png';
-import {useDeviceOrientation} from '@react-native-community/hooks/lib/useDeviceOrientation';
+import {TransactionType} from '../../types/types';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -41,8 +40,6 @@ const transactionSchema = yup.object({
   amount: yup.string().required('Amount is required'),
 });
 
-const keyExtractor = (it: string) => it;
-
 interface Props {
   navigation: NativeStackNavigationProp<WalletNavigatorList>;
 }
@@ -50,14 +47,11 @@ interface Props {
 const CorrectTransaction: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const transaction = useSelector(monetaryMove);
-  const orientation = useDeviceOrientation();
   const receivedWalletItems = useSelector(walletItems);
   const [categoryInfo, setCategoryInfo] = useState<ChosenCategory>({
     icon: transaction.icon || '',
     category: transaction.category || '',
   });
-
-  const [isModal, setIsModal] = useState<boolean>(false);
 
   const oldAmount = useRef(transaction.amount);
   const oldIcon = useRef(transaction.icon);
@@ -102,7 +96,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
       }
 
       if (item.walletAmount < 0) {
-        setIsModal(true);
+        Alert.alert('Not enough money');
       }
 
       if (
@@ -128,32 +122,8 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
     },
   });
 
-  const setModal = useCallback(() => {
-    setIsModal(false);
-  }, []);
-
   return (
     <ScrollView style={styles.container}>
-      <Modal animationType="fade" transparent={true} visible={isModal}>
-        <View style={styles.backGroundModal}>
-          <View
-            style={
-              orientation.landscape ? styles.modalLandscape : styles.modal
-            }>
-            <View style={styles.modalTitle}>
-              <Text style={styles.modalTextTitle}>Not enough money</Text>
-            </View>
-            <View style={styles.modalBtnArea}>
-              <TouchableOpacity
-                style={styles.modalBtnCancel}
-                onPress={setModal}>
-                <Text style={styles.modalBtnText}>Ok</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
       <View style={styles.BtnIncomeExpenses}>
         <Text style={styles.textIncomeExpenses}>
           {transaction.type?.toUpperCase()}
@@ -170,7 +140,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
         />
       </View>
       <View style={styles.categoriesList}>
-        <FlatList
+        {/* <FlatList
           data={transaction.type === 'income' ? income : expenses}
           keyExtractor={keyExtractor}
           renderItem={it => (
@@ -182,7 +152,24 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
           )}
           horizontal
           showsHorizontalScrollIndicator={false}
-        />
+        /> */}
+        {transaction.type === TransactionType.income
+          ? income.map(it => (
+              <CategoriesInAddMoneyMove
+                key={it}
+                picture={it}
+                onPress={setCategoryInfo}
+                chosen={categoryInfo}
+              />
+            ))
+          : expenses.map(it => (
+              <CategoriesInAddMoneyMove
+                key={it}
+                picture={it}
+                onPress={setCategoryInfo}
+                chosen={categoryInfo}
+              />
+            ))}
       </View>
       <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
         <Image source={confirmSource} style={styles.img} />
@@ -193,69 +180,6 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  backGroundModal: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-  },
-
-  modal: {
-    borderRadius: 10,
-    justifyContent: 'center',
-    height: '25%',
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginHorizontal: 40,
-    marginVertical: 200,
-  },
-
-  modalLandscape: {
-    borderRadius: 10,
-    justifyContent: 'center',
-    height: 200,
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginHorizontal: 40,
-    marginVertical: 100,
-  },
-
-  modalTitle: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  modalBtnArea: {
-    marginVertical: 30,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-
-  modalBtnCancel: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    width: '40%',
-    backgroundColor: '#404CB2',
-    borderRadius: 12,
-  },
-
-  modalBtnText: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    color: 'white',
-    fontSize: 16,
-  },
-
-  modalTextTitle: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    color: 'black',
-    fontSize: 18,
-  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -326,9 +250,10 @@ const styles = StyleSheet.create({
 
   categoriesList: {
     backgroundColor: '#F6F6F6',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     padding: 3,
     borderRadius: 8,
   },

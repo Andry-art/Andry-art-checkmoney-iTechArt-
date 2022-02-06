@@ -57,7 +57,9 @@ const WalletItem: FC<Props> = ({
             <Text style={styles.cardTitleText}>{title}</Text>
           </View>
           <View style={styles.total}>
-            <Text style={styles.totalText}>{amount}$</Text>
+            <Text style={styles.totalText}>
+              {Math.round(amount * 100) / 100}$
+            </Text>
           </View>
         </LinearGradient>
       </TouchableOpacity>

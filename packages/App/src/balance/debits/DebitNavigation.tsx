@@ -5,7 +5,7 @@ import {getDebitsItemsRequest} from '../../store/actions/debitsActions';
 import {useDispatch} from 'react-redux';
 import Debits from '../debits/Debits';
 import NewDebits from '../debits/NewDebits';
-import DebitInfo from '../debits/DebitInfo';
+import DebitInfoComponent from './DebitInfoComponent';
 import {Image, StyleSheet, TouchableOpacity} from 'react-native';
 import LogOutModal from '../../components/LogOutModal';
 import logOutSource from '../../../Pics/logout.png';
@@ -58,7 +58,7 @@ const DebitNavigation = () => {
       />
       <Stack.Screen
         name="Debit Info"
-        component={DebitInfo}
+        component={DebitInfoComponent}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (

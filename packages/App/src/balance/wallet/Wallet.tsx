@@ -21,13 +21,10 @@ import {
 } from '../../store/selectors/walletItems';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  filterInComeRequest,
-  filterExpensesRequest,
   deleteWalletCardRequest,
   cardMonetaryMove,
   deleteTransactionRequest,
   correctTransactionInfo,
-  filterAllItemsRequest,
 } from '../../store/actions/walletActions';
 import Loading from '../../components/Loading';
 import {
@@ -35,9 +32,10 @@ import {
   WalletInfo,
   ITransactions,
 } from '../../types/types';
-import CardModal from '../../components/CardModal';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useDeviceOrientation} from '@react-native-community/hooks/lib/useDeviceOrientation';
+import NetInfo from '@react-native-community/netinfo';
+import dayjs from 'dayjs';
 
 const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 10,
@@ -65,31 +63,47 @@ const Wallet: FC<Props> = ({navigation}) => {
   const getErrorInfo = useSelector(getError);
 
   const [itemVisible, setItemVisible] = useState<number>(0);
-  const [isModalCardVisible, setIsModalCardVisible] = useState<boolean>(false);
-  const [isModalTransactionVisible, setIsModalTransactionVisible] =
-    useState<boolean>(false);
-  const [cardId, setCardId] = useState<number>(0);
-  const [transactionKey, setTransactionKey] = useState<{
-    keyTransaction: number;
-    amount: number;
-    type: string;
-  }>({keyTransaction: 0, amount: 0, type: ''});
   const [refItem, setRefItem] = useState<FlatList<WalletInfo> | null>();
   const [chosenBtn, setChosenBtn] = useState<string>('All actions');
+  const [isConnection, setIsConnection] = useState<boolean>(true);
+  const [lastTime, setLastTime] = useState<Date>();
+
+  useEffect(() => {
+    setIsConnection(true);
+    NetInfo.addEventListener(state => {
+      console.log(state.isConnected);
+      if (state.isConnected === false) {
+        setIsConnection(false);
+      }
+      if (state.isConnected === true) {
+        setIsConnection(true);
+        setLastTime(new Date());
+      }
+    });
+  }, []);
+
+  if (isConnection === false) {
+    if (lastTime) {
+      Alert.alert(
+        'No internet',
+        `Last time connection was ${dayjs(lastTime).format('DD MMM, hh:mm')}`,
+      );
+    }
+    if (!lastTime) {
+      Alert.alert('No internet connection');
+    }
+  }
 
   const filterInCome = (title: string) => {
     setChosenBtn(title);
-    dispatch(filterInComeRequest());
   };
 
   const filterExpenses = (title: string) => {
     setChosenBtn(title);
-    dispatch(filterExpensesRequest());
   };
 
   const allCategories = (title: string) => {
     setChosenBtn(title);
-    dispatch(filterAllItemsRequest());
   };
 
   const newCard = () => {
@@ -106,15 +120,21 @@ const Wallet: FC<Props> = ({navigation}) => {
   };
 
   const showModal = (id: number) => {
-    setCardId(id);
-    setIsModalCardVisible(true);
-  };
-
-  const deleteCard = () => {
-    dispatch(deleteWalletCardRequest(cardId));
-    setItemVisible(0);
-    refItem?.scrollToIndex({animated: true, index: 0});
-    setIsModalCardVisible(false);
+    Alert.alert(' Would you like to delete card?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => {
+          const indexCard = itemVisible - 1;
+          dispatch(deleteWalletCardRequest(id));
+          setItemVisible(0);
+          refItem?.scrollToIndex({animated: true, index: indexCard});
+        },
+      },
+    ]);
   };
 
   const showModalTransaction = (
@@ -122,14 +142,20 @@ const Wallet: FC<Props> = ({navigation}) => {
     amount: number,
     type: string,
   ) => {
-    setTransactionKey({keyTransaction, amount, type});
-    setIsModalTransactionVisible(true);
-  };
-
-  const deleteTransaction = () => {
-    const item = receivedWalletItems[itemVisible];
-    dispatch(deleteTransactionRequest({item, transactionKey}));
-    setIsModalTransactionVisible(false);
+    const transactionKey = {keyTransaction, amount, type};
+    Alert.alert('Would you like to delete transaction?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => {
+          const item = receivedWalletItems[itemVisible];
+          dispatch(deleteTransactionRequest({item, transactionKey}));
+        },
+      },
+    ]);
   };
 
   const correctTransaction = (
@@ -174,20 +200,6 @@ const Wallet: FC<Props> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <CardModal
-        title="Would you like to delete transaction?"
-        isVisible={isModalTransactionVisible}
-        onPressDelete={deleteTransaction}
-        onPressHide={setIsModalTransactionVisible}
-      />
-
-      <CardModal
-        title=" Would you like to delete card?"
-        isVisible={isModalCardVisible}
-        onPressDelete={deleteCard}
-        onPressHide={setIsModalCardVisible}
-      />
-
       <View
         style={orientation.landscape ? styles.walletLandscape : styles.wallet}>
         <Text style={styles.title}>TOTAL BALANCE</Text>

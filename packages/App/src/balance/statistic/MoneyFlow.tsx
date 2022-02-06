@@ -73,12 +73,14 @@ const MoneyFlow: FC<Props> = ({month}) => {
         </View>
         <View style={styles.listLine}>
           <Text style={styles.title}>Left</Text>
-          <Text style={styles.amountLeft}>{left ? left : 0}</Text>
+          <Text style={styles.amountLeft}>
+            {left ? Math.round(left * 100) / 100 : 0}
+          </Text>
         </View>
         <View style={styles.listLine}>
           <Text style={styles.title}>OverExpenses</Text>
           <Text style={styles.amountOverExpenses}>
-            {OverExpenses ? -OverExpenses : 0}
+            {OverExpenses ? -Math.round(OverExpenses * 100) / 100 : 0}
           </Text>
         </View>
       </View>

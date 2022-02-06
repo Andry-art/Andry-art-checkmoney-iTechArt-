@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -14,34 +15,38 @@ import {
   getDebitsToYou,
   getYourDebits,
 } from '../../store/selectors/debits';
-import CardModal from '../../components/CardModal';
 import {deleteDebitRequest} from '../../store/actions/debitsActions';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
 import minusSource from '../../../Pics/debt/minus.png';
+import dayjs from 'dayjs';
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
 }
 
-const DebitInfo: FC<Props> = ({navigation}) => {
+const DebitInfoComponent: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const info = useSelector(debitInfo);
   let wallet = useSelector(walletName);
   const toYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [modalVisibleMinus, setModalVisibleMinus] = useState<boolean>(false);
 
   const showModal = () => {
-    setModalVisible(true);
+    Alert.alert(' Would you like to delete card?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => {
+          deleteDebit();
+        },
+      },
+    ]);
   };
-
-  const hide = useCallback(() => {
-    setModalVisible(false);
-    setModalVisibleMinus(false);
-  }, []);
 
   const deleteDebitMinus = () => {
     let debitsArray;
@@ -87,7 +92,18 @@ const DebitInfo: FC<Props> = ({navigation}) => {
       }
 
       if (wallet?.walletAmount < 0) {
-        setModalVisibleMinus(true);
+        Alert.alert('Going to be minus, delete?', '', [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Delete',
+            onPress: () => {
+              deleteDebitMinus();
+            },
+          },
+        ]);
       }
     }
 
@@ -102,18 +118,6 @@ const DebitInfo: FC<Props> = ({navigation}) => {
 
   return (
     <>
-      <CardModal
-        title=" Would you like to delete debit?"
-        isVisible={modalVisible}
-        onPressDelete={deleteDebit}
-        onPressHide={hide}
-      />
-      <CardModal
-        title="Going to be minus, delete?"
-        isVisible={modalVisibleMinus}
-        onPressDelete={deleteDebitMinus}
-        onPressHide={hide}
-      />
       <ScrollView style={styles.container}>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>
@@ -123,7 +127,9 @@ const DebitInfo: FC<Props> = ({navigation}) => {
         </View>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>Date</Text>
-          <Text style={styles.textAmount}>{info.date}</Text>
+          <Text style={styles.textAmount}>
+            {dayjs(info.date).format('DD/MM/YY')}
+          </Text>
         </View>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>Amount</Text>
@@ -203,4 +209,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DebitInfo;
+export default DebitInfoComponent;

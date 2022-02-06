@@ -17,6 +17,8 @@ import statsImgSource from '../Pics/TabMenu/bar-chart.png';
 import logOutSource from '../Pics/logout.png';
 import LogOutModal from './components/LogOutModal';
 import {getAllItemWallet} from './store/actions/walletActions';
+import OnBoarding from './onBoardingPages/OnBoarding';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,6 +27,27 @@ const Navigation = () => {
   const dispatch = useDispatch();
   const isLogIn = useSelector(userIsLogIn);
   const isLoading = useSelector(IsLoadingUser);
+
+  const [ViewOnBoarding, setViewOnBoarding] = useState(true);
+  const [loadingOnboarding, setLoadingOnBoarding] = useState(true);
+
+  const checkOnboardingPage = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@viewedOnBoarding');
+      if (value === null) {
+        setLoadingOnBoarding(false);
+        setViewOnBoarding(false);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingOnBoarding(false);
+    }
+  };
+
+  useEffect(() => {
+    checkOnboardingPage();
+  }, []);
 
   useEffect(() => {
     dispatch(getAllItemWallet());
@@ -36,8 +59,12 @@ const Navigation = () => {
     setIsVisible(prev => !prev);
   };
 
-  if (isLoading) {
+  if (isLoading || loadingOnboarding) {
     return <Loading />;
+  }
+
+  if (!ViewOnBoarding) {
+    return <OnBoarding setViewOnBoarding={setViewOnBoarding} />;
   }
 
   return (
