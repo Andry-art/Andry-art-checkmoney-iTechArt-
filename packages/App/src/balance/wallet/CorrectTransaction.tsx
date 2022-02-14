@@ -189,7 +189,6 @@ const styles = StyleSheet.create({
   textTitle: {
     textAlign: 'center',
     padding: 10,
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '600',
     color: 'black',
@@ -202,7 +201,6 @@ const styles = StyleSheet.create({
   },
 
   textIncomeExpenses: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     color: 'black',

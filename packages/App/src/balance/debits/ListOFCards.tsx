@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
   },
 
   textAmount: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '600',
     fontSize: 22,
@@ -67,7 +66,6 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: 16,

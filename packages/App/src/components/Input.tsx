@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
   },
 
   labels: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: 'normal',
     fontSize: 14,

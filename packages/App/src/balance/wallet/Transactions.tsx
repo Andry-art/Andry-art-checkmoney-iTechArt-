@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '800',
     fontSize: 18,
@@ -143,14 +142,12 @@ const styles = StyleSheet.create({
 
   date: {
     width: '100%',
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '300',
     fontSize: 12,
   },
 
   sumMinus: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: 18,
@@ -158,7 +155,6 @@ const styles = StyleSheet.create({
   },
 
   sumPlus: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: 18,

@@ -226,7 +226,6 @@ const styles = StyleSheet.create({
   },
 
   textIncomeExpenses: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     color: 'white',

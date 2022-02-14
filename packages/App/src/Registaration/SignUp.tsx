@@ -175,7 +175,6 @@ const styles = StyleSheet.create({
   },
 
   welcome: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: 'bold',
     fontSize: 24,
@@ -185,7 +184,6 @@ const styles = StyleSheet.create({
   },
 
   labels: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: 'normal',
     fontSize: 14,
@@ -227,7 +225,6 @@ const styles = StyleSheet.create({
   },
 
   signUpText: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: 16,
@@ -251,7 +248,6 @@ const styles = StyleSheet.create({
   },
 
   logInText: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     fontSize: 16,

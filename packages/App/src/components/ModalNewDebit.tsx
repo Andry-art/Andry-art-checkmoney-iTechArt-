@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   },
 
   modalBtnText: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     color: 'white',
@@ -79,7 +78,6 @@ const styles = StyleSheet.create({
     width: '60%',
     textAlign: 'center',
     marginTop: 20,
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     color: 'black',

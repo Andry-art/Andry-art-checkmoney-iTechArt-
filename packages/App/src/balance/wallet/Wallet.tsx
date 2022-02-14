@@ -322,7 +322,6 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     color: '#A8ADDD',
@@ -364,7 +363,6 @@ const styles = StyleSheet.create({
   },
 
   categoriesListText: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '800',
     fontSize: 18,

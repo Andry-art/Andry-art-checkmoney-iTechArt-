@@ -184,7 +184,6 @@ const styles = StyleSheet.create({
 
   title: {
     textAlign: 'center',
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '500',
     color: 'black',

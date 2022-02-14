@@ -140,7 +140,6 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: 18,
