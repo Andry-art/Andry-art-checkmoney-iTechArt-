@@ -1,5 +1,5 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, Text, Alert} from 'react-native';
+import {StyleSheet, View, FlatList, Text, Alert, SafeAreaView} from 'react-native';
 import WalletItem from './WalletItem';
 import Button from './Button';
 import incomeIconSource from '../../../Pics/balance/income.png';
@@ -277,6 +277,7 @@ const Wallet: FC<Props> = ({navigation}) => {
           }
           keyExtractor={keyExtractorForTransactions}
           renderItem={({item}) => (
+            <SafeAreaView >
             <Transactions
               category={item.category}
               amount={item.amountTransaction}
@@ -287,6 +288,7 @@ const Wallet: FC<Props> = ({navigation}) => {
               onLongPress={showModalTransaction}
               onPress={correctTransaction}
             />
+            </SafeAreaView>
           )}
         />
       )}

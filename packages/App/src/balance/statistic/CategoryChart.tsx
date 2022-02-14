@@ -105,9 +105,9 @@ const CategoryChart: FC<Props> = ({month}) => {
       <Text style={styles.title}>Category expenses</Text>
       <VictoryPie
         padAngle={3}
-        padding={100}
+        padding={300}
         innerRadius={40}
-        labelRadius={120}
+        labelRadius={140}
         colorScale={['#240046', '#3c096c', '#7b2cbf', '#9d4edd', '#e0aaff']}
         style={{data: {width: '100%'}}}
         data={CategoriesWasUsed}
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    marginBottom: -40,
+    marginBottom: -220,
     fontStyle: 'normal',
     fontWeight: '600',
     color: 'black',
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
 
   listContainer: {
-    marginTop: -30,
+    marginTop: -180,
     width: '100%',
     paddingHorizontal: 40,
   },

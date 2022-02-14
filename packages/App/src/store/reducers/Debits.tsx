@@ -61,6 +61,8 @@ const debits = createReducer<IDebits>(initialState, builder => {
       state.yourDebit = action.payload[1].yourDebits;
       state.isLoading = false;
       state.errorGet = '';
+      state.errorNewDebit = '';
+      state.errorDelete = '';
       return state;
     })
     .addCase(getDebitsItemsFailed, (state, action: PayloadAction<string>) => {

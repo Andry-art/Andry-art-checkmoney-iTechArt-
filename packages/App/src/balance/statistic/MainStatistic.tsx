@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   Image,
+  SafeAreaView
 } from 'react-native';
 import {Months} from '../../types/types';
 import MoneyFlow from './MoneyFlow';
@@ -44,7 +45,7 @@ const MainStatistic: FC = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <ScrollView horizontal style={styles.monthsScroll}>
         {months.map(it => (
           <TouchableOpacity
@@ -65,6 +66,8 @@ const MainStatistic: FC = () => {
         ))}
       </ScrollView>
 
+   
+
       {allTransactionsByMonth.length === 0 ? (
         <View style={styles.noChart}>
           <Text style={styles.noChartText}>
@@ -74,9 +77,11 @@ const MainStatistic: FC = () => {
         </View>
       ) : (
         <ScrollView style={styles.containerScroll}>
+           <SafeAreaView style={styles.container}>
           <MoneyFlow month={chosenMonth} />
           <WeeklyChart month={chosenMonth} />
           <CategoryChart month={chosenMonth} />
+          </SafeAreaView>
         </ScrollView>
       )}
     </View>
@@ -84,6 +89,10 @@ const MainStatistic: FC = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+backgroundColor: 'white',
+  },
+
   containerScroll: {
     backgroundColor: 'white',
     marginBottom: 60,
