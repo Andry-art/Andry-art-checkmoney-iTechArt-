@@ -1,28 +1,34 @@
-import React, {Dispatch, FC, SetStateAction, useCallback, useMemo} from 'react';
-import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import React, {Dispatch, FC, SetStateAction, useCallback} from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
-  color: string;
-  onPress: Dispatch<SetStateAction<string>>;
+  color: Array<string>;
+  onPress: Dispatch<SetStateAction<Array<string>>>;
 }
 
 const ColorsNewCard: FC<Props> = ({color, onPress}) => {
-  const styler = useMemo<StyleProp<ViewStyle>>(() => {
-    return [styles.colorsItems, {backgroundColor: color}];
-  }, [color]);
-
   const onPressCallBack = useCallback(() => {
     onPress(color);
   }, [color, onPress]);
 
-  return <TouchableOpacity style={styler} onPress={onPressCallBack} />;
+  return (
+    <TouchableOpacity onPress={onPressCallBack}>
+      <LinearGradient
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+        colors={color}
+        style={styles.colorsItems}
+      />
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
   colorsItems: {
-    width: 60,
-    height: 60,
-    borderRadius: 100,
+    width: 55,
+    height: 45,
+    borderRadius: 10,
   },
 });
 

@@ -9,23 +9,12 @@ export const getWalletItemsFailed = createAction<string>(
   'getWalletItemsFailed',
 );
 
-export const filterInComeRequest = createAction<undefined>('FILTER_INCOME');
-export const filterIncomeSuccess = createAction<undefined>('filterIncomeItems');
-
-export const filterAllItemsRequest = createAction<undefined>(
-  'FILTER_ALL_ITEMS_REQUEST',
-);
-
-export const filterExpensesRequest = createAction<undefined>('FILTER_EXPENSES');
-export const filterExpensesSuccess = createAction<undefined>(
-  'filterExpensesItems',
-);
-export const filterFailed = createAction<string>('filterIncomeItemsFailed');
-
-export const addNewCardRequest =
-  createAction<{cardName: string; amount: number; color: string; key: number}>(
-    'ADD_CARD',
-  );
+export const addNewCardRequest = createAction<{
+  cardName: string;
+  amount: number;
+  color: Array<string>;
+  key: number;
+}>('ADD_CARD');
 export const addNewCardSuccess = createAction<WalletInfo>('addCard');
 export const addNewCardFailed = createAction<string>('addCardFailed');
 
@@ -103,3 +92,5 @@ export const monetaryMove = createAction<{
   icon?: string;
   idCard?: number;
 }>('monetaryMovements');
+
+export const cleanErrorsWallet = createAction<undefined>('cleanErrors');

@@ -7,6 +7,8 @@ import {
   logOutActionSuccess,
 } from '../actions/registration';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {cleanErrorsWallet} from '../actions/walletActions';
+import {cleanErrorsDebits} from '../actions/debitsActions';
 
 export function* userSendLogIn(
   action: ReturnType<typeof userLogIn>,
@@ -57,6 +59,8 @@ export function* userLogOut(): Generator {
   try {
     yield EncryptedStorage.removeItem('user_session');
     yield put(logOutActionSuccess());
+    yield put(cleanErrorsWallet());
+    yield put(cleanErrorsDebits());
   } catch (error) {
     yield put(userLogInFailed((error as Error).message));
   }

@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ListOFCards from './ListOFCards';
@@ -20,8 +21,8 @@ import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
 import imgArrowSource from '../../../Pics/double-arrow.png';
-import ModalNewDebit from '../../components/ModalNewDebit';
 import {DebitType} from '../../types/types';
+import plusSource from '../../../Pics/debt/plus.png';
 
 const newDebitSchema = yup.object({
   name: yup.string().required('Name is required'),
@@ -44,11 +45,6 @@ const NewDebits: FC<Props> = ({navigation}) => {
   const yourDebits = useSelector(getYourDebits);
   const [debitType, setDebitType] = useState<string>(DebitType.toYou);
   const [keyCard, setKeyCard] = useState<number>(0);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-
-  const hide = () => {
-    setModalVisible(false);
-  };
 
   const setDebitToYou = () => {
     setDebitType(DebitType.toYou);
@@ -74,15 +70,18 @@ const NewDebits: FC<Props> = ({navigation}) => {
               .replace(/^([^\.]*\.)|\./g, '$1'),
           ) * 100,
         ) / 100;
-      const date = new Date().toLocaleDateString();
+      const date = String(new Date(Date.now()));
       const keyOfWallet = keyCard;
       const type = debitType;
       if (type === DebitType.toYou) {
-        key = toYou[toYou.length - 1].key + 1;
+        key = toYou.length === 0 ? 1 : toYou[toYou.length - 1].key + 1;
         debitsArray = toYou;
       }
       if (type === DebitType.yourDebit) {
-        key = yourDebits[yourDebits.length - 1].key + 1;
+        key =
+          yourDebits.length === 0
+            ? 1
+            : yourDebits[yourDebits.length - 1].key + 1;
         debitsArray = yourDebits;
       }
 
@@ -102,8 +101,12 @@ const NewDebits: FC<Props> = ({navigation}) => {
           };
         }
         if (wallet.walletAmount < 0) {
-          setModalVisible(true);
+          Alert.alert('You can`t give debit, try another wallet');
         }
+      }
+
+      if (!wallet) {
+        Alert.alert('Choose wallet');
       }
 
       if (wallet && key && debitsArray && wallet?.walletAmount > 0) {
@@ -123,12 +126,6 @@ const NewDebits: FC<Props> = ({navigation}) => {
   return (
     <>
       <ScrollView style={styles.container}>
-        <ModalNewDebit
-          title="You cant give debit, try another wallet"
-          isVisible={modalVisible}
-          onPressHide={hide}
-        />
-
         <View style={styles.debtBTN}>
           <TouchableOpacity
             style={
@@ -176,7 +173,6 @@ const NewDebits: FC<Props> = ({navigation}) => {
             <ListOFCards
               amount={item.walletAmount}
               title={item.walletTitle}
-              color={item.color}
               cardKey={item.key}
               onPress={setKeyCard}
               chosenCard={keyCard}
@@ -184,11 +180,14 @@ const NewDebits: FC<Props> = ({navigation}) => {
           )}
           horizontal
         />
-        <TouchableOpacity
-          style={styles.btnConfirm}
-          onPress={formik.handleSubmit}>
-          <Text style={styles.textConfirm}>Add new debit</Text>
-        </TouchableOpacity>
+        <View style={styles.btnArea}>
+          <TouchableOpacity
+            style={styles.btnConfirm}
+            onPress={formik.handleSubmit}>
+            <Image source={plusSource} style={styles.imgBtn} />
+            <Text style={styles.textConfirm}>ADD NEW DEBT</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </>
   );
@@ -196,6 +195,7 @@ const NewDebits: FC<Props> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
     flex: 1,
     backgroundColor: 'white',
   },
@@ -203,42 +203,42 @@ const styles = StyleSheet.create({
   debtBTN: {
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    padding: 20,
+    padding: 10,
     flexDirection: 'row',
   },
   activeBTNtoYou: {
-    width: '40%',
-    borderRadius: 30,
-    backgroundColor: '#0C547C',
-    height: 55,
+    height: 40,
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '40%',
+    borderRadius: 10,
   },
   inactiveBTNtoYou: {
-    width: '40%',
-    borderRadius: 30,
-    backgroundColor: '#D1EDFC',
-    height: 55,
+    height: 40,
+    backgroundColor: '#C0C0C0',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '40%',
+    borderRadius: 10,
   },
 
   activeBTNYour: {
-    borderRadius: 30,
-    width: '40%',
-    backgroundColor: '#0C547C',
-    height: 55,
+    height: 40,
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '40%',
+    borderRadius: 10,
   },
 
   inactiveBTNYour: {
-    borderRadius: 30,
-    width: '40%',
-    backgroundColor: '#D1EDFC',
-    height: 55,
+    height: 40,
+    backgroundColor: '#C0C0C0',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '40%',
+    borderRadius: 10,
   },
 
   inputArea: {
@@ -246,17 +246,16 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    borderColor: '#32A7E9',
-    borderWidth: 1,
-    minHeight: 50,
-    backgroundColor: 'white',
-    height: 40,
-    marginTop: 10,
-    borderRadius: 30,
+    fontSize: 20,
     paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#404CB2',
+    marginTop: 10,
+    borderRadius: 10,
+    textAlign: 'center',
   },
   listOfCards: {
-    padding: 20,
+    paddingHorizontal: 10,
   },
 
   btnText: {
@@ -267,25 +266,38 @@ const styles = StyleSheet.create({
   },
 
   btnConfirm: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    height: 100,
+    width: '100%',
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30,
-    margin: 20,
-    height: 55,
-    backgroundColor: '#7CD0FF',
-    marginBottom: 90,
+    elevation: 7,
+    marginTop: 30,
+    marginBottom: 80,
   },
 
   textConfirm: {
     fontStyle: 'normal',
-    fontWeight: '500',
-    color: 'black',
+    fontWeight: '700',
     fontSize: 16,
+    color: '#FFFFFF',
   },
 
   error: {
     marginLeft: 10,
     color: 'red',
+  },
+
+  btnArea: {
+    paddingHorizontal: 20,
+  },
+
+  imgBtn: {
+    position: 'absolute',
+    left: 20,
+    tintColor: 'white',
   },
 });
 

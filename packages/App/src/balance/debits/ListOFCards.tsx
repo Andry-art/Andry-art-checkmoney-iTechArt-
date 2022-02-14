@@ -1,12 +1,12 @@
 import React, {FC, useCallback, useMemo} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import dollarImgSource from '../../../Pics/debt/dollar.png';
 
 type Props = {
   chosenCard: number;
   cardKey: number;
   amount: number;
   title: string;
-  color: string;
   onPress: (key: number) => void;
 };
 
@@ -15,19 +15,11 @@ const ListOFCards: FC<Props> = ({
   cardKey,
   amount,
   title,
-  color,
   onPress,
 }) => {
-  const cardColor = useMemo(() => {
-    return [styles.card, {backgroundColor: color}];
-  }, [color]);
-
   const cardColorChosen = useMemo(() => {
-    return [
-      styles.card,
-      {backgroundColor: color, borderColor: '#9098AD', borderWidth: 5},
-    ];
-  }, [color]);
+    return [styles.card, {borderColor: '#9098AD', borderWidth: 5}];
+  }, []);
 
   const getCardKey = useCallback(() => {
     onPress(cardKey);
@@ -36,13 +28,16 @@ const ListOFCards: FC<Props> = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={chosenCard === cardKey ? cardColorChosen : cardColor}
+        style={chosenCard === cardKey ? cardColorChosen : styles.card}
         onPress={getCardKey}>
-        <Text style={styles.textAmount}>{amount}$</Text>
+        <View style={styles.titleCard}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.textAmount}>
+            {Math.round(amount * 100) / 100}$
+          </Text>
+        </View>
+        <Image source={dollarImgSource} style={styles.img} />
       </TouchableOpacity>
-      <Text style={chosenCard === cardKey ? styles.titleChosen : styles.title}>
-        {title}
-      </Text>
     </View>
   );
 };
@@ -52,34 +47,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: 100,
-    height: 70,
-    backgroundColor: 'yellow',
+    flexDirection: 'row',
+    width: 240,
+    height: 100,
     marginHorizontal: 10,
     borderRadius: 20,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    borderWidth: 2,
+    padding: 15,
   },
 
   textAmount: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
-    fontWeight: '800',
-    fontSize: 18,
+    fontWeight: '600',
+    fontSize: 22,
+    color: '#001026',
   },
 
   title: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 16,
+    color: '#001026',
   },
 
-  titleChosen: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '800',
-    fontSize: 17,
+  titleCard: {
+    justifyContent: 'space-between',
+  },
+
+  img: {
+    width: '30%',
+    height: '90%',
   },
 });
 

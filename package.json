@@ -28,11 +28,18 @@
       "**/react-native-sensitive-info",
       "**/react-native-encrypted-storage/**",
       "**/react-native-encrypted-storage",
+      "**/@react-native-community/async-storage/**",
+      "**/@react-native-community/async-storage",
       "**/formik/**",
       "**/formik",
       "**/yup/**",
       "**/react-redux/**",
-      "**/react-redux"
+      "**/react-redux",
+      "**/react-native-linear-gradient/**",
+      "**/react-native-linear-gradient",
+      "**/@react-native-segmented-control/segmented-control/**",
+      "**/@react-native-community/netinfo/**",
+      "**/@react-native-community/netinfo"
     ]
   },
   "scripts": {

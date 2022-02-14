@@ -14,14 +14,16 @@ const ModalNewDebit: FC<Props> = ({title, isVisible, onPressHide}) => {
 
   return (
     <Modal animationType="fade" transparent={true} visible={isVisible}>
-      <View style={styles.modal}>
-        <View style={styles.modalTitle}>
-          <Text style={styles.modalTextTitle}>{title}</Text>
-        </View>
-        <View style={styles.modalBtnArea}>
-          <TouchableOpacity onPress={hide} style={styles.modalBtnCancel}>
-            <Text style={styles.modalBtnText}>Cancel</Text>
-          </TouchableOpacity>
+      <View style={styles.backGroundModal}>
+        <View style={styles.modal}>
+          <View style={styles.modalTitle}>
+            <Text style={styles.modalTextTitle}>{title}</Text>
+          </View>
+          <View style={styles.modalBtnArea}>
+            <TouchableOpacity onPress={hide} style={styles.modalBtnCancel}>
+              <Text style={styles.modalBtnText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -29,11 +31,16 @@ const ModalNewDebit: FC<Props> = ({title, isVisible, onPressHide}) => {
 };
 
 const styles = StyleSheet.create({
+  backGroundModal: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+
   modal: {
     borderRadius: 10,
     justifyContent: 'center',
     height: '25%',
-    backgroundColor: '#C9EEF7',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     marginHorizontal: 40,
     marginVertical: 200,
@@ -51,29 +58,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
-  modalBtnDelete: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    width: '40%',
-    backgroundColor: 'red',
-    borderRadius: 10,
-  },
-
   modalBtnCancel: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
     width: '40%',
-    backgroundColor: '#74EA8E',
+    backgroundColor: '#404CB2',
     borderRadius: 10,
   },
 
   modalBtnText: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
-    fontWeight: '600',
-    color: 'black',
+    fontWeight: '700',
+    color: 'white',
     fontSize: 16,
   },
 
@@ -81,7 +78,6 @@ const styles = StyleSheet.create({
     width: '60%',
     textAlign: 'center',
     marginTop: 20,
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '700',
     color: 'black',

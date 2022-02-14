@@ -12,6 +12,10 @@ target 'App' do
     :hermes_enabled => false
   )
 
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
+  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+
   target 'AppTests' do
     inherit! :complete
     # Pods for testing

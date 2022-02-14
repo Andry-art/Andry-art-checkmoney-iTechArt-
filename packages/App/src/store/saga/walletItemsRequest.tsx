@@ -4,21 +4,17 @@ import {WalletInfo, ErrorFetch} from '../../types/types';
 import {
   getWalletItemsSuccess,
   getWalletItemsFailed,
-  filterIncomeSuccess,
-  filterExpensesSuccess,
   addNewCardSuccess,
   deleteCardSuccess,
   monetaryMove,
   addTransactionSuccess,
   deleteTransactionSuccess,
   addCorrectTransactionSuccess,
-  filterFailed,
   addNewCardFailed,
   deleteCardFailed,
   deleteTransactionFailed,
   addCorrectTransactionFailed,
   addTransactionFailed,
-  filterInComeRequest,
   addNewCardRequest,
   deleteWalletCardRequest,
   cardMonetaryMove,
@@ -46,25 +42,6 @@ export function* getWalletItems(): Generator {
   } catch (error) {
     console.log('getWallet', error);
     yield put(getWalletItemsFailed((error as Error).message));
-    if ((error as ErrorFetch).code === 401) {
-      yield put(logOutAction());
-    }
-  }
-}
-
-export function* filterItems(
-  action: ReturnType<typeof filterInComeRequest>,
-): Generator {
-  try {
-    if (action.type === 'FILTER_INCOME') {
-      yield put(filterIncomeSuccess());
-    }
-    if (action.type === 'FILTER_EXPENSES') {
-      yield put(filterExpensesSuccess());
-    }
-  } catch (error) {
-    console.log('filterErrorIncome', error);
-    yield put(filterFailed((error as Error).message));
     if ((error as ErrorFetch).code === 401) {
       yield put(logOutAction());
     }
@@ -263,8 +240,6 @@ export function* correctTransactionChange(
 
 export function* WalletItems(): Generator {
   yield takeEvery('GET_WALLET_ITEMS', getWalletItems);
-  yield takeEvery('FILTER_INCOME', filterItems);
-  yield takeEvery('FILTER_EXPENSES', filterItems);
   yield takeEvery('ADD_CARD', addCard);
   yield takeEvery('DELETE_CARD', deleteCardRequest);
   yield takeEvery('CARD_MONETARY_MOVE', monetaryMovements);

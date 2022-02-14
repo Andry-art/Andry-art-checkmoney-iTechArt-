@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   button: {
     position: 'absolute',
-    backgroundColor: 'darkblue',
+    backgroundColor: '#404CB2',
     borderRadius: 100,
     padding: 20,
   },

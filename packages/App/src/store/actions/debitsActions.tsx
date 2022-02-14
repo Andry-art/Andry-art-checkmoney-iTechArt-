@@ -41,3 +41,5 @@ export const deleteYourDebitSuccess = createAction<{
 }>('deleteYourDebitSuccess');
 
 export const deleteDebitFailed = createAction<string>('deleteDebitFailed');
+
+export const cleanErrorsDebits = createAction<undefined>('cleanErrorsDebits');

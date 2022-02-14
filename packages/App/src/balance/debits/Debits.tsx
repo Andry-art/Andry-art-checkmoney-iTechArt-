@@ -8,6 +8,8 @@ import {
   LayoutAnimation,
   Alert,
   ScrollView,
+  Image,
+  View,
 } from 'react-native';
 import ListOfDebits from './ListOfDebits';
 import {
@@ -19,6 +21,7 @@ import {
   walletName,
   newDebitError,
   deleteDebitError,
+  getErrorDebits,
 } from '../../store/selectors/debits';
 import {useDispatch, useSelector} from 'react-redux';
 import {DebitInfo, DebitNavigatorList, DebitType} from '../../types/types';
@@ -26,9 +29,10 @@ import {
   addDebitInfo,
   deleteDebitRequest,
 } from '../../store/actions/debitsActions';
-import CardModal from '../../components/CardModal';
 import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import arrowSource from '../../../Pics/debt/up-arrow.png';
+import plusSource from '../../../Pics/debt/plus.png';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -44,8 +48,6 @@ const Debits: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const [debitsVisible, setDebitsVisible] = useState<boolean>(false);
   const [myDebitsVisible, setMyDebitsVisible] = useState<boolean>(false);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [modalVisibleMinus, setModalVisibleMinus] = useState<boolean>(false);
 
   const toYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
@@ -55,6 +57,7 @@ const Debits: FC<Props> = ({navigation}) => {
   let wallet = useSelector(walletName);
   const addDebitError = useSelector(newDebitError);
   const deleteError = useSelector(deleteDebitError);
+  const debitsError = useSelector(getErrorDebits);
 
   useEffect(() => {
     if (addDebitError) {
@@ -63,7 +66,10 @@ const Debits: FC<Props> = ({navigation}) => {
     if (deleteError) {
       Alert.alert(deleteError);
     }
-  }, [addDebitError, deleteError]);
+    if (debitsError) {
+      Alert.alert(debitsError);
+    }
+  }, [addDebitError, deleteError, debitsError]);
 
   const DebitsToYou = useCallback(() => {
     setDebitsVisible(prev => !prev);
@@ -79,27 +85,37 @@ const Debits: FC<Props> = ({navigation}) => {
     navigation.navigate('Add New Debit');
   };
 
-  const showModal = useCallback(
-    ({type, keyOfWallet, key, date, person, amount}: DebitInfo) => {
-      setModalVisible(true);
-      dispatch(
-        addDebitInfo({
-          type,
-          keyOfWallet,
-          key,
-          date,
-          person,
-          amount,
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const hide = useCallback(() => {
-    setModalVisible(false);
-    setModalVisibleMinus(false);
-  }, []);
+  const showModal = ({
+    type,
+    keyOfWallet,
+    key,
+    date,
+    person,
+    amount,
+  }: DebitInfo) => {
+    dispatch(
+      addDebitInfo({
+        type,
+        keyOfWallet,
+        key,
+        date,
+        person,
+        amount,
+      }),
+    );
+    Alert.alert(' Would you like to delete debt?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => {
+          deleteDebit();
+        },
+      },
+    ]);
+  };
 
   const deleteDebitMinus = () => {
     let debitsArray;
@@ -115,7 +131,6 @@ const Debits: FC<Props> = ({navigation}) => {
       dispatch(
         deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
       );
-      navigation.goBack();
       dispatch(getAllItemWallet());
     }
   };
@@ -145,7 +160,18 @@ const Debits: FC<Props> = ({navigation}) => {
       }
 
       if (wallet?.walletAmount < 0) {
-        setModalVisibleMinus(true);
+        Alert.alert('Going to be minus, delete?', '', [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Delete',
+            onPress: () => {
+              deleteDebitMinus();
+            },
+          },
+        ]);
       }
     }
 
@@ -153,7 +179,6 @@ const Debits: FC<Props> = ({navigation}) => {
       dispatch(
         deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
       );
-      setModalVisible(false);
       dispatch(getAllItemWallet());
     }
   };
@@ -179,28 +204,22 @@ const Debits: FC<Props> = ({navigation}) => {
 
   return (
     <ScrollView nestedScrollEnabled={true} style={styles.container}>
-      <CardModal
-        title=" Would you like to delete debit?"
-        isVisible={modalVisible}
-        onPressDelete={deleteDebit}
-        onPressHide={hide}
-      />
-
-      <CardModal
-        title="Going to be minus?"
-        isVisible={modalVisibleMinus}
-        onPressDelete={deleteDebitMinus}
-        onPressHide={hide}
-      />
-
       <TouchableOpacity
         style={debitsVisible ? styles.debitsActive : styles.debits}
         onPress={DebitsToYou}>
-        <Text style={styles.title}>Debits to you</Text>
-        <Text style={styles.titleAmount}>{sumDebToYou}$</Text>
+        <View style={styles.arrowUp}>
+          <Image source={arrowSource} style={styles.img} />
+        </View>
+        <Text style={debitsVisible ? styles.titleActive : styles.title}>
+          Debits to you
+        </Text>
+        <Text
+          style={debitsVisible ? styles.titleAmountActive : styles.titleAmount}>
+          {sumDebToYou}$
+        </Text>
       </TouchableOpacity>
       {debitsVisible && (
-        <ScrollView>
+        <ScrollView style={styles.listDebits}>
           {toYou.map(item => (
             <ListOfDebits
               key={item.key}
@@ -213,6 +232,7 @@ const Debits: FC<Props> = ({navigation}) => {
               color="#1B824A"
               onPress={toDebitInfo}
               onLongPress={showModal}
+              lastKey={toYou[toYou.length - 1].key}
             />
           ))}
         </ScrollView>
@@ -221,12 +241,22 @@ const Debits: FC<Props> = ({navigation}) => {
       <TouchableOpacity
         style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
         onPress={myDebits}>
-        <Text style={styles.titleYourDeb}>Your debits</Text>
-        <Text style={styles.titleAmountYourDeb}>{sumOfYourDeb}$</Text>
+        <View style={styles.arrowDown}>
+          <Image source={arrowSource} style={styles.img} />
+        </View>
+        <Text style={myDebitsVisible ? styles.titleActive : styles.title}>
+          Your debits
+        </Text>
+        <Text
+          style={
+            myDebitsVisible ? styles.titleAmountActive : styles.titleAmount
+          }>
+          {sumOfYourDeb}$
+        </Text>
       </TouchableOpacity>
 
       {myDebitsVisible && (
-        <ScrollView>
+        <ScrollView style={styles.listDebits}>
           {yourDebits.map(item => (
             <ListOfDebits
               key={item.key}
@@ -239,13 +269,15 @@ const Debits: FC<Props> = ({navigation}) => {
               color="#1B824A"
               onPress={toDebitInfo}
               onLongPress={showModal}
+              lastKey={yourDebits[yourDebits.length - 1].key}
             />
           ))}
         </ScrollView>
       )}
 
       <TouchableOpacity style={styles.addNewDebit} onPress={toNewDebits}>
-        <Text style={styles.titleAddNew}>Add New</Text>
+        <Image source={plusSource} style={styles.imgBtn} />
+        <Text style={styles.titleAddNew}>ADD NEW</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -263,10 +295,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    backgroundColor: '#7CD0FF',
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    height: 85,
+    backgroundColor: '#404CB2',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
@@ -275,9 +308,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#E9E9E9',
+    height: 85,
+    borderRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
@@ -286,10 +321,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    backgroundColor: '#7CD0FF',
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    height: 85,
+    backgroundColor: '#404CB2',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
@@ -298,60 +334,90 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    height: 55,
-    borderRadius: 30,
-    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#E9E9E9',
+    height: 85,
+    borderRadius: 12,
+    paddingHorizontal: 10,
     marginTop: 20,
   },
 
   title: {
     fontStyle: 'normal',
     fontWeight: '700',
-    color: 'green',
+    color: '#94AFB6',
     fontSize: 18,
   },
 
-  titleYourDeb: {
+  titleActive: {
     fontStyle: 'normal',
     fontWeight: '700',
-    color: 'red',
+    color: '#FFFFFF',
     fontSize: 18,
   },
 
   titleAmount: {
     fontStyle: 'normal',
     fontWeight: '500',
-    color: 'green',
+    color: '#3D6670',
     fontSize: 18,
   },
 
-  titleAmountYourDeb: {
+  titleAmountActive: {
     fontStyle: 'normal',
     fontWeight: '500',
-    color: 'red',
+    color: '#FFFFFF',
     fontSize: 18,
   },
+
   listDebits: {
-    padding: 0,
+    borderWidth: 2,
+    borderColor: '#E9E9E9',
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
   },
 
   titleAddNew: {
     fontStyle: 'normal',
     fontWeight: '700',
-    fontSize: 18,
-    color: '#23A7F1',
+    fontSize: 16,
+    color: '#FFFFFF',
   },
 
   addNewDebit: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    height: 100,
+    width: '100%',
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    height: 55,
-    borderRadius: 30,
-    borderColor: '#23A7F1',
-    marginTop: 20,
-    width: '100%',
+    elevation: 7,
+    marginTop: 75,
     marginBottom: 80,
+  },
+
+  arrowUp: {
+    padding: 15,
+    backgroundColor: '#41BE06',
+    borderRadius: 100,
+  },
+
+  img: {
+    tintColor: 'white',
+  },
+
+  arrowDown: {
+    padding: 15,
+    backgroundColor: '#EB1F39',
+    borderRadius: 100,
+    rotation: 180,
+  },
+
+  imgBtn: {
+    position: 'absolute',
+    left: 20,
+    tintColor: 'white',
   },
 });
 

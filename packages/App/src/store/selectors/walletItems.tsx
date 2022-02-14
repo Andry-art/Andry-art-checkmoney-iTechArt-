@@ -14,9 +14,10 @@ export const walletItems = (state: RootState) => {
 };
 
 export const walletsAmount = createDraftSafeSelector(walletItems, state => {
-  return state.reduce((sum, cur) => {
+  const walletSum = state.reduce((sum, cur) => {
     return (sum * 100 + cur.walletAmount * 100) / 100;
   }, 0);
+  return Math.round(walletSum * 100) / 100;
 });
 
 export const monetaryMove = (state: RootState) => {

@@ -4,6 +4,8 @@ import wallet from './reducers/Wallet';
 import debits from './reducers/Debits';
 import createSagaMiddleware from '@redux-saga/core';
 import {RootSaga} from '../store/saga/RootSaga';
+import {persistStore, persistReducer} from 'redux-persist';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const SagaMiddleware = createSagaMiddleware();
 
@@ -13,10 +15,19 @@ const rootReducer = combineReducers({
   debits,
 });
 
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 export const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
   middleware: [SagaMiddleware],
 });
+
+export const persister = persistStore(store);
 
 SagaMiddleware.run(RootSaga);
 

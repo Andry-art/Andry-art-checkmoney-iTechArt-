@@ -73,12 +73,14 @@ const MoneyFlow: FC<Props> = ({month}) => {
         </View>
         <View style={styles.listLine}>
           <Text style={styles.title}>Left</Text>
-          <Text style={styles.amountLeft}>{left ? left : 0}</Text>
+          <Text style={styles.amountLeft}>
+            {left ? Math.round(left * 100) / 100 : 0}
+          </Text>
         </View>
         <View style={styles.listLine}>
           <Text style={styles.title}>OverExpenses</Text>
           <Text style={styles.amountOverExpenses}>
-            {OverExpenses ? -OverExpenses : 0}
+            {OverExpenses ? -Math.round(OverExpenses * 100) / 100 : 0}
           </Text>
         </View>
       </View>
@@ -89,7 +91,10 @@ const MoneyFlow: FC<Props> = ({month}) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    padding: 20,
+    marginHorizontal: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: '#404CB2',
   },
 
   diagram: {
@@ -102,8 +107,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '60%',
     height: 50,
-    backgroundColor: '#D0EEFF',
-    borderRadius: 30,
+    backgroundColor: '#F6F6F6',
+    borderRadius: 12,
     flexDirection: 'row',
     marginVertical: 20,
   },
@@ -112,9 +117,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     width: '50%',
     height: 50,
-
-    borderTopLeftRadius: 30,
-    borderBottomLeftRadius: 30,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
     borderRightColor: 'black',
     borderRightWidth: 2,
   },
@@ -122,15 +126,15 @@ const styles = StyleSheet.create({
     width: '30%',
     height: 50,
     backgroundColor: 'green',
-    borderTopLeftRadius: 30,
-    borderBottomLeftRadius: 30,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
   },
 
   scaleRightContainer: {
     width: '50%',
     height: 50,
-    borderTopRightRadius: 30,
-    borderBottomRightRadius: 30,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
     borderLeftColor: 'black',
     borderLeftWidth: 2,
   },
@@ -139,14 +143,15 @@ const styles = StyleSheet.create({
     width: '50%',
     height: 50,
     backgroundColor: 'red',
-    borderTopRightRadius: 30,
-    borderBottomRightRadius: 30,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
   },
 
   listLine: {
     flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     justifyContent: 'space-between',
-    marginVertical: 10,
   },
 
   title: {

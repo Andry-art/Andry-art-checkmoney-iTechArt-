@@ -7,25 +7,14 @@ import {
   StyleProp,
   ViewStyle,
   useWindowDimensions,
-  Image,
-  Platform,
-  UIManager,
-  Animated,
-  LayoutAnimation,
 } from 'react-native';
-import walletIconSource from '../../../Pics/balance/wallet.png';
+import LinearGradient from 'react-native-linear-gradient';
 import {AmountInCents} from '../../types/types';
-
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
 
 interface Props {
   title: string;
   amount: AmountInCents;
-  color: string;
+  color: Array<string>;
   onLongPress: (id: number) => void;
   keyCard: number;
   onPress: (key: number, amount: number, title: string) => void;
@@ -46,13 +35,6 @@ const WalletItem: FC<Props> = ({
     [width],
   );
 
-  const backgroundColor = useMemo<StyleProp<ViewStyle>>(
-    () => [styles.card, {backgroundColor: color}],
-    [color],
-  );
-
-  LayoutAnimation.easeInEaseOut();
-
   const onLongPressCallBack = useCallback(() => {
     onLongPress(keyCard);
   }, [keyCard, onLongPress]);
@@ -62,36 +44,43 @@ const WalletItem: FC<Props> = ({
   }, [amount, keyCard, onPress, title]);
 
   return (
-    <Animated.View style={viewStyle}>
+    <View style={viewStyle}>
       <TouchableOpacity
-        style={backgroundColor}
         onLongPress={onLongPressCallBack}
         onPress={onPressCallBack}>
-        <View style={styles.cardTitle}>
-          <Image source={walletIconSource} />
-          <Text style={styles.cardTitleText}>{title}</Text>
-        </View>
-        <View style={styles.total}>
-          <Text style={styles.totalText}>{amount}$</Text>
-        </View>
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          colors={color ? color : ['#F39034', '#FF2727']}
+          style={styles.card}>
+          <View style={styles.cardTitle}>
+            <Text style={styles.cardTitleText}>{title}</Text>
+          </View>
+          <View style={styles.total}>
+            <Text style={styles.totalText}>
+              {Math.round(amount * 100) / 100}$
+            </Text>
+          </View>
+        </LinearGradient>
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'flex-start',
-    backgroundColor: '#D0EEFF',
+    backgroundColor: '#FFFFFF',
   },
 
   card: {
     justifyContent: 'flex-start',
     backgroundColor: '#74EA8E',
-    height: '100%',
+    height: 200,
     borderRadius: 30,
-    margin: 20,
-    padding: 20,
+    marginHorizontal: 35,
+    padding: 24,
+    elevation: 3,
   },
 
   cardTitle: {
@@ -101,23 +90,21 @@ const styles = StyleSheet.create({
   },
 
   cardTitleText: {
-    marginLeft: 20,
-    fontFamily: 'Poppins',
+    color: 'white',
     fontStyle: 'normal',
-    fontWeight: 'normal',
+    fontWeight: '700',
     fontSize: 14,
   },
 
   total: {
-    alignItems: 'center',
-    margin: 10,
+    marginTop: 8,
   },
 
   totalText: {
-    fontFamily: 'Poppins',
+    color: 'white',
     fontStyle: 'normal',
-    fontWeight: 'bold',
-    fontSize: 24,
+    fontWeight: '700',
+    fontSize: 26,
   },
 });
 

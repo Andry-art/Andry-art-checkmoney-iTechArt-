@@ -19,6 +19,7 @@ interface Props {
     person,
     amount,
   }: DebitInfo) => void;
+  lastKey: number;
 }
 
 const ListOfDebits: FC<Props> = ({
@@ -31,6 +32,7 @@ const ListOfDebits: FC<Props> = ({
   color,
   onPress,
   onLongPress,
+  lastKey,
 }) => {
   const chosenDebt = () => {
     const key = keyDeb;
@@ -45,7 +47,7 @@ const ListOfDebits: FC<Props> = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={styles.listItem}
+        style={keyDeb === lastKey ? styles.lastItem : styles.listItem}
         onPress={chosenDebt}
         onLongPress={chosenDebtOnLongPress}>
         <Text style={styles.textName}>{person}</Text>
@@ -57,16 +59,20 @@ const ListOfDebits: FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
   },
   listItem: {
     flexDirection: 'row',
-
     padding: 20,
-    backgroundColor: '#C7EBFF',
     justifyContent: 'space-between',
     borderBottomWidth: 2,
-    borderBottomColor: '#E6F6FF',
+    borderBottomColor: '#404CB2',
+  },
+
+  lastItem: {
+    flexDirection: 'row',
+    padding: 20,
+    justifyContent: 'space-between',
   },
 
   textName: {

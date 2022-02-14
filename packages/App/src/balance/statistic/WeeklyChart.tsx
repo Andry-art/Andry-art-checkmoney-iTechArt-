@@ -1,10 +1,11 @@
 import React, {FC, useMemo, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {useSelector} from 'react-redux';
 import {allTransactionsArray} from '../../store/selectors/walletItems';
 import {VictoryChart, VictoryBar, VictoryTheme} from 'victory-native';
 import {useDeviceOrientation} from '@react-native-community/hooks';
 import {TransactionType} from '../../types/types';
+import arrowSource from '../../../Pics/debt/right-arrow.png';
 
 enum DayOfWeek {
   Mon = 1,
@@ -89,12 +90,12 @@ const WeeklyChart: FC<Props> = ({month}) => {
   return (
     <View style={styles.container}>
       <View style={styles.title}>
-        <TouchableOpacity style={styles.btn} onPress={prev}>
-          <Text style={styles.textBtn}>Prev</Text>
+        <TouchableOpacity style={styles.btnPrev} onPress={prev}>
+          <Image source={arrowSource} style={styles.img} />
         </TouchableOpacity>
         <Text style={styles.titleWeekly}>Weekly expenses</Text>
-        <TouchableOpacity style={styles.btn} onPress={next}>
-          <Text style={styles.textBtn}>Next</Text>
+        <TouchableOpacity style={styles.btnNext} onPress={next}>
+          <Image source={arrowSource} style={styles.img} />
         </TouchableOpacity>
       </View>
       <View style={styles.chart}>
@@ -105,8 +106,8 @@ const WeeklyChart: FC<Props> = ({month}) => {
           theme={VictoryTheme.material}>
           <VictoryBar
             width={100}
-            cornerRadius={12}
-            style={{data: {fill: '#212858', width: 30, borderRadius: 30}}}
+            cornerRadius={8}
+            style={{data: {fill: '#404CB2', width: 30, borderRadius: 30}}}
             data={arrayOfCharts[chartIndex]}
           />
         </VictoryChart>
@@ -119,7 +120,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
+    margin: 20,
+    paddingBottom: 20,
+    paddingTop: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: '#404CB2',
   },
 
   titleWeekly: {
@@ -143,16 +148,30 @@ const styles = StyleSheet.create({
   title: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
   },
 
-  btn: {
+  btnNext: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '20%',
-    height: 40,
-    backgroundColor: '#7CD0FF',
-    borderRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#404CB2',
+    borderRadius: 10,
+  },
+
+  btnPrev: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#404CB2',
+    borderRadius: 10,
+    rotation: 180,
+  },
+
+  img: {
+    tintColor: 'white',
   },
 });
 

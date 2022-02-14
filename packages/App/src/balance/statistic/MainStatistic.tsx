@@ -44,7 +44,7 @@ const MainStatistic: FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <ScrollView horizontal style={styles.monthsScroll}>
         {months.map(it => (
           <TouchableOpacity
@@ -86,53 +86,48 @@ const MainStatistic: FC = () => {
 const styles = StyleSheet.create({
   containerScroll: {
     backgroundColor: 'white',
-    marginBottom: 70,
-  },
-
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
+    marginBottom: 60,
   },
 
   monthsScroll: {
-    backgroundColor: 'white',
+    backgroundColor: '#F6F6F6',
+    padding: 10,
     height: 60,
   },
 
   monthsContainer: {
-    padding: 10,
-    marginHorizontal: 20,
-    height: 55,
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    marginHorizontal: 10,
+    borderRadius: 10,
   },
 
   monthsContainerActive: {
-    backgroundColor: '#EBEDF8',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 20,
-    borderRadius: 30,
-    height: 45,
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 15,
+    height: '100%',
+    borderRadius: 10,
   },
 
   textMonths: {
     fontStyle: 'normal',
     fontWeight: '500',
     color: 'black',
-    fontSize: 16,
+    fontSize: 14,
   },
 
   textMonthsActive: {
     fontStyle: 'normal',
     fontWeight: '700',
     color: 'black',
-    fontSize: 18,
+    fontSize: 16,
   },
 
   noChart: {
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
-    paddingBottom: 150,
   },
 
   noChartText: {

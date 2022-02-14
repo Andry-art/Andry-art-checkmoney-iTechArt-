@@ -1,14 +1,13 @@
-import React, {FC, useMemo, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {
   StyleSheet,
   View,
   Text,
-  Image,
   TextInput,
   TouchableOpacity,
+  Image,
   ScrollView,
 } from 'react-native';
-import walletIconSource from '../../../Pics/balance/wallet.png';
 import {useFormik} from 'formik';
 import {useDispatch, useSelector} from 'react-redux';
 import {addNewCardRequest} from '../../store/actions/walletActions';
@@ -17,8 +16,16 @@ import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletNavigatorList} from '../../types/types';
 import ColorsNewCard from './ColorsNewCard';
+import walletSource from '../../../Pics/balance/wallet.png';
+import LinearGradient from 'react-native-linear-gradient';
 
-const colors = ['#8D45A7', '#DFE24A', '#56E24A', '#3FECEC', '#EA4953'];
+const colors = [
+  ['#F39034', '#FF2727'],
+  ['#003AD2', '#0097EC'],
+  ['#00A843', '#1FD071'],
+  ['#5900C9', '#9852F0'],
+  ['#01DCBA', '#7F30CB'],
+];
 const initialValues = {
   cardName: '',
   amount: '',
@@ -36,7 +43,10 @@ interface Props {
 const NewCard: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const receivedWalletItems = useSelector(walletItems);
-  const [cardColor, setCardColor] = useState<string>('#56E24A');
+  const [cardColor, setCardColor] = useState<Array<string>>([
+    '#F39034',
+    '#FF2727',
+  ]);
   const [placeholderTitle, setPlaceholderTitle] = useState<string>('Title');
   const [placeholderAmount, setPlaceholderAmount] = useState<string>('Amount');
 
@@ -66,19 +76,14 @@ const NewCard: FC<Props> = ({navigation}) => {
     },
   });
 
-  const cardColorMemo = useMemo(
-    () => [styles.card, {backgroundColor: cardColor}],
-    [cardColor],
-  );
-
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>New Card</Text>
-      </View>
-      <View style={cardColorMemo}>
+      <LinearGradient
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+        colors={cardColor}
+        style={styles.card}>
         <View style={styles.titleCard}>
-          <Image source={walletIconSource} />
           <View style={styles.titleArea}>
             <TextInput
               textContentType="name"
@@ -92,7 +97,7 @@ const NewCard: FC<Props> = ({navigation}) => {
             <Text style={styles.error}>{errors.cardName}</Text>
           </View>
         </View>
-        <View style={styles.amountArea}>
+        <View>
           <TextInput
             style={styles.amountInput}
             keyboardType="number-pad"
@@ -105,14 +110,15 @@ const NewCard: FC<Props> = ({navigation}) => {
           />
           <Text style={styles.error}>{errors.amount}</Text>
         </View>
-      </View>
+      </LinearGradient>
       <View style={styles.colorsArea}>
-        {colors.map(it => (
-          <ColorsNewCard key={it} color={it} onPress={setCardColor} />
+        {colors.map((it, i) => (
+          <ColorsNewCard key={i} color={it} onPress={setCardColor} />
         ))}
       </View>
       <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
-        <Text style={styles.textBtn}>Add card</Text>
+        <Image source={walletSource} style={styles.img} />
+        <Text style={styles.textBtn}>ADD NEW CARD</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -120,12 +126,20 @@ const NewCard: FC<Props> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 20,
-    marginVertical: 10,
+    paddingTop: 30,
+    padding: 15,
+    backgroundColor: '#FFFFFF',
+  },
+
+  cardContainer: {
+    width: '100%',
+    backgroundColor: 'white',
+    paddingHorizontal: 25,
+    borderRadius: 40,
+    elevation: 3,
   },
 
   title: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: 18,
@@ -134,14 +148,15 @@ const styles = StyleSheet.create({
 
   card: {
     justifyContent: 'flex-start',
-    height: 200,
+    height: 180,
     borderRadius: 30,
-    padding: 20,
+    padding: 24,
+    marginHorizontal: 30,
   },
 
   titleContainer: {
     alignItems: 'center',
-    padding: 30,
+    padding: 15,
   },
 
   titleCard: {
@@ -153,12 +168,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     width: '40%',
     padding: 0,
-    marginHorizontal: 20,
-  },
-
-  amountArea: {
-    alignItems: 'center',
-    padding: 40,
   },
 
   amountInput: {
@@ -166,8 +175,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     width: '50%',
     padding: 0,
-    marginHorizontal: 20,
-    textAlign: 'center',
   },
 
   colorsArea: {
@@ -177,30 +184,36 @@ const styles = StyleSheet.create({
   },
 
   submitBtn: {
-    marginTop: 40,
-    borderRadius: 30,
-    height: 60,
+    flexDirection: 'row',
+    marginTop: 20,
+    borderRadius: 10,
+    height: 100,
     width: '100%',
-    backgroundColor: '#7CD0FF',
+    backgroundColor: '#404CB2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 80,
+    marginBottom: 40,
+    elevation: 7,
   },
 
   textBtn: {
-    fontFamily: 'Poppins',
     fontStyle: 'normal',
-    fontWeight: '600',
-    fontSize: 18,
-    color: 'black',
+    fontWeight: '700',
+    fontSize: 16,
+    color: '#FFFFFF',
   },
   error: {
-    marginHorizontal: 20,
     color: 'black',
   },
 
   titleArea: {
     width: '100%',
+  },
+
+  img: {
+    position: 'absolute',
+    left: 20,
+    tintColor: 'white',
   },
 });
 
