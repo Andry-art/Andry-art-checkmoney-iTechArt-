@@ -28,6 +28,7 @@ const userIsLogIn = createReducer<IRegistration>(initialState, builder => {
     .addCase(userLogInSuccess, state => {
       state.isLogIn = true;
       state.isLoading = false;
+      state.error = '';
       return state;
     })
     .addCase(userLogInFailed, (state, action: PayloadAction<string>) => {

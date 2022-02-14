@@ -10,6 +10,7 @@ import {
   ScrollView,
   Image,
   View,
+  SafeAreaView
 } from 'react-native';
 import ListOfDebits from './ListOfDebits';
 import {
@@ -204,6 +205,7 @@ const Debits: FC<Props> = ({navigation}) => {
 
   return (
     <ScrollView nestedScrollEnabled={true} style={styles.container}>
+      <SafeAreaView >
       <TouchableOpacity
         style={debitsVisible ? styles.debitsActive : styles.debits}
         onPress={DebitsToYou}>
@@ -279,6 +281,7 @@ const Debits: FC<Props> = ({navigation}) => {
         <Image source={plusSource} style={styles.imgBtn} />
         <Text style={styles.titleAddNew}>ADD NEW</Text>
       </TouchableOpacity>
+      </SafeAreaView>
     </ScrollView>
   );
 };
