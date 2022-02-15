@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#404CB2',
     borderRadius: 10,
-    rotation: 180,
+    transform: [{rotate: "180deg"}]
   },
 
   img: {

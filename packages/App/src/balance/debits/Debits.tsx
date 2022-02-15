@@ -34,6 +34,11 @@ import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import arrowSource from '../../../Pics/debt/up-arrow.png';
 import plusSource from '../../../Pics/debt/plus.png';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -60,6 +65,21 @@ const Debits: FC<Props> = ({navigation}) => {
   const deleteError = useSelector(deleteDebitError);
   const debitsError = useSelector(getErrorDebits);
 
+  const debToYouInitRotate = useSharedValue(0)
+  const yourDebInitRotate = useSharedValue(0)
+
+  const debToYouAnimated = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotate: `${debToYouInitRotate.value}deg` }],
+    };
+  });
+
+  const yourDebAnimated = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotate: `${yourDebInitRotate.value}deg` }],
+    };
+  });
+
   useEffect(() => {
     if (addDebitError) {
       Alert.alert(addDebitError);
@@ -75,11 +95,26 @@ const Debits: FC<Props> = ({navigation}) => {
   const DebitsToYou = useCallback(() => {
     setDebitsVisible(prev => !prev);
     setMyDebitsVisible(false);
+   if (debToYouInitRotate.value === 0) {
+    debToYouInitRotate.value = withTiming(180)
+    yourDebInitRotate.value = withTiming(0)
+   } 
+   if (debToYouInitRotate.value === 180) {
+    debToYouInitRotate.value = withTiming(0)
+   }
   }, []);
 
   const myDebits = () => {
     setMyDebitsVisible(prev => !prev);
     setDebitsVisible(false);
+
+    if (yourDebInitRotate.value === 0) {
+      yourDebInitRotate.value = withTiming(180)
+      debToYouInitRotate.value = withTiming(0)
+     } 
+     if (yourDebInitRotate.value === 180) {
+      yourDebInitRotate.value = withTiming(0)
+     }
   };
 
   const toNewDebits = () => {
@@ -201,6 +236,8 @@ const Debits: FC<Props> = ({navigation}) => {
     [dispatch, navigation],
   );
 
+ 
+
   LayoutAnimation.easeInEaseOut();
 
   return (
@@ -209,9 +246,9 @@ const Debits: FC<Props> = ({navigation}) => {
       <TouchableOpacity
         style={debitsVisible ? styles.debitsActive : styles.debits}
         onPress={DebitsToYou}>
-        <View style={styles.arrowUp}>
+        <Animated.View style={[styles.arrowUp, debToYouAnimated]}>
           <Image source={arrowSource} style={styles.img} />
-        </View>
+        </Animated.View>
         <Text style={debitsVisible ? styles.titleActive : styles.title}>
           Debits to you
         </Text>
@@ -243,9 +280,9 @@ const Debits: FC<Props> = ({navigation}) => {
       <TouchableOpacity
         style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
         onPress={myDebits}>
-        <View style={styles.arrowDown}>
+        <Animated.View style={[styles.arrowDown, yourDebAnimated]}>
           <Image source={arrowSource} style={styles.img} />
-        </View>
+        </Animated.View>
         <Text style={myDebitsVisible ? styles.titleActive : styles.title}>
           Your debits
         </Text>
@@ -304,6 +341,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 12,
     paddingHorizontal: 10,
     marginTop: 20,
+    
   },
 
   debits: {

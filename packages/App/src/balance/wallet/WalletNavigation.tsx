@@ -7,10 +7,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import NewCard from './NewCard';
 import AddMonetaryMovements from './AddMonetaryMovements';
 import CorrectTransaction from './CorrectTransaction';
-import {Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import logOutSource from '../../../Pics/logout.png';
 import LogOutModal from '../../components/LogOutModal';
 import {userIsLogIn} from '../../store/selectors/registration';
+import { logOutAction } from '../../store/actions/registration';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +27,18 @@ const BalanceNavigation = () => {
   }, [dispatch, isLogIn]);
 
   const logOutRequest = () => {
-    setIsVisible(prev => !prev);
+    Alert.alert('Would you like to logOut?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Log Out',
+        onPress: async () => {
+          dispatch(logOutAction());
+        },
+      },
+    ]);
   };
 
   return (
@@ -39,11 +51,6 @@ const BalanceNavigation = () => {
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
-              <LogOutModal
-                isModalVisible={isVisible}
-                setIsVisible={setIsVisible}
-                logOutRequest={logOutRequest}
-              />
             </TouchableOpacity>
           ),
         }}

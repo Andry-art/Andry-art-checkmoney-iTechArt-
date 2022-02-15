@@ -224,6 +224,7 @@ const Wallet: FC<Props> = ({navigation}) => {
                       color={item.color}
                       onLongPress={showModal}
                       onPress={toAddMonetaryMovements}
+                      navigation = {navigation}
                     />
                   )}
                   centerContent={true}
@@ -254,13 +255,6 @@ const Wallet: FC<Props> = ({navigation}) => {
                     title="Expenses"
                     picture={expensesIconSource}
                     onPress={filterExpenses}
-                    chosen={chosenBtn}
-                  />
-
-                  <Button
-                    title="New card"
-                    picture={addNewIconSource}
-                    onPress={newCard}
                     chosen={chosenBtn}
                   />
                 </View>
