@@ -1,5 +1,5 @@
 import {createAction} from '@reduxjs/toolkit';
-import {WalletInfo} from '../../types/types';
+import {Location, WalletInfo} from '../../types/types';
 
 export const getAllItemWallet = createAction<undefined>('GET_WALLET_ITEMS');
 export const getWalletItemsSuccess = createAction<Array<WalletInfo>>(
@@ -36,6 +36,7 @@ export const addTransactionRequest = createAction<{
     category: string;
     icon: string;
     date: Date;
+    coordinate?: Location | {};
   };
 }>('ADD_TRANSACTION');
 export const addTransactionSuccess = createAction<WalletInfo>('addTransaction');

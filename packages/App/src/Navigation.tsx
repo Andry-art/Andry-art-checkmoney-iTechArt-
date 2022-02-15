@@ -15,11 +15,11 @@ import walletImgSource from '../Pics/balance/wallet.png';
 import debitsImgSource from '../Pics/TabMenu/money.png';
 import statsImgSource from '../Pics/TabMenu/bar-chart.png';
 import logOutSource from '../Pics/logout.png';
-import LogOutModal from './components/LogOutModal';
 import {getAllItemWallet} from './store/actions/walletActions';
 import OnBoarding from './onBoardingPages/OnBoarding';
 import AsyncStorage from '@react-native-community/async-storage';
 import { logOutAction } from './store/actions/registration';
+import Map from './balance/map/Map';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -167,6 +167,29 @@ const Navigation = () => {
                       {color: focused ? '#404CB2' : '#C0C0C0'},
                     ]}>
                     Stats
+                  </Text>
+                </View>
+              ),
+            }}
+          />
+
+<Tab.Screen
+            name="Map"
+            component={Map}
+            options={{
+              headerStyle: {backgroundColor: '#FFFFFF'},
+              tabBarIcon: ({focused}) => (
+                <View style={styles.iconArea}>
+                  <Image
+                    source={debitsImgSource}
+                    style={{tintColor: focused ? '#404CB2' : '#C0C0C0'}}
+                  />
+                  <Text
+                    style={[
+                      styles.title,
+                      {color: focused ? '#404CB2' : '#C0C0C0'},
+                    ]}>
+                    Debits
                   </Text>
                 </View>
               ),

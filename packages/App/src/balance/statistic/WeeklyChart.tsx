@@ -73,6 +73,8 @@ const WeeklyChart: FC<Props> = ({month}) => {
     [],
   ];
 
+  console.log(secondChart)
+
   const next = () => {
     if (arrayOfCharts[chartIndex + 1].length !== 0) {
       setChartIndex(prev => prev + 1);

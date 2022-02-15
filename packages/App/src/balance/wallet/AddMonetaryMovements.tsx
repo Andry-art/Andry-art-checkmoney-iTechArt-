@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  useWindowDimensions,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
@@ -19,6 +20,7 @@ import {
   ChosenCategory,
   Expenses,
   Income,
+  Location,
 } from '../../types/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import imgArrowSource from '../../../Pics/double-arrow.png';
@@ -26,6 +28,7 @@ import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {TransactionType} from '../../types/types';
 import addTransactionSource from '../../../Pics/balance/income.png';
+import MapView, {Marker} from 'react-native-maps';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -60,6 +63,13 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
     category: '',
   });
 
+  const [chooseLocation, setchooseLocation] = useState<boolean>(false);
+
+  const [markLocation, setMarkLocation] = useState<Location>({
+         latitude: 53.902287,
+         longitude: 27.561824,
+  });
+
   const receivedWalletItems = useSelector(walletItems);
 
   const {handleChange, handleSubmit, values, errors} = useFormik<{
@@ -83,6 +93,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         ? categoryInfo.category
         : 'Unknown';
       const chosenWallet = receivedWalletItems.find(it => it.key === key);
+      const coordinate = chooseLocation ? markLocation : {}
       if (chosenWallet !== undefined) {
         const keyTransaction =
           chosenWallet.transactions.length === 0
@@ -112,6 +123,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
                 category,
                 icon,
                 date,
+                coordinate,
               },
             }),
           );
@@ -184,6 +196,26 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         <Image source={addTransactionSource} style={styles.img} />
         <Text style={styles.confirmText}>Add {isMoneyMove}</Text>
       </TouchableOpacity>
+{!chooseLocation &&   <TouchableOpacity style={styles.chooseLocation} onPress={() => setchooseLocation(true)}>
+        <Text style={styles.confirmText}>Choose location</Text>
+      </TouchableOpacity>}
+    
+     {(isMoneyMove === TransactionType.expenses && chooseLocation) && <MapView
+             style={{height:400}}
+       provider={null} 
+       region={{
+         latitude: 53.902287,
+         longitude: 27.561824,
+         latitudeDelta: 0.0015,
+         longitudeDelta: 0.0121,
+       }}
+     >
+       <Marker
+       draggable
+          coordinate={markLocation}
+          onDragEnd={(e) => setMarkLocation(e.nativeEvent.coordinate)}
+       ></Marker>
+     </MapView> } 
     </ScrollView>
   );
 };
@@ -258,6 +290,19 @@ const styles = StyleSheet.create({
   confirm: {
     flexDirection: 'row',
     marginTop: 20,
+    borderRadius: 10,
+    height: 100,
+    width: '100%',
+    backgroundColor: '#404CB2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    elevation: 7,
+  },
+
+  chooseLocation:{
+    flexDirection: 'row',
+
     borderRadius: 10,
     height: 100,
     width: '100%',
