@@ -33,15 +33,7 @@ export function* getWalletItems(): Generator {
     )) as Array<WalletInfo>;
 
     if (response) {
-      response.push( {
-        walletAmount: 0,
-        id: -1,
-        key: -1,
-        color: ['#F6F6F6', '#D0D0D0'],
-        walletTitle: '',
-        transactions: [
-        ],
-      })
+      response;
       yield put(getWalletItemsSuccess(response));
     }
 

@@ -42,7 +42,7 @@ const initialState: IWallet = {
           icon: '',
         },
       ],
-    }
+    },
   ],
   filteredIncome: [],
   filteredExpenses: [],
@@ -115,7 +115,7 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
       return state;
     })
     .addCase(addNewCardSuccess, (state, action) => {
-      state.walletContent.splice(state.walletContent.length - 1 ,0 ,action.payload);
+      state.walletContent.push(action.payload);
       state.isLoadingNewCard = false;
       return state;
     })

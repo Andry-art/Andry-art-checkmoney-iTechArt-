@@ -7,18 +7,26 @@ import SignUp from './Registaration/SignUp';
 import Loading from './components/Loading';
 import {userIsLogIn, IsLoadingUser} from './store/selectors/registration';
 import {useDispatch, useSelector} from 'react-redux';
-import {StyleSheet, View, Image, Text, TouchableOpacity, Alert} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import BalanceNavigation from './balance/wallet/WalletNavigation';
 import DebitNavigation from './balance/debits/DebitNavigation';
 import MainStatistic from './balance/statistic/MainStatistic';
 import walletImgSource from '../Pics/balance/wallet.png';
 import debitsImgSource from '../Pics/TabMenu/money.png';
+import mapImgSource from '../Pics/TabMenu/location.png';
 import statsImgSource from '../Pics/TabMenu/bar-chart.png';
 import logOutSource from '../Pics/logout.png';
 import {getAllItemWallet} from './store/actions/walletActions';
 import OnBoarding from './onBoardingPages/OnBoarding';
 import AsyncStorage from '@react-native-community/async-storage';
-import { logOutAction } from './store/actions/registration';
+import {logOutAction} from './store/actions/registration';
 import Map from './balance/map/Map';
 
 const Stack = createNativeStackNavigator();
@@ -173,7 +181,7 @@ const Navigation = () => {
             }}
           />
 
-<Tab.Screen
+          <Tab.Screen
             name="Map"
             component={Map}
             options={{
@@ -181,7 +189,7 @@ const Navigation = () => {
               tabBarIcon: ({focused}) => (
                 <View style={styles.iconArea}>
                   <Image
-                    source={debitsImgSource}
+                    source={mapImgSource}
                     style={{tintColor: focused ? '#404CB2' : '#C0C0C0'}}
                   />
                   <Text
@@ -189,7 +197,7 @@ const Navigation = () => {
                       styles.title,
                       {color: focused ? '#404CB2' : '#C0C0C0'},
                     ]}>
-                    Debits
+                    Map
                   </Text>
                 </View>
               ),

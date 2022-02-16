@@ -7,11 +7,11 @@ import {
   View,
   Image,
   SafeAreaView,
-  useWindowDimensions
+  useWindowDimensions,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import { useSelector } from 'react-redux';
-import { allTransactionsArray } from '../../store/selectors/walletItems';
+import MapView, {Marker} from 'react-native-maps';
+import {useSelector} from 'react-redux';
+import {allTransactionsArray} from '../../store/selectors/walletItems';
 import {Months, TransactionType} from '../../types/types';
 import Transactions from '../wallet/Transactions';
 
@@ -30,9 +30,7 @@ const months = [
   Months.December,
 ];
 
-
 const Map: FC = () => {
-
   const {height} = useWindowDimensions();
   const [chosenMonth, setChosenMonth] = useState<number>(new Date().getMonth());
 
@@ -44,14 +42,18 @@ const Map: FC = () => {
   const allTransactions = useSelector(allTransactionsArray);
 
   const allTransactionsByMonth = useMemo(() => {
-    return allTransactions.filter(it => new Date(it.date).getMonth() === chosenMonth);
+    return allTransactions.filter(
+      it => new Date(it.date).getMonth() === chosenMonth,
+    );
   }, [allTransactions, chosenMonth]);
 
-  const allTransactionExpenses = allTransactionsByMonth.filter(it => it.type === TransactionType.expenses)
+  const allTransactionExpenses = allTransactionsByMonth.filter(
+    it => it.type === TransactionType.expenses,
+  );
 
-    return(
-        <SafeAreaView style={styles.container}>
-         <ScrollView horizontal style={styles.monthsScroll}>
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView horizontal style={styles.monthsScroll}>
         {months.map(it => (
           <TouchableOpacity
             key={it}
@@ -70,82 +72,97 @@ const Map: FC = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-            <MapView
-             style={{height}}
-       provider={null} 
-       region={{
-         latitude: 53.902287,
-         longitude: 27.561824,
-         latitudeDelta: 0.0015,
-         longitudeDelta: 0.0121,
-       }}
-     >
-       {allTransactionExpenses.map(it => (it.coordinate && <Marker
-       key={it.keyTransaction}
-       coordinate={it.coordinate}
-       title={it.category}
-       description = {`${String(it.amountTransaction)}$`}
-       />))}
-
-     </MapView>
-
-        </SafeAreaView>
-    )
-}
+      <MapView
+        style={{height}}
+        provider={null}
+        region={{
+          latitude: 53.902287,
+          longitude: 27.561824,
+          latitudeDelta: 0.0015,
+          longitudeDelta: 0.0121,
+        }}>
+        {allTransactionExpenses.map(
+          it =>
+            it.coordinate && (
+              <Marker
+                key={it.keyTransaction}
+                coordinate={it.coordinate}
+                title={it.category}
+                description={`${String(it.amountTransaction)}$`}>
+                <View style={styles.marker}>
+                  <Text style={styles.markerText}>{`${String(
+                    it.amountTransaction,
+                  )}$`}</Text>
+                </View>
+              </Marker>
+            ),
+        )}
+      </MapView>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-  
+  container: {},
+  map: {
+    height: '80%',
   },
-    map: {
- height: "80%"
-  
-    },
 
-    monthsScroll: {
-      backgroundColor: '#F6F6F6',
-      padding: 10,
-      height: 60,
-    },
-    monthsContainerActive: {
-      justifyContent: 'center',
-      backgroundColor: '#FFFFFF',
-      paddingHorizontal: 15,
-      height: '100%',
-      borderRadius: 10,
-    },
+  monthsScroll: {
+    backgroundColor: '#F6F6F6',
+    padding: 10,
+    height: 60,
+  },
+  monthsContainerActive: {
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 15,
+    height: '100%',
+    borderRadius: 10,
+  },
 
-    monthsContainer: {
-      justifyContent: 'center',
-      paddingHorizontal: 15,
-      paddingVertical: 5,
-      marginHorizontal: 10,
-      borderRadius: 10,
-    },
+  monthsContainer: {
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    marginHorizontal: 10,
+    borderRadius: 10,
+  },
 
-    textMonthsActive: {
-      fontStyle: 'normal',
-      fontWeight: '700',
-      color: 'black',
-      fontSize: 16,
-    },
+  textMonthsActive: {
+    fontStyle: 'normal',
+    fontWeight: '700',
+    color: 'black',
+    fontSize: 16,
+  },
 
-    textMonths: {
-      fontStyle: 'normal',
-      fontWeight: '500',
-      color: 'black',
-      fontSize: 14,
-    },
+  textMonths: {
+    fontStyle: 'normal',
+    fontWeight: '500',
+    color: 'black',
+    fontSize: 14,
+  },
 
-    listOfTransactions: {
-      flexDirection: 'row',
-      position: 'absolute',
-width: "100%",
-height: 80,
-backgroundColor: 'white',
-bottom: 230,
-    }
-  });
+  listOfTransactions: {
+    flexDirection: 'row',
+    position: 'absolute',
+    width: '100%',
+    height: 80,
+    backgroundColor: 'white',
+    bottom: 230,
+  },
+  marker: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    backgroundColor: '#404CB2',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
+  markerText: {
+    color: 'white',
+  },
+});
 
-export default Map
+export default Map;

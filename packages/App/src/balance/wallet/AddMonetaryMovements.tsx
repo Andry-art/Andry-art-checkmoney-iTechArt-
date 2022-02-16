@@ -66,8 +66,8 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   const [chooseLocation, setchooseLocation] = useState<boolean>(false);
 
   const [markLocation, setMarkLocation] = useState<Location>({
-         latitude: 53.902287,
-         longitude: 27.561824,
+    latitude: 53.902287,
+    longitude: 27.561824,
   });
 
   const receivedWalletItems = useSelector(walletItems);
@@ -93,7 +93,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         ? categoryInfo.category
         : 'Unknown';
       const chosenWallet = receivedWalletItems.find(it => it.key === key);
-      const coordinate = chooseLocation ? markLocation : {}
+      const coordinate = chooseLocation ? markLocation : {};
       if (chosenWallet !== undefined) {
         const keyTransaction =
           chosenWallet.transactions.length === 0
@@ -196,26 +196,34 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         <Image source={addTransactionSource} style={styles.img} />
         <Text style={styles.confirmText}>Add {isMoneyMove}</Text>
       </TouchableOpacity>
-{!chooseLocation &&   <TouchableOpacity style={styles.chooseLocation} onPress={() => setchooseLocation(true)}>
-        <Text style={styles.confirmText}>Choose location</Text>
-      </TouchableOpacity>}
-    
-     {(isMoneyMove === TransactionType.expenses && chooseLocation) && <MapView
-             style={{height:400}}
-       provider={null} 
-       region={{
-         latitude: 53.902287,
-         longitude: 27.561824,
-         latitudeDelta: 0.0015,
-         longitudeDelta: 0.0121,
-       }}
-     >
-       <Marker
-       draggable
-          coordinate={markLocation}
-          onDragEnd={(e) => setMarkLocation(e.nativeEvent.coordinate)}
-       ></Marker>
-     </MapView> } 
+      {!chooseLocation && (
+        <TouchableOpacity
+          style={styles.chooseLocation}
+          onPress={() => setchooseLocation(true)}>
+          <Text style={styles.confirmText}>Choose location</Text>
+        </TouchableOpacity>
+      )}
+
+      {isMoneyMove === TransactionType.expenses && chooseLocation && (
+        <MapView
+          style={{height: 400}}
+          provider={null}
+          region={{
+            latitude: markLocation.latitude,
+            longitude: markLocation.longitude,
+            latitudeDelta: 0.0015,
+            longitudeDelta: 0.0121,
+          }}>
+          <Marker
+            draggable
+            coordinate={markLocation}
+            onDragEnd={e => setMarkLocation(e.nativeEvent.coordinate)}>
+            <View style={styles.marker}>
+              <Text style={styles.markerText}>{values.amount}</Text>
+            </View>
+          </Marker>
+        </MapView>
+      )}
     </ScrollView>
   );
 };
@@ -300,7 +308,7 @@ const styles = StyleSheet.create({
     elevation: 7,
   },
 
-  chooseLocation:{
+  chooseLocation: {
     flexDirection: 'row',
 
     borderRadius: 10,
@@ -347,6 +355,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     tintColor: 'white',
+  },
+
+  marker: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    backgroundColor: '#404CB2',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  markerText: {
+    color: 'white',
   },
 });
 
