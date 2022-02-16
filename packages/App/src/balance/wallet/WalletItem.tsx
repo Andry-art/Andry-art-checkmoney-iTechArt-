@@ -1,4 +1,4 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {FC, useCallback, useMemo} from 'react';
 import {
   StyleSheet,
@@ -29,7 +29,7 @@ const WalletItem: FC<Props> = ({
   onLongPress,
   keyCard,
   onPress,
-  navigation
+  navigation,
 }) => {
   const {width} = useWindowDimensions();
 
@@ -52,17 +52,6 @@ const WalletItem: FC<Props> = ({
 
   return (
     <View style={viewStyle}>
-      {keyCard === -1 ?   <TouchableOpacity
-        onPress={newCard}>
-        <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          colors={color ? color : ['#F39034', '#FF2727']}
-          style={styles.newCard}>
-       <Text style = {styles.plus}>+</Text>    
-        </LinearGradient>
-      </TouchableOpacity> 
-      : 
       <TouchableOpacity
         onLongPress={onLongPressCallBack}
         onPress={onPressCallBack}>
@@ -80,8 +69,7 @@ const WalletItem: FC<Props> = ({
             </Text>
           </View>
         </LinearGradient>
-      </TouchableOpacity>}
-     
+      </TouchableOpacity>
     </View>
   );
 };
@@ -92,25 +80,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
 
-  plus: {
-    fontSize: 60,
-    color: 'white',
-  },
-
-
-
   card: {
     justifyContent: 'flex-start',
-    backgroundColor: '#74EA8E',
-    height: 200,
-    borderRadius: 30,
-    marginHorizontal: 35,
-    padding: 24,
-    elevation: 3,
-  },
-
-  newCard:{
-    alignItems: 'center',
     backgroundColor: '#74EA8E',
     height: 200,
     borderRadius: 30,
