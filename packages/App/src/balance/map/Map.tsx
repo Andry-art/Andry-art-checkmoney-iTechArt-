@@ -8,12 +8,25 @@ import {
   Image,
   SafeAreaView,
   useWindowDimensions,
+  ActionSheetIOS,
+  Modal,
+  Alert,
+  ImageSourcePropType
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {useSelector} from 'react-redux';
+import slides from '../../../slides';
 import {allTransactionsArray} from '../../store/selectors/walletItems';
-import {Months, TransactionType} from '../../types/types';
-import Transactions from '../wallet/Transactions';
+import {ITransactions, Months, TransactionType} from '../../types/types';
+import iconCarSource from '../../../Pics/categories/car.png';
+import iconHealthSource from '../../../Pics/categories/heart-beat.png';
+import iconGrocerySource from '../../../Pics/categories/food.png';
+import iconUnknownSource from '../../../Pics/categories/question.png';
+import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
+import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
+import iconSalarySource from '../../../Pics/categories/money.png';
+import dayjs from 'dayjs';
+
 
 const months = [
   Months.January,
@@ -30,9 +43,23 @@ const months = [
   Months.December,
 ];
 
+const imgSource: Record<string, ImageSourcePropType> = {
+  iconCarSource: iconCarSource,
+  iconHealthSource: iconHealthSource,
+  iconUnknownSource: iconUnknownSource,
+  iconGrocerySource: iconGrocerySource,
+  iconShoppingSource: iconShoppingSource,
+  iconRestaurantSource: iconRestaurantSource,
+  iconSalarySource: iconSalarySource,
+};
+
 const Map: FC = () => {
   const {height} = useWindowDimensions();
   const [chosenMonth, setChosenMonth] = useState<number>(new Date().getMonth());
+  const [chosenMark, setChosenMark] = useState<ITransactions>();
+  const [showModal, setShowModal] = useState<boolean>(false)
+
+  const img = imgSource[chosenMark?.icon];
 
   const chooseMonth = (month: number) => {
     setChosenMonth(0);
@@ -50,6 +77,14 @@ const Map: FC = () => {
   const allTransactionExpenses = allTransactionsByMonth.filter(
     it => it.type === TransactionType.expenses,
   );
+
+  const showInfo = (transaction?: ITransactions) =>{  
+    setChosenMark(transaction)
+    setShowModal(prev => !prev)
+  }
+ 
+  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,6 +107,33 @@ const Map: FC = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+      <Modal visible ={showModal} presentationStyle = {"pageSheet"} animationType = "slide">
+        <View style = {styles.modalContainer}>
+          <View style = {styles.mainPic}>
+          <Text>EXPENSES</Text>
+          <View style = {styles.iconBGExpens}><Image source={img} style = {{width: 60, height: 60}}></Image></View>
+          </View>
+          <View> 
+          <View style = {styles.list}> 
+            <Text>Category</Text> 
+            <Text>{chosenMark?.category}</Text>
+            </View>
+            <View style = {styles.list}>
+            <Text>Amount</Text> 
+            <Text>{chosenMark?.amountTransaction}</Text>
+            </View>
+            <View style = {styles.list}> 
+            <Text>Date</Text> 
+            <Text>{dayjs(chosenMark?.date).format('DD/MM/YY')}</Text>
+            </View>
+          </View>
+        </View>
+
+<TouchableOpacity onPress={() =>setShowModal(prev => !prev)}><Text>dddd</Text></TouchableOpacity>
+
+      </Modal>
+  
       <MapView
         style={{height}}
         provider={null}
@@ -85,6 +147,7 @@ const Map: FC = () => {
           it =>
             it.coordinate && (
               <Marker
+              onPress={() => showInfo(it)}
                 key={it.keyTransaction}
                 coordinate={it.coordinate}
                 title={it.category}
@@ -96,8 +159,9 @@ const Map: FC = () => {
                 </View>
               </Marker>
             ),
-        )}
+        )}  
       </MapView>
+      
     </SafeAreaView>
   );
 };
@@ -163,6 +227,31 @@ const styles = StyleSheet.create({
   markerText: {
     color: 'white',
   },
+
+  mainPic: {
+    alignItems: 'center'
+  },
+
+  modalContainer: {
+   marginVertical: 100,
+justifyContent: 'center',
+
+  },
+
+  iconBGExpens: {
+    backgroundColor: '#FFE9E6',
+    padding: 15,
+    borderRadius: 20,
+    margin: 40,
+    alignItems: 'center'
+  },
+
+  list: {
+flexDirection: 'row',
+justifyContent: 'space-between',
+paddingHorizontal: 40,
+marginBottom: 20,
+  }
 });
 
 export default Map;

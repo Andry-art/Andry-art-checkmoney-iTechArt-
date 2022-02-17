@@ -72,7 +72,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
               .replace(/^([^\.]*\.)|\./g, '$1'),
           ) * 100,
         ) / 100;
-      const category = transaction.category || '';
+      const category = categoryInfo.category || '';
       const date = transaction.date || '';
       const type = transaction.type || '';
       const icon = categoryInfo.icon || '';
@@ -140,19 +140,6 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
         />
       </View>
       <View style={styles.categoriesList}>
-        {/* <FlatList
-          data={transaction.type === 'income' ? income : expenses}
-          keyExtractor={keyExtractor}
-          renderItem={it => (
-            <CategoriesInAddMoneyMove
-              picture={it.item}
-              onPress={setCategoryInfo}
-              chosen={categoryInfo}
-            />
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        /> */}
         {transaction.type === TransactionType.income
           ? income.map(it => (
               <CategoriesInAddMoneyMove

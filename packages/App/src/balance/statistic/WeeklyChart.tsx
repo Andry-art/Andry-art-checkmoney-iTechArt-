@@ -21,12 +21,35 @@ interface Props {
   month: number;
 }
 
+
 const WeeklyChart: FC<Props> = ({month}) => {
   const orientation = useDeviceOrientation();
   const allTransactions = useSelector(allTransactionsArray);
   const allTransactionsByMonth = useMemo(() => {
     return allTransactions.filter(it => new Date(it.date).getMonth() === month);
   }, [allTransactions, month]);
+
+  const daysInMonth = new Date(new Date().getFullYear(), month + 1, 1);
+  daysInMonth.setDate(daysInMonth.getDate() - 1);
+
+  const allDaysInMonth: Array<{
+    DayOfWeek: number;
+    day: number;
+    x: string;
+    y: number;
+  }> = [];
+
+  for (let i = 1; i <= daysInMonth.getDate(); i++) {
+    const day = new Date(new Date().getFullYear(), month, i);
+
+    const dayOfMonth = {
+      DayOfWeek: day.getDay(),
+      day: day.getDate(),
+      x: `${DayOfWeek[day.getDay()]}` + `${day.getDate()}`,
+      y: 0,
+    };
+    allDaysInMonth.push(dayOfMonth);
+  }
 
   const allTransactionExpenses = useMemo(() => {
     return allTransactionsByMonth
@@ -37,43 +60,23 @@ const WeeklyChart: FC<Props> = ({month}) => {
           `${DayOfWeek[new Date(it.date).getDay()]}` +
           ` ${new Date(it.date).getDate()}`,
         day: new Date(it.date).getDate(),
-        DayOfWeek: DayOfWeek[new Date(it.date).getDay()],
+        DayOfWeek: new Date(it.date).getDay(),
         y: it.amountTransaction,
       }));
   }, [allTransactionsByMonth]);
 
-  const firstChart = useMemo(() => {
-    return allTransactionExpenses.filter(it => it.day <= 6);
-  }, [allTransactionExpenses]);
-  const secondChart = useMemo(() => {
-    return allTransactionExpenses
-      .filter(it => it.day > 6)
-      .filter(it => it.day <= 12);
-  }, [allTransactionExpenses]);
-  const thirdChart = useMemo(() => {
-    return allTransactionExpenses
-      .filter(it => it.day > 12)
-      .filter(it => it.day <= 18);
-  }, [allTransactionExpenses]);
-  const fourthChart = useMemo(() => {
-    return allTransactionExpenses
-      .filter(it => it.day > 18)
-      .filter(it => it.day <= 24);
-  }, [allTransactionExpenses]);
-  const fifthChart = useMemo(() => {
-    return allTransactionExpenses.filter(it => it.day > 24);
-  }, [allTransactionExpenses]);
+  const allTransactionsDurMonth = allDaysInMonth.map(it => allTransactionExpenses.find(item => item.day === it.day) || it)
+
+
 
   const arrayOfCharts = [
-    firstChart,
-    secondChart,
-    thirdChart,
-    fourthChart,
-    fifthChart,
+    allTransactionsDurMonth.splice(0,6),
+    allTransactionsDurMonth.splice(0,6),
+    allTransactionsDurMonth.splice(0,6),
+    allTransactionsDurMonth.splice(0,6),
+    allTransactionsDurMonth.splice(0,6),
     [],
   ];
-
-  console.log(secondChart)
 
   const next = () => {
     if (arrayOfCharts[chartIndex + 1].length !== 0) {
@@ -89,6 +92,12 @@ const WeeklyChart: FC<Props> = ({month}) => {
 
   const [chartIndex, setChartIndex] = useState<number>(0);
 
+  const aaa = arrayOfCharts[chartIndex].reduce((sum, cur) => {
+    return (sum * 100 + cur.y * 100) / 100;
+  }, 0)
+
+  console.log(aaa)
+
   return (
     <View style={styles.container}>
       <View style={styles.title}>
@@ -102,15 +111,26 @@ const WeeklyChart: FC<Props> = ({month}) => {
       </View>
       <View style={styles.chart}>
         <VictoryChart
+          animate = {
+            {
+                duration: 800,
+            }
+            }
           height={orientation.landscape ? 250 : 300}
           width={orientation.landscape ? 500 : 400}
           domainPadding={{x: 20}}
           theme={VictoryTheme.material}>
           <VictoryBar
+          animate = {
+          {
+              duration: 800,
+          }
+          }
             width={100}
             cornerRadius={8}
             style={{data: {fill: '#404CB2', width: 30, borderRadius: 30}}}
             data={arrayOfCharts[chartIndex]}
+            domain ={aaa === 0 && {y: [0, 50]} }
           />
         </VictoryChart>
       </View>
@@ -169,7 +189,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#404CB2',
     borderRadius: 10,
-    transform: [{rotate: "180deg"}]
+    transform: [{rotate: '180deg'}],
   },
 
   img: {
