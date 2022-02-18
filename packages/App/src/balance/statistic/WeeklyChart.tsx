@@ -92,7 +92,7 @@ const WeeklyChart: FC<Props> = ({month}) => {
 
   const [chartIndex, setChartIndex] = useState<number>(0);
 
-  const aaa = arrayOfCharts[chartIndex].reduce((sum, cur) => {
+  const sumOfTransactions = arrayOfCharts[chartIndex].reduce((sum, cur) => {
     return (sum * 100 + cur.y * 100) / 100;
   }, 0)
 
