@@ -33,7 +33,6 @@ export function* getWalletItems(): Generator {
     )) as Array<WalletInfo>;
 
     if (response) {
-      response;
       yield put(getWalletItemsSuccess(response));
     }
 

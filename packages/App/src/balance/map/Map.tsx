@@ -8,16 +8,19 @@ import {
   Image,
   SafeAreaView,
   useWindowDimensions,
-  ActionSheetIOS,
   Modal,
-  Alert,
-  ImageSourcePropType
+  ImageSourcePropType,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {useSelector} from 'react-redux';
 import slides from '../../../slides';
 import {allTransactionsArray} from '../../store/selectors/walletItems';
-import {ITransactions, Months, TransactionType} from '../../types/types';
+import {
+  ITransactions,
+  Location,
+  Months,
+  TransactionType,
+} from '../../types/types';
 import iconCarSource from '../../../Pics/categories/car.png';
 import iconHealthSource from '../../../Pics/categories/heart-beat.png';
 import iconGrocerySource from '../../../Pics/categories/food.png';
@@ -26,7 +29,6 @@ import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
 import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
 import iconSalarySource from '../../../Pics/categories/money.png';
 import dayjs from 'dayjs';
-
 
 const months = [
   Months.January,
@@ -57,9 +59,14 @@ const Map: FC = () => {
   const {height} = useWindowDimensions();
   const [chosenMonth, setChosenMonth] = useState<number>(new Date().getMonth());
   const [chosenMark, setChosenMark] = useState<ITransactions>();
-  const [showModal, setShowModal] = useState<boolean>(false)
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [position, setPosition] = useState<Location>({
+    latitude: 53.902287,
+    longitude: 27.561824,
+  });
 
-  const img = imgSource[chosenMark?.icon];
+
+  const img = chosenMark ? imgSource[chosenMark.icon] : iconUnknownSource;
 
   const chooseMonth = (month: number) => {
     setChosenMonth(0);
@@ -78,13 +85,14 @@ const Map: FC = () => {
     it => it.type === TransactionType.expenses,
   );
 
-  const showInfo = (transaction?: ITransactions) =>{  
-    setChosenMark(transaction)
-    setShowModal(prev => !prev)
-  }
- 
-  
-
+  const showInfo = (transaction?: ITransactions) => {
+    setChosenMark(transaction);
+    setShowModal(prev => !prev);
+    if(transaction?.coordinate){
+      setPosition(transaction?.coordinate);
+    }
+    
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -108,38 +116,49 @@ const Map: FC = () => {
         ))}
       </ScrollView>
 
-      <Modal visible ={showModal} presentationStyle = {"pageSheet"} animationType = "slide">
-        <View style = {styles.modalContainer}>
-          <View style = {styles.mainPic}>
-          <Text>EXPENSES</Text>
-          <View style = {styles.iconBGExpens}><Image source={img} style = {{width: 60, height: 60}}></Image></View>
-          </View>
-          <View> 
-          <View style = {styles.list}> 
-            <Text>Category</Text> 
-            <Text>{chosenMark?.category}</Text>
-            </View>
-            <View style = {styles.list}>
-            <Text>Amount</Text> 
-            <Text>{chosenMark?.amountTransaction}</Text>
-            </View>
-            <View style = {styles.list}> 
-            <Text>Date</Text> 
-            <Text>{dayjs(chosenMark?.date).format('DD/MM/YY')}</Text>
+      <Modal
+        visible={showModal}
+        presentationStyle={'pageSheet'}
+        animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.mainPic}>
+            <Text style={styles.modalTitle}>EXPENSES</Text>
+            <View style={styles.iconBGExpens}>
+              <Image source={img} style={{width: 60, height: 60}} />
             </View>
           </View>
+          <View>
+            <View style={styles.list}>
+              <Text style={styles.textList}>Category</Text>
+              <Text style={styles.textList}>{chosenMark?.category}</Text>
+            </View>
+            <View style={styles.list}>
+              <Text style={styles.textList}>Amount</Text>
+              <Text style={styles.textList}>
+                {chosenMark?.amountTransaction}
+              </Text>
+            </View>
+            <View style={styles.list}>
+              <Text style={styles.textList}>Date</Text>
+              <Text style={styles.textList}>
+                {dayjs(chosenMark?.date).format('DD/MM/YY')}
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.confirm}
+            onPress={() => setShowModal(prev => !prev)}>
+            <Text style={styles.confirmText}>Ok</Text>
+          </TouchableOpacity>
         </View>
-
-<TouchableOpacity onPress={() =>setShowModal(prev => !prev)}><Text>dddd</Text></TouchableOpacity>
-
       </Modal>
-  
+
       <MapView
         style={{height}}
         provider={null}
         region={{
-          latitude: 53.902287,
-          longitude: 27.561824,
+          latitude: position.latitude,
+          longitude: position.longitude,
           latitudeDelta: 0.0015,
           longitudeDelta: 0.0121,
         }}>
@@ -147,11 +166,9 @@ const Map: FC = () => {
           it =>
             it.coordinate && (
               <Marker
-              onPress={() => showInfo(it)}
+                onPress={() => showInfo(it)}
                 key={it.keyTransaction}
-                coordinate={it.coordinate}
-                title={it.category}
-                description={`${String(it.amountTransaction)}$`}>
+                coordinate={it.coordinate}>
                 <View style={styles.marker}>
                   <Text style={styles.markerText}>{`${String(
                     it.amountTransaction,
@@ -159,9 +176,8 @@ const Map: FC = () => {
                 </View>
               </Marker>
             ),
-        )}  
+        )}
       </MapView>
-      
     </SafeAreaView>
   );
 };
@@ -229,13 +245,13 @@ const styles = StyleSheet.create({
   },
 
   mainPic: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
   modalContainer: {
-   marginVertical: 100,
-justifyContent: 'center',
-
+    marginVertical: 100,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
 
   iconBGExpens: {
@@ -243,15 +259,43 @@ justifyContent: 'center',
     padding: 15,
     borderRadius: 20,
     margin: 40,
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
   list: {
-flexDirection: 'row',
-justifyContent: 'space-between',
-paddingHorizontal: 40,
-marginBottom: 20,
-  }
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+
+  confirm: {
+    flexDirection: 'row',
+    marginTop: 20,
+    borderRadius: 10,
+    height: 100,
+    width: '100%',
+    backgroundColor: '#404CB2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    elevation: 7,
+  },
+
+  confirmText: {
+    fontStyle: 'normal',
+    fontWeight: '700',
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+
+  modalTitle: {
+    fontSize: 25,
+    fontWeight: '600',
+  },
+  textList: {
+    fontSize: 18,
+  },
 });
 
 export default Map;

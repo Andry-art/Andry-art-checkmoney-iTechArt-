@@ -96,7 +96,9 @@ const WeeklyChart: FC<Props> = ({month}) => {
     return (sum * 100 + cur.y * 100) / 100;
   }, 0)
 
-  console.log(aaa)
+  const y = arrayOfCharts[chartIndex].map(it => it.y)
+
+
 
   return (
     <View style={styles.container}>
@@ -113,7 +115,7 @@ const WeeklyChart: FC<Props> = ({month}) => {
         <VictoryChart
           animate = {
             {
-                duration: 800,
+                duration: 600,
             }
             }
           height={orientation.landscape ? 250 : 300}
@@ -123,14 +125,14 @@ const WeeklyChart: FC<Props> = ({month}) => {
           <VictoryBar
           animate = {
           {
-              duration: 800,
+              duration: 600,
           }
           }
             width={100}
             cornerRadius={8}
             style={{data: {fill: '#404CB2', width: 30, borderRadius: 30}}}
             data={arrayOfCharts[chartIndex]}
-            domain ={aaa === 0 && {y: [0, 50]} }
+            domain ={aaa === 0 ? {y: [0, 50]} : { y: [Math.min.apply(null, y), Math.max.apply(null, y)]}}
           />
         </VictoryChart>
       </View>
