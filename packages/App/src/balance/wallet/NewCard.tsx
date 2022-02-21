@@ -69,7 +69,6 @@ const NewCard: FC<Props> = ({navigation}) => {
         ) / 100;
       const color = cardColor;
       const key = receivedWalletItems[receivedWalletItems.length - 1].key + 1;
-      console.log(amount);
       dispatch(addNewCardRequest({cardName, amount, color, key}));
 
       navigation.goBack();
