@@ -6,9 +6,10 @@ import {useDispatch} from 'react-redux';
 import Debits from '../debits/Debits';
 import NewDebits from '../debits/NewDebits';
 import DebitInfoComponent from './DebitInfoComponent';
-import {Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import LogOutModal from '../../components/LogOutModal';
 import logOutSource from '../../../Pics/logout.png';
+import { logOutAction } from '../../store/actions/registration';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,7 +23,18 @@ const DebitNavigation = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const logOutRequest = () => {
-    setIsVisible(prev => !prev);
+    Alert.alert('Would you like to logOut?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Log Out',
+        onPress: async () => {
+          dispatch(logOutAction());
+        },
+      },
+    ]);
   };
 
   return (
@@ -35,11 +47,6 @@ const DebitNavigation = () => {
           headerRight: () => (
             <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
               <Image source={logOutSource} />
-              <LogOutModal
-                isModalVisible={isVisible}
-                setIsVisible={setIsVisible}
-                logOutRequest={logOutRequest}
-              />
             </TouchableOpacity>
           ),
         }}

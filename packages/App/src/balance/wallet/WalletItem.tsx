@@ -1,3 +1,4 @@
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {FC, useCallback, useMemo} from 'react';
 import {
   StyleSheet,
@@ -9,7 +10,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {AmountInCents} from '../../types/types';
+import {AmountInCents, WalletNavigatorList} from '../../types/types';
 
 interface Props {
   title: string;
@@ -18,6 +19,7 @@ interface Props {
   onLongPress: (id: number) => void;
   keyCard: number;
   onPress: (key: number, amount: number, title: string) => void;
+  navigation: NativeStackNavigationProp<WalletNavigatorList>;
 }
 
 const WalletItem: FC<Props> = ({
@@ -27,6 +29,7 @@ const WalletItem: FC<Props> = ({
   onLongPress,
   keyCard,
   onPress,
+  navigation,
 }) => {
   const {width} = useWindowDimensions();
 
@@ -34,6 +37,10 @@ const WalletItem: FC<Props> = ({
     () => [styles.container, {width}],
     [width],
   );
+
+  const newCard = () => {
+    navigation.navigate('New Card');
+  };
 
   const onLongPressCallBack = useCallback(() => {
     onLongPress(keyCard);

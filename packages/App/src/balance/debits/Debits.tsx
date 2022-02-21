@@ -10,7 +10,7 @@ import {
   ScrollView,
   Image,
   View,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import ListOfDebits from './ListOfDebits';
 import {
@@ -34,6 +34,11 @@ import {getAllItemWallet} from '../../store/actions/walletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import arrowSource from '../../../Pics/debt/up-arrow.png';
 import plusSource from '../../../Pics/debt/plus.png';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -59,6 +64,41 @@ const Debits: FC<Props> = ({navigation}) => {
   const addDebitError = useSelector(newDebitError);
   const deleteError = useSelector(deleteDebitError);
   const debitsError = useSelector(getErrorDebits);
+
+  const debToYouInitRotate = useSharedValue(180);
+  const yourDebInitRotate = useSharedValue(180);
+
+  const debToYouAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${debToYouInitRotate.value}deg`}],
+    };
+  });
+
+  const yourDebAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{rotate: `${yourDebInitRotate.value}deg`}],
+    };
+  });
+
+  useEffect(() => {
+    if (debToYouInitRotate.value === 0) {
+      debToYouInitRotate.value = withTiming(180);
+      yourDebInitRotate.value = withTiming(0);
+    }
+    if (debToYouInitRotate.value === 180) {
+      debToYouInitRotate.value = withTiming(0);
+    }
+  }, [debitsVisible]);
+
+  useEffect(() => {
+    if (yourDebInitRotate.value === 0) {
+      yourDebInitRotate.value = withTiming(180);
+      debToYouInitRotate.value = withTiming(0);
+    }
+    if (yourDebInitRotate.value === 180) {
+      yourDebInitRotate.value = withTiming(0);
+    }
+  }, [myDebitsVisible]);
 
   useEffect(() => {
     if (addDebitError) {
@@ -205,82 +245,84 @@ const Debits: FC<Props> = ({navigation}) => {
 
   return (
     <ScrollView nestedScrollEnabled={true} style={styles.container}>
-      <SafeAreaView >
-      <TouchableOpacity
-        style={debitsVisible ? styles.debitsActive : styles.debits}
-        onPress={DebitsToYou}>
-        <View style={styles.arrowUp}>
-          <Image source={arrowSource} style={styles.img} />
-        </View>
-        <Text style={debitsVisible ? styles.titleActive : styles.title}>
-          Debits to you
-        </Text>
-        <Text
-          style={debitsVisible ? styles.titleAmountActive : styles.titleAmount}>
-          {sumDebToYou}$
-        </Text>
-      </TouchableOpacity>
-      {debitsVisible && (
-        <ScrollView style={styles.listDebits}>
-          {toYou.map(item => (
-            <ListOfDebits
-              key={item.key}
-              type={item.type}
-              keyOfWallet={item.keyOfWallet}
-              keyDeb={item.key}
-              date={item.date}
-              person={item.person}
-              amount={item.amount}
-              color="#1B824A"
-              onPress={toDebitInfo}
-              onLongPress={showModal}
-              lastKey={toYou[toYou.length - 1].key}
-            />
-          ))}
-        </ScrollView>
-      )}
+      <SafeAreaView>
+        <TouchableOpacity
+          style={debitsVisible ? styles.debitsActive : styles.debits}
+          onPress={DebitsToYou}>
+          <Animated.View style={[styles.arrowUp, debToYouAnimatedStyle]}>
+            <Image source={arrowSource} style={styles.img} />
+          </Animated.View>
+          <Text style={debitsVisible ? styles.titleActive : styles.title}>
+            Debits to you
+          </Text>
+          <Text
+            style={
+              debitsVisible ? styles.titleAmountActive : styles.titleAmount
+            }>
+            {sumDebToYou}$
+          </Text>
+        </TouchableOpacity>
+        {debitsVisible && (
+          <ScrollView style={styles.listDebits}>
+            {toYou.map(item => (
+              <ListOfDebits
+                key={item.key}
+                type={item.type}
+                keyOfWallet={item.keyOfWallet}
+                keyDeb={item.key}
+                date={item.date}
+                person={item.person}
+                amount={item.amount}
+                color="#1B824A"
+                onPress={toDebitInfo}
+                onLongPress={showModal}
+                lastKey={toYou[toYou.length - 1].key}
+              />
+            ))}
+          </ScrollView>
+        )}
 
-      <TouchableOpacity
-        style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
-        onPress={myDebits}>
-        <View style={styles.arrowDown}>
-          <Image source={arrowSource} style={styles.img} />
-        </View>
-        <Text style={myDebitsVisible ? styles.titleActive : styles.title}>
-          Your debits
-        </Text>
-        <Text
-          style={
-            myDebitsVisible ? styles.titleAmountActive : styles.titleAmount
-          }>
-          {sumOfYourDeb}$
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
+          onPress={myDebits}>
+          <Animated.View style={[styles.arrowDown, yourDebAnimatedStyle]}>
+            <Image source={arrowSource} style={styles.img} />
+          </Animated.View>
+          <Text style={myDebitsVisible ? styles.titleActive : styles.title}>
+            Your debits
+          </Text>
+          <Text
+            style={
+              myDebitsVisible ? styles.titleAmountActive : styles.titleAmount
+            }>
+            {sumOfYourDeb}$
+          </Text>
+        </TouchableOpacity>
 
-      {myDebitsVisible && (
-        <ScrollView style={styles.listDebits}>
-          {yourDebits.map(item => (
-            <ListOfDebits
-              key={item.key}
-              type={item.type}
-              keyOfWallet={item.keyOfWallet}
-              keyDeb={item.key}
-              date={item.date}
-              person={item.person}
-              amount={item.amount}
-              color="#1B824A"
-              onPress={toDebitInfo}
-              onLongPress={showModal}
-              lastKey={yourDebits[yourDebits.length - 1].key}
-            />
-          ))}
-        </ScrollView>
-      )}
+        {myDebitsVisible && (
+          <ScrollView style={styles.listDebits}>
+            {yourDebits.map(item => (
+              <ListOfDebits
+                key={item.key}
+                type={item.type}
+                keyOfWallet={item.keyOfWallet}
+                keyDeb={item.key}
+                date={item.date}
+                person={item.person}
+                amount={item.amount}
+                color="#1B824A"
+                onPress={toDebitInfo}
+                onLongPress={showModal}
+                lastKey={yourDebits[yourDebits.length - 1].key}
+              />
+            ))}
+          </ScrollView>
+        )}
 
-      <TouchableOpacity style={styles.addNewDebit} onPress={toNewDebits}>
-        <Image source={plusSource} style={styles.imgBtn} />
-        <Text style={styles.titleAddNew}>ADD NEW</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.addNewDebit} onPress={toNewDebits}>
+          <Image source={plusSource} style={styles.imgBtn} />
+          <Text style={styles.titleAddNew}>ADD NEW</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     </ScrollView>
   );

@@ -1,5 +1,16 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, Text, Alert, SafeAreaView} from 'react-native';
+import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Text,
+  Alert,
+  SafeAreaView,
+  TouchableOpacity,
+  useWindowDimensions,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import WalletItem from './WalletItem';
 import Button from './Button';
 import incomeIconSource from '../../../Pics/balance/income.png';
@@ -36,6 +47,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useDeviceOrientation} from '@react-native-community/hooks/lib/useDeviceOrientation';
 import NetInfo from '@react-native-community/netinfo';
 import dayjs from 'dayjs';
+import LinearGradient from 'react-native-linear-gradient';
 
 const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 10,
@@ -175,7 +187,9 @@ const Wallet: FC<Props> = ({navigation}) => {
   };
 
   const viewableItemsChanged = useCallback(({viewableItems}) => {
-    setItemVisible(viewableItems[0].index);
+    if (viewableItems.length !== 0) {
+      setItemVisible(viewableItems[0].index);
+    }
   }, []);
 
   if (errorFilters) {
@@ -197,6 +211,13 @@ const Wallet: FC<Props> = ({navigation}) => {
   if (isLoading) {
     <Loading />;
   }
+
+  const {width} = useWindowDimensions();
+
+  const viewStyle = useMemo<StyleProp<ViewStyle>>(
+    () => [styles.cardContainer, {width}],
+    [width],
+  );
 
   return (
     <View style={styles.container}>
@@ -224,6 +245,7 @@ const Wallet: FC<Props> = ({navigation}) => {
                       color={item.color}
                       onLongPress={showModal}
                       onPress={toAddMonetaryMovements}
+                      navigation={navigation}
                     />
                   )}
                   centerContent={true}
@@ -233,6 +255,19 @@ const Wallet: FC<Props> = ({navigation}) => {
                   viewabilityConfig={viewability}
                   onViewableItemsChanged={viewableItemsChanged}
                   ref={ref => setRefItem(ref)}
+                  ListFooterComponent={
+                    <View style={viewStyle}>
+                      <TouchableOpacity onPress={newCard}>
+                        <LinearGradient
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 0}}
+                          colors={['#F6F6F6', '#D0D0D0']}
+                          style={styles.newCard}>
+                          <Text style={styles.plus}>+</Text>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
+                  }
                 />
               </View>
 
@@ -256,13 +291,6 @@ const Wallet: FC<Props> = ({navigation}) => {
                     onPress={filterExpenses}
                     chosen={chosenBtn}
                   />
-
-                  <Button
-                    title="New card"
-                    picture={addNewIconSource}
-                    onPress={newCard}
-                    chosen={chosenBtn}
-                  />
                 </View>
                 <Text style={styles.categoriesListText}>All categories</Text>
               </View>
@@ -277,17 +305,17 @@ const Wallet: FC<Props> = ({navigation}) => {
           }
           keyExtractor={keyExtractorForTransactions}
           renderItem={({item}) => (
-            <SafeAreaView >
-            <Transactions
-              category={item.category}
-              amount={item.amountTransaction}
-              date={item.date}
-              type={item.type}
-              icon={item.icon}
-              keyTransaction={item.keyTransaction}
-              onLongPress={showModalTransaction}
-              onPress={correctTransaction}
-            />
+            <SafeAreaView>
+              <Transactions
+                category={item.category}
+                amount={item.amountTransaction}
+                date={item.date}
+                type={item.type}
+                icon={item.icon}
+                keyTransaction={item.keyTransaction}
+                onLongPress={showModalTransaction}
+                onPress={correctTransaction}
+              />
             </SafeAreaView>
           )}
         />
@@ -369,6 +397,26 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 18,
     marginVertical: 10,
+  },
+
+  cardContainer: {
+    justifyContent: 'flex-start',
+    backgroundColor: '#FFFFFF',
+  },
+
+  newCard: {
+    alignItems: 'center',
+    backgroundColor: '#74EA8E',
+    height: 200,
+    borderRadius: 30,
+    marginHorizontal: 35,
+    padding: 24,
+    elevation: 3,
+  },
+
+  plus: {
+    fontSize: 60,
+    color: 'white',
   },
 });
 

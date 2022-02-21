@@ -7,7 +7,7 @@ import SignUp from './Registaration/SignUp';
 import Loading from './components/Loading';
 import {userIsLogIn, IsLoadingUser} from './store/selectors/registration';
 import {useDispatch, useSelector} from 'react-redux';
-import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Image, Text, TouchableOpacity, Alert} from 'react-native';
 import BalanceNavigation from './balance/wallet/WalletNavigation';
 import DebitNavigation from './balance/debits/DebitNavigation';
 import MainStatistic from './balance/statistic/MainStatistic';
@@ -19,6 +19,7 @@ import LogOutModal from './components/LogOutModal';
 import {getAllItemWallet} from './store/actions/walletActions';
 import OnBoarding from './onBoardingPages/OnBoarding';
 import AsyncStorage from '@react-native-community/async-storage';
+import { logOutAction } from './store/actions/registration';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,7 +57,18 @@ const Navigation = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const logOutRequest = () => {
-    setIsVisible(prev => !prev);
+    Alert.alert('Would you like to logOut?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Log Out',
+        onPress: async () => {
+          dispatch(logOutAction());
+        },
+      },
+    ]);
   };
 
   if (isLoading || loadingOnboarding) {
@@ -141,11 +153,6 @@ const Navigation = () => {
               headerRight: () => (
                 <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
                   <Image source={logOutSource} />
-                  <LogOutModal
-                    isModalVisible={isVisible}
-                    setIsVisible={setIsVisible}
-                    logOutRequest={logOutRequest}
-                  />
                 </TouchableOpacity>
               ),
               tabBarIcon: ({focused}) => (

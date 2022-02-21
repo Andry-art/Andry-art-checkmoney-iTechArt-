@@ -100,6 +100,7 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
               ),
             }),
         );
+
         return state;
       },
     )

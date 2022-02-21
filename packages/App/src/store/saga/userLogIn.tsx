@@ -57,7 +57,7 @@ export function* userSendSignUp(
 
 export function* userLogOut(): Generator {
   try {
-    yield EncryptedStorage.removeItem('user_session');
+    yield EncryptedStorage.clear();
     yield put(logOutActionSuccess());
     yield put(cleanErrorsWallet());
     yield put(cleanErrorsDebits());
