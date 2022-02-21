@@ -70,6 +70,9 @@ const Wallet = createReducer<IWallet>(initialState, builder => {
     .addCase(getAllItemWallet, state => {
       state.isLoading = true;
       state.errorGet = '';
+      state.errorFilters = '';
+      state.errorDeleteCard = '';
+      state.errorAddNewCard = '';
       return state;
     })
     .addCase(

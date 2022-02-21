@@ -9,7 +9,7 @@ import DebitInfoComponent from './DebitInfoComponent';
 import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import LogOutModal from '../../components/LogOutModal';
 import logOutSource from '../../../Pics/logout.png';
-import { logOutAction } from '../../store/actions/registration';
+import {logOutAction} from '../../store/actions/registration';
 
 const Stack = createNativeStackNavigator();
 

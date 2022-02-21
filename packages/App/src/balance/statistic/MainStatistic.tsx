@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
   Image,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {Months} from '../../types/types';
 import MoneyFlow from './MoneyFlow';
@@ -66,8 +66,6 @@ const MainStatistic: FC = () => {
         ))}
       </ScrollView>
 
-   
-
       {allTransactionsByMonth.length === 0 ? (
         <View style={styles.noChart}>
           <Text style={styles.noChartText}>
@@ -77,10 +75,10 @@ const MainStatistic: FC = () => {
         </View>
       ) : (
         <ScrollView style={styles.containerScroll}>
-           <SafeAreaView style={styles.container}>
-          <MoneyFlow month={chosenMonth} />
-          <WeeklyChart month={chosenMonth} />
-          <CategoryChart month={chosenMonth} />
+          <SafeAreaView style={styles.container}>
+            <MoneyFlow month={chosenMonth} />
+            <WeeklyChart month={chosenMonth} />
+            <CategoryChart month={chosenMonth} />
           </SafeAreaView>
         </ScrollView>
       )}
@@ -90,7 +88,7 @@ const MainStatistic: FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-backgroundColor: 'white',
+    backgroundColor: 'white',
   },
 
   containerScroll: {

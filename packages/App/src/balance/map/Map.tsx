@@ -65,11 +65,9 @@ const Map: FC = () => {
     longitude: 27.561824,
   });
 
-
   const img = chosenMark ? imgSource[chosenMark.icon] : iconUnknownSource;
 
   const chooseMonth = (month: number) => {
-    setChosenMonth(0);
     setChosenMonth(month);
   };
 
@@ -88,10 +86,9 @@ const Map: FC = () => {
   const showInfo = (transaction?: ITransactions) => {
     setChosenMark(transaction);
     setShowModal(prev => !prev);
-    if(transaction?.coordinate){
+    if (transaction?.coordinate) {
       setPosition(transaction?.coordinate);
     }
-    
   };
 
   return (

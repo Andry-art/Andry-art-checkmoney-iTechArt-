@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Wallet from './Wallet';
 import {getAllItemWallet} from '../../store/actions/walletActions';
@@ -9,17 +9,14 @@ import AddMonetaryMovements from './AddMonetaryMovements';
 import CorrectTransaction from './CorrectTransaction';
 import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import logOutSource from '../../../Pics/logout.png';
-import LogOutModal from '../../components/LogOutModal';
 import {userIsLogIn} from '../../store/selectors/registration';
-import { logOutAction } from '../../store/actions/registration';
+import {logOutAction} from '../../store/actions/registration';
 
 const Stack = createNativeStackNavigator();
 
 const BalanceNavigation = () => {
   const dispatch = useDispatch();
   const isLogIn = useSelector(userIsLogIn);
-
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     dispatch(getAllItemWallet());

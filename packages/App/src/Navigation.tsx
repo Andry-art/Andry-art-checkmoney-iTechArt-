@@ -62,8 +62,6 @@ const Navigation = () => {
     dispatch(getAllItemWallet());
   }, [dispatch]);
 
-  const [isVisible, setIsVisible] = useState(false);
-
   const logOutRequest = () => {
     Alert.alert('Would you like to logOut?', '', [
       {

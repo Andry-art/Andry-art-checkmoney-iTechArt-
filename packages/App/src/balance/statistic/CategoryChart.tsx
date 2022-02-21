@@ -104,7 +104,7 @@ const CategoryChart: FC<Props> = ({month}) => {
     <View style={styles.container}>
       <Text style={styles.title}>Category expenses</Text>
       <VictoryPie
-      animate
+        animate
         padAngle={3}
         padding={100}
         innerRadius={40}

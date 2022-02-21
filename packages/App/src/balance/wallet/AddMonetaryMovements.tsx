@@ -55,7 +55,7 @@ const transactionSchema = yup.object({
 const AddMonetaryMovements: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const {key, amount, title} = useSelector(monetaryMove);
-  const [isMoneyMove, setIsMoneyMove] = useState<string>(
+  const [moneyMoveType, setMoneyMoveType] = useState<string>(
     TransactionType.expenses,
   );
   const [categoryInfo, setCategoryInfo] = useState<ChosenCategory>({
@@ -87,7 +87,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
               .replace(/^([^\.]*\.)|\./g, '$1'),
           ) * 100,
         ) / 100;
-      const type = isMoneyMove;
+      const type = moneyMoveType;
       const icon = categoryInfo.icon ? categoryInfo.icon : 'iconUnknownSource';
       const category = categoryInfo.category
         ? categoryInfo.category
@@ -143,21 +143,21 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
       <View style={styles.moneyMoves}>
         <TouchableOpacity
           style={
-            isMoneyMove === TransactionType.expenses
+            moneyMoveType === TransactionType.expenses
               ? styles.BtnIncomeExpensesFocus
               : styles.BtnIncomeExpenses
           }
-          onPress={() => setIsMoneyMove(TransactionType.expenses)}>
+          onPress={() => setMoneyMoveType(TransactionType.expenses)}>
           <Text style={styles.textIncomeExpenses}>Expenses</Text>
         </TouchableOpacity>
         <Image source={imgArrowSource} />
         <TouchableOpacity
           style={
-            isMoneyMove === TransactionType.income
+            moneyMoveType === TransactionType.income
               ? styles.BtnIncomeExpensesFocus
               : styles.BtnIncomeExpenses
           }
-          onPress={() => setIsMoneyMove(TransactionType.income)}>
+          onPress={() => setMoneyMoveType(TransactionType.income)}>
           <Text style={styles.textIncomeExpenses}>Income</Text>
         </TouchableOpacity>
       </View>
@@ -173,7 +173,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         <Text style={styles.validation}>{errors.amount}</Text>
       </View>
       <View style={styles.categoriesList}>
-        {isMoneyMove === TransactionType.income
+        {moneyMoveType === TransactionType.income
           ? income.map(it => (
               <CategoriesInAddMoneyMove
                 key={it}
@@ -194,7 +194,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
 
       <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
         <Image source={addTransactionSource} style={styles.img} />
-        <Text style={styles.confirmText}>Add {isMoneyMove}</Text>
+        <Text style={styles.confirmText}>Add {moneyMoveType}</Text>
       </TouchableOpacity>
       {!chooseLocation && (
         <TouchableOpacity
@@ -204,7 +204,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
         </TouchableOpacity>
       )}
 
-      {isMoneyMove === TransactionType.expenses && chooseLocation && (
+      {moneyMoveType === TransactionType.expenses && chooseLocation && (
         <MapView
           style={{height: 400}}
           provider={null}

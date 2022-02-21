@@ -21,14 +21,14 @@ interface Props {
   month: number;
 }
 
+const allDaysInMonth: Array<{
+  DayOfWeek: number;
+  day: number;
+  x: string;
+  y: number;
+}> = [];
 
-const WeeklyChart: FC<Props> = ({month}) => {
-  const orientation = useDeviceOrientation();
-  const allTransactions = useSelector(allTransactionsArray);
-  const allTransactionsByMonth = useMemo(() => {
-    return allTransactions.filter(it => new Date(it.date).getMonth() === month);
-  }, [allTransactions, month]);
-
+const monthArr = (month: number) => {
   const daysInMonth = new Date(new Date().getFullYear(), month + 1, 1);
   daysInMonth.setDate(daysInMonth.getDate() - 1);
 
@@ -41,7 +41,7 @@ const WeeklyChart: FC<Props> = ({month}) => {
 
   for (let i = 1; i <= daysInMonth.getDate(); i++) {
     const day = new Date(new Date().getFullYear(), month, i);
-
+    console.log(day);
     const dayOfMonth = {
       DayOfWeek: day.getDay(),
       day: day.getDate(),
@@ -50,6 +50,20 @@ const WeeklyChart: FC<Props> = ({month}) => {
     };
     allDaysInMonth.push(dayOfMonth);
   }
+
+  return allDaysInMonth;
+};
+
+const WeeklyChart: FC<Props> = ({month}) => {
+  const orientation = useDeviceOrientation();
+  const allTransactions = useSelector(allTransactionsArray);
+  const allTransactionsByMonth = useMemo(() => {
+    return allTransactions.filter(it => new Date(it.date).getMonth() === month);
+  }, [allTransactions, month]);
+
+  const allDaysInMonth = useMemo(() => {
+    return monthArr(month);
+  }, [month]);
 
   const allTransactionExpenses = useMemo(() => {
     return allTransactionsByMonth
@@ -65,16 +79,17 @@ const WeeklyChart: FC<Props> = ({month}) => {
       }));
   }, [allTransactionsByMonth]);
 
-  const allTransactionsDurMonth = allDaysInMonth.map(it => allTransactionExpenses.find(item => item.day === it.day) || it)
-
-
+  const allTransactionsDurMonth = allDaysInMonth.map(
+    it => allTransactionExpenses.find(item => item.day === it.day) || it,
+  );
 
   const arrayOfCharts = [
-    allTransactionsDurMonth.splice(0,6),
-    allTransactionsDurMonth.splice(0,6),
-    allTransactionsDurMonth.splice(0,6),
-    allTransactionsDurMonth.splice(0,6),
-    allTransactionsDurMonth.splice(0,6),
+    allTransactionsDurMonth.splice(0, 5),
+    allTransactionsDurMonth.splice(0, 5),
+    allTransactionsDurMonth.splice(0, 5),
+    allTransactionsDurMonth.splice(0, 5),
+    allTransactionsDurMonth.splice(0, 5),
+    allTransactionsDurMonth,
     [],
   ];
 
@@ -92,13 +107,11 @@ const WeeklyChart: FC<Props> = ({month}) => {
 
   const [chartIndex, setChartIndex] = useState<number>(0);
 
-  const aaa = arrayOfCharts[chartIndex].reduce((sum, cur) => {
+  const sumOfTransactions = arrayOfCharts[chartIndex].reduce((sum, cur) => {
     return (sum * 100 + cur.y * 100) / 100;
-  }, 0)
+  }, 0);
 
-  const y = arrayOfCharts[chartIndex].map(it => it.y)
-
-
+  const y = arrayOfCharts[chartIndex].map(it => it.y);
 
   return (
     <View style={styles.container}>
@@ -113,26 +126,26 @@ const WeeklyChart: FC<Props> = ({month}) => {
       </View>
       <View style={styles.chart}>
         <VictoryChart
-          animate = {
-            {
-                duration: 600,
-            }
-            }
+          animate={{
+            duration: 600,
+          }}
           height={orientation.landscape ? 250 : 300}
           width={orientation.landscape ? 500 : 400}
           domainPadding={{x: 20}}
           theme={VictoryTheme.material}>
           <VictoryBar
-          animate = {
-          {
+            animate={{
               duration: 600,
-          }
-          }
+            }}
             width={100}
             cornerRadius={8}
             style={{data: {fill: '#404CB2', width: 30, borderRadius: 30}}}
             data={arrayOfCharts[chartIndex]}
-            domain ={aaa === 0 ? {y: [0, 50]} : { y: [Math.min.apply(null, y), Math.max.apply(null, y)]}}
+            domain={
+              sumOfTransactions === 0
+                ? {y: [0, 50]}
+                : {y: [Math.min.apply(null, y), Math.max.apply(null, y)]}
+            }
           />
         </VictoryChart>
       </View>
