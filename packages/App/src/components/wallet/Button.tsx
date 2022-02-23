@@ -1,7 +1,7 @@
 import React, {FC, useMemo} from 'react';
 import {StyleSheet, Text, TouchableOpacity, ImageURISource} from 'react-native';
 import {useSelector} from 'react-redux';
-import {filtersError} from '../../store/selectors/walletItems';
+import {filtersError} from '../../store/selectors/WalletSelectors';
 
 interface Props {
   title: string;

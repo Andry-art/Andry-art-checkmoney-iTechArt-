@@ -22,7 +22,7 @@ import {
   deleteTransactionRequest,
   correctTransactionInfo,
   addCorrectTransactionRequest,
-} from '../actions/WalletActions';
+} from '../actions/RalletActions';
 import {logOutAction} from '../actions/RegistrationActions';
 
 export function* getWalletItems(): Generator {

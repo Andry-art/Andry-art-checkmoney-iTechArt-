@@ -15,7 +15,7 @@ import {Formik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch, useSelector} from 'react-redux';
 import {userLogIn} from '../../store/actions/RegistrationActions';
-import {logInError} from '../../store/selectors/registration';
+import {logInError} from '../../store/selectors/RegistrationSelectors';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RegistrationNavigation} from '../../types/types';
 

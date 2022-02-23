@@ -28,14 +28,14 @@ import {
   filteredIncome,
   filteredExp,
   getError,
-} from '../../store/selectors/walletItems';
+} from '../../store/selectors/WalletSelectors';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   deleteWalletCardRequest,
   cardMonetaryMove,
   deleteTransactionRequest,
   correctTransactionInfo,
-} from '../../store/actions/WalletActions';
+} from '../../store/actions/RalletActions';
 import Loading from '../Loading';
 import {
   WalletNavigatorList,

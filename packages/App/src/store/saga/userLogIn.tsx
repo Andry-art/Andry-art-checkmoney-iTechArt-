@@ -7,7 +7,7 @@ import {
   logOutActionSuccess,
 } from '../actions/RegistrationActions';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {cleanErrorsWallet} from '../actions/WalletActions';
+import {cleanErrorsWallet} from '../actions/RalletActions';
 import {cleanErrorsDebits} from '../actions/DebitsActions';
 
 export function* userSendLogIn(

@@ -22,14 +22,14 @@ import {
   newDebitError,
   deleteDebitError,
   getErrorDebits,
-} from '../../store/selectors/debits';
+} from '../../store/selectors/DebitSelectors';
 import {useDispatch, useSelector} from 'react-redux';
 import {DebitInfo, DebitNavigatorList, DebitType} from '../../types/types';
 import {
   addDebitInfo,
   deleteDebitRequest,
 } from '../../store/actions/DebitsActions';
-import {getAllItemWallet} from '../../store/actions/WalletActions';
+import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import arrowSource from '../../../pictures/debt/up-arrow.png';
 import plusSource from '../../../pictures/debt/plus.png';
@@ -53,8 +53,7 @@ const Debits: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const [debitsVisible, setDebitsVisible] = useState<boolean>(false);
   const [myDebitsVisible, setMyDebitsVisible] = useState<boolean>(false);
-
-  const toYou = useSelector(getDebitsToYou);
+  const debitToYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
   const sumDebToYou = useSelector(sumDebitsToYou);
   const sumOfYourDeb = useSelector(sumOfYourDebits);
@@ -63,7 +62,6 @@ const Debits: FC<Props> = ({navigation}) => {
   const addDebitError = useSelector(newDebitError);
   const deleteError = useSelector(deleteDebitError);
   const debitsError = useSelector(getErrorDebits);
-
   const debToYouInitRotate = useSharedValue(180);
   const yourDebInitRotate = useSharedValue(180);
 
@@ -111,12 +109,12 @@ const Debits: FC<Props> = ({navigation}) => {
     }
   }, [addDebitError, deleteError, debitsError]);
 
-  const DebitsToYou = useCallback(() => {
+  const debitsToYouVisible = useCallback(() => {
     setDebitsVisible(prev => !prev);
     setMyDebitsVisible(false);
   }, []);
 
-  const myDebits = () => {
+  const yourDebitsVisible = () => {
     setMyDebitsVisible(prev => !prev);
     setDebitsVisible(false);
   };
@@ -125,7 +123,7 @@ const Debits: FC<Props> = ({navigation}) => {
     navigation.navigate('Add New Debit');
   };
 
-  const showModal = ({
+  const showModalDelete = ({
     type,
     keyOfWallet,
     key,
@@ -157,24 +155,6 @@ const Debits: FC<Props> = ({navigation}) => {
     ]);
   };
 
-  const deleteDebitMinus = () => {
-    let debitsArray;
-    if (info.type === DebitType.yourDebit) {
-      debitsArray = yourDebits;
-    }
-
-    if (info.type === DebitType.toYou) {
-      debitsArray = toYou;
-    }
-
-    if (wallet && debitsArray) {
-      dispatch(
-        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
-      );
-      dispatch(getAllItemWallet());
-    }
-  };
-
   const deleteDebit = () => {
     let debitsArray;
     if (info.type === DebitType.yourDebit) {
@@ -182,7 +162,7 @@ const Debits: FC<Props> = ({navigation}) => {
     }
 
     if (info.type === DebitType.toYou) {
-      debitsArray = toYou;
+      debitsArray = debitToYou;
     }
 
     if (wallet) {
@@ -223,6 +203,24 @@ const Debits: FC<Props> = ({navigation}) => {
     }
   };
 
+  const deleteDebitMinus = () => {
+    let debitsArray;
+    if (info.type === DebitType.yourDebit) {
+      debitsArray = yourDebits;
+    }
+
+    if (info.type === DebitType.toYou) {
+      debitsArray = debitToYou;
+    }
+
+    if (wallet && debitsArray) {
+      dispatch(
+        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
+      );
+      dispatch(getAllItemWallet());
+    }
+  };
+
   const toDebitInfo = useCallback(
     ({type, keyOfWallet, key, date, person, amount}: DebitInfo) => {
       dispatch(
@@ -247,7 +245,7 @@ const Debits: FC<Props> = ({navigation}) => {
       <SafeAreaView>
         <TouchableOpacity
           style={debitsVisible ? styles.debitsActive : styles.debits}
-          onPress={DebitsToYou}>
+          onPress={debitsToYouVisible}>
           <Animated.View style={[styles.arrowUp, debToYouAnimatedStyle]}>
             <Image source={arrowSource} style={styles.img} />
           </Animated.View>
@@ -263,7 +261,7 @@ const Debits: FC<Props> = ({navigation}) => {
         </TouchableOpacity>
         {debitsVisible && (
           <ScrollView style={styles.listDebits}>
-            {toYou.map(item => (
+            {debitToYou.map(item => (
               <ListOfDebits
                 key={item.key}
                 type={item.type}
@@ -274,8 +272,8 @@ const Debits: FC<Props> = ({navigation}) => {
                 amount={item.amount}
                 color="#1B824A"
                 onPress={toDebitInfo}
-                onLongPress={showModal}
-                lastKey={toYou[toYou.length - 1].key}
+                onLongPress={showModalDelete}
+                lastKey={debitToYou[debitToYou.length - 1].key}
               />
             ))}
           </ScrollView>
@@ -283,7 +281,7 @@ const Debits: FC<Props> = ({navigation}) => {
 
         <TouchableOpacity
           style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
-          onPress={myDebits}>
+          onPress={yourDebitsVisible}>
           <Animated.View style={[styles.arrowDown, yourDebAnimatedStyle]}>
             <Image source={arrowSource} style={styles.img} />
           </Animated.View>
@@ -311,7 +309,7 @@ const Debits: FC<Props> = ({navigation}) => {
                 amount={item.amount}
                 color="#1B824A"
                 onPress={toDebitInfo}
-                onLongPress={showModal}
+                onLongPress={showModalDelete}
                 lastKey={yourDebits[yourDebits.length - 1].key}
               />
             ))}

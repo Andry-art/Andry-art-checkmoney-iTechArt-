@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import {useFormik} from 'formik';
 import {useDispatch, useSelector} from 'react-redux';
-import {addNewCardRequest} from '../../store/actions/WalletActions';
-import {walletItems} from '../../store/selectors/walletItems';
+import {addNewCardRequest} from '../../store/actions/RalletActions';
+import {walletItems} from '../../store/selectors/WalletSelectors';
 import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletNavigatorList} from '../../types/types';

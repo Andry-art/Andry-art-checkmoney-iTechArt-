@@ -1,86 +1,42 @@
-import React, {FC, useMemo} from 'react';
+import React, {FC} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
-import {allTransactionsArray} from '../../store/selectors/walletItems';
-import {TransactionType} from '../../types/types';
+import {flow} from '../../store/selectors/StatisticSelectors';
 
-interface Props {
-  month: number;
-}
-
-const MoneyFlow: FC<Props> = ({month}) => {
-  const allTransactions = useSelector(allTransactionsArray);
-  const allTransactionsByMonth = useMemo(() => {
-    return allTransactions.filter(it => new Date(it.date).getMonth() === month);
-  }, [allTransactions, month]);
-  const allIncomeSum = useMemo(() => {
-    return allTransactionsByMonth
-      .filter(it => it.type === TransactionType.income)
-      .reduce((sum, cur) => {
-        return (sum * 100 + cur.amountTransaction * 100) / 100;
-      }, 0);
-  }, [allTransactionsByMonth]);
-
-  const allExpensesSum = useMemo(() => {
-    return allTransactionsByMonth
-      .filter(it => it.type === TransactionType.expenses)
-      .reduce((sum, cur) => {
-        return (sum * 100 + cur.amountTransaction * 100) / 100;
-      }, 0);
-  }, [allTransactionsByMonth]);
-
-  let left;
-  let OverExpenses;
-  let greenPercent;
-  let redPercent;
-  let styleGreen;
-  let styleRed;
-
-  if (allIncomeSum > allExpensesSum) {
-    greenPercent = 100 - Math.round((allExpensesSum / allIncomeSum) * 100);
-    left = allIncomeSum - allExpensesSum;
-    styleGreen = {width: `${greenPercent}%`, opacity: 1};
-    styleRed = {opacity: 0};
-  }
-
-  if (allIncomeSum < allExpensesSum) {
-    redPercent = 100 - Math.round((allIncomeSum / allExpensesSum) * 100);
-    OverExpenses = allExpensesSum - allIncomeSum;
-    styleGreen = {opacity: 0};
-    styleRed = {width: `${redPercent}%`, opacity: 1};
-  }
+const MoneyFlow: FC = () => {
+  const data = useSelector(flow);
 
   return (
     <View style={styles.container}>
       <View style={styles.diagram}>
         <View style={styles.scaleContainer}>
           <View style={styles.scaleLeftContainer}>
-            <View style={[styles.scaleLeft, styleGreen]} />
+            <View style={[styles.scaleLeft, data.styleGreen]} />
           </View>
           <View style={styles.scaleRightContainer}>
-            <View style={[styles.scaleRight, styleRed]} />
+            <View style={[styles.scaleRight, data.styleRed]} />
           </View>
         </View>
       </View>
       <View>
         <View style={styles.listLine}>
           <Text style={styles.title}>Income</Text>
-          <Text style={styles.amount}>{allIncomeSum}</Text>
+          <Text style={styles.amount}>{data.allIncomeSum}</Text>
         </View>
         <View style={styles.listLine}>
           <Text style={styles.title}>Expenses</Text>
-          <Text style={styles.amount}>{allExpensesSum}</Text>
+          <Text style={styles.amount}>{data.allExpensesSum}</Text>
         </View>
         <View style={styles.listLine}>
           <Text style={styles.title}>Left</Text>
           <Text style={styles.amountLeft}>
-            {left ? Math.round(left * 100) / 100 : 0}
+            {data.left ? Math.round(data.left * 100) / 100 : 0}
           </Text>
         </View>
         <View style={styles.listLine}>
           <Text style={styles.title}>OverExpenses</Text>
           <Text style={styles.amountOverExpenses}>
-            {OverExpenses ? -Math.round(OverExpenses * 100) / 100 : 0}
+            {data.overExpenses ? -Math.round(data.overExpenses * 100) / 100 : 0}
           </Text>
         </View>
       </View>

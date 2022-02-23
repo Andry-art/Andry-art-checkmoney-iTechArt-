@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {useSelector} from 'react-redux';
-import {allTransactionsArray} from '../../store/selectors/walletItems';
+import {allTransactionsArray} from '../../store/selectors/WalletSelectors';
 import {
   ITransactions,
   Location,
@@ -59,7 +59,7 @@ const Map: FC = () => {
   const [chosenMonth, setChosenMonth] = useState<number>(new Date().getMonth());
   const [chosenMark, setChosenMark] = useState<ITransactions>();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [position, setPosition] = useState<Location>({
+  const [initPosition, setInitPosition] = useState<Location>({
     latitude: 53.902287,
     longitude: 27.561824,
   });
@@ -86,7 +86,7 @@ const Map: FC = () => {
     setChosenMark(transaction);
     setShowModal(prev => !prev);
     if (transaction?.coordinate) {
-      setPosition(transaction?.coordinate);
+      setInitPosition(transaction?.coordinate);
     }
   };
 
@@ -153,8 +153,8 @@ const Map: FC = () => {
         style={{height}}
         provider={null}
         region={{
-          latitude: position.latitude,
-          longitude: position.longitude,
+          latitude: initPosition.latitude,
+          longitude: initPosition.longitude,
           latitudeDelta: 0.0015,
           longitudeDelta: 0.0121,
         }}>

@@ -12,12 +12,15 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ListOFCards from './ListOFCards';
-import {walletItems} from '../../store/selectors/walletItems';
+import {walletItems} from '../../store/selectors/WalletSelectors';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
-import {getDebitsToYou, getYourDebits} from '../../store/selectors/debits';
+import {
+  getDebitsToYou,
+  getYourDebits,
+} from '../../store/selectors/DebitSelectors';
 import {addNewDebitRequest} from '../../store/actions/DebitsActions';
-import {getAllItemWallet} from '../../store/actions/WalletActions';
+import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
 import imgArrowSource from '../../../pictures/double-arrow.png';
@@ -41,7 +44,7 @@ interface Props {
 const NewDebits: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const cards = useSelector(walletItems);
-  const toYou = useSelector(getDebitsToYou);
+  const debitToYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
   const [debitType, setDebitType] = useState<string>(DebitType.toYou);
   const [keyCard, setKeyCard] = useState<number>(0);
@@ -74,8 +77,11 @@ const NewDebits: FC<Props> = ({navigation}) => {
       const keyOfWallet = keyCard;
       const type = debitType;
       if (type === DebitType.toYou) {
-        key = toYou.length === 0 ? 1 : toYou[toYou.length - 1].key + 1;
-        debitsArray = toYou;
+        key =
+          debitToYou.length === 0
+            ? 1
+            : debitToYou[debitToYou.length - 1].key + 1;
+        debitsArray = debitToYou;
       }
       if (type === DebitType.yourDebit) {
         key =
@@ -124,72 +130,70 @@ const NewDebits: FC<Props> = ({navigation}) => {
   });
 
   return (
-    <>
-      <ScrollView style={styles.container}>
-        <View style={styles.debtBTN}>
-          <TouchableOpacity
-            style={
-              debitType === DebitType.toYou
-                ? styles.activeBTNtoYou
-                : styles.inactiveBTNtoYou
-            }
-            onPress={setDebitToYou}>
-            <Text style={styles.btnText}>To you</Text>
-          </TouchableOpacity>
-          <Image source={imgArrowSource} />
-          <TouchableOpacity
-            style={
-              debitType === DebitType.yourDebit
-                ? styles.activeBTNYour
-                : styles.inactiveBTNYour
-            }
-            onPress={setYourDebit}>
-            <Text style={styles.btnText}>Your debt</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.inputArea}>
-          <TextInput
-            style={styles.input}
-            onChangeText={formik.handleChange('name')}
-            value={formik.values.name}
-            placeholder="Name"
-          />
-          <Text style={styles.error}>{formik.errors.name}</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="number-pad"
-            onChangeText={formik.handleChange('amount')}
-            value={formik.values.amount}
-            placeholder="Amount"
-            contextMenuHidden={true}
-          />
-          <Text style={styles.error}>{formik.errors.amount}</Text>
-        </View>
-        <FlatList
-          style={styles.listOfCards}
-          data={cards}
-          keyExtractor={it => String(it.key)}
-          renderItem={({item}) => (
-            <ListOFCards
-              amount={item.walletAmount}
-              title={item.walletTitle}
-              cardKey={item.key}
-              onPress={setKeyCard}
-              chosenCard={keyCard}
-            />
-          )}
-          horizontal
+    <ScrollView style={styles.container}>
+      <View style={styles.debtBTN}>
+        <TouchableOpacity
+          style={
+            debitType === DebitType.toYou
+              ? styles.activeBTNtoYou
+              : styles.inactiveBTNtoYou
+          }
+          onPress={setDebitToYou}>
+          <Text style={styles.btnText}>To you</Text>
+        </TouchableOpacity>
+        <Image source={imgArrowSource} />
+        <TouchableOpacity
+          style={
+            debitType === DebitType.yourDebit
+              ? styles.activeBTNYour
+              : styles.inactiveBTNYour
+          }
+          onPress={setYourDebit}>
+          <Text style={styles.btnText}>Your debt</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.inputArea}>
+        <TextInput
+          style={styles.input}
+          onChangeText={formik.handleChange('name')}
+          value={formik.values.name}
+          placeholder="Name"
         />
-        <View style={styles.btnArea}>
-          <TouchableOpacity
-            style={styles.btnConfirm}
-            onPress={formik.handleSubmit}>
-            <Image source={plusSource} style={styles.imgBtn} />
-            <Text style={styles.textConfirm}>ADD NEW DEBT</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </>
+        <Text style={styles.error}>{formik.errors.name}</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="number-pad"
+          onChangeText={formik.handleChange('amount')}
+          value={formik.values.amount}
+          placeholder="Amount"
+          contextMenuHidden={true}
+        />
+        <Text style={styles.error}>{formik.errors.amount}</Text>
+      </View>
+      <FlatList
+        style={styles.listOfCards}
+        data={cards}
+        keyExtractor={it => String(it.key)}
+        renderItem={({item}) => (
+          <ListOFCards
+            amount={item.walletAmount}
+            title={item.walletTitle}
+            cardKey={item.key}
+            onPress={setKeyCard}
+            chosenCard={keyCard}
+          />
+        )}
+        horizontal
+      />
+      <View style={styles.btnArea}>
+        <TouchableOpacity
+          style={styles.btnConfirm}
+          onPress={formik.handleSubmit}>
+          <Image source={plusSource} style={styles.imgBtn} />
+          <Text style={styles.textConfirm}>ADD NEW DEBT</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 

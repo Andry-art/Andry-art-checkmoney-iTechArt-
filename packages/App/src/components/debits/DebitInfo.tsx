@@ -14,9 +14,9 @@ import {
   walletName,
   getDebitsToYou,
   getYourDebits,
-} from '../../store/selectors/debits';
+} from '../../store/selectors/DebitSelectors';
 import {deleteDebitRequest} from '../../store/actions/DebitsActions';
-import {getAllItemWallet} from '../../store/actions/WalletActions';
+import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
 import minusSource from '../../../pictures/debt/minus.png';
@@ -30,7 +30,7 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const info = useSelector(debitInfo);
   let wallet = useSelector(walletName);
-  const toYou = useSelector(getDebitsToYou);
+  const debitToYou = useSelector(getDebitsToYou);
   const yourDebits = useSelector(getYourDebits);
 
   const showModal = () => {
@@ -55,7 +55,7 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
     }
 
     if (info.type === DebitType.toYou) {
-      debitsArray = toYou;
+      debitsArray = debitToYou;
     }
 
     if (wallet && debitsArray) {
@@ -74,7 +74,7 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
     }
 
     if (info.type === DebitType.toYou) {
-      debitsArray = toYou;
+      debitsArray = debitToYou;
     }
 
     if (wallet) {

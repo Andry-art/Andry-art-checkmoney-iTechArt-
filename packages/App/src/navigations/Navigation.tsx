@@ -5,7 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import LogIn from '../components/registaration/LogIn';
 import SignUp from '../components/registaration/SignUp';
 import Loading from '../components/Loading';
-import {userIsLogIn, IsLoadingUser} from '../store/selectors/registration';
+import {userIsLogIn, IsLoadingUser} from '../store/selectors/RegistrationSelectors';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   StyleSheet,
@@ -23,7 +23,7 @@ import debitsImgSource from '../../pictures/TabMenu/money.png';
 import mapImgSource from '../../pictures/TabMenu/location.png';
 import statsImgSource from '../../pictures/TabMenu/bar-chart.png';
 import logOutSource from '../../pictures/logout.png';
-import {getAllItemWallet} from '../store/actions/WalletActions';
+import {getAllItemWallet} from '../store/actions/RalletActions';
 import OnBoarding from '../components/onBoardingPages/OnBoarding';
 import AsyncStorage from '@react-native-community/async-storage';
 import {logOutAction} from '../store/actions/RegistrationActions';

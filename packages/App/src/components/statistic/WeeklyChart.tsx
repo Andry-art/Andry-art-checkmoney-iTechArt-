@@ -1,99 +1,15 @@
-import React, {FC, useMemo, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {useSelector} from 'react-redux';
-import {allTransactionsArray} from '../../store/selectors/walletItems';
 import {VictoryChart, VictoryBar, VictoryTheme} from 'victory-native';
 import {useDeviceOrientation} from '@react-native-community/hooks';
-import {TransactionType} from '../../types/types';
 import arrowSource from '../../../pictures/debt/right-arrow.png';
+import {weekly} from '../../store/selectors/StatisticSelectors';
 
-enum DayOfWeek {
-  Mon = 1,
-  Tue = 2,
-  Wed = 3,
-  Thu = 4,
-  Fri = 5,
-  Sat = 6,
-  Sun = 0,
-}
-
-interface Props {
-  month: number;
-}
-
-const monthArr = (month: number) => {
-  const daysInMonth = new Date(new Date().getFullYear(), month + 1, 1);
-  daysInMonth.setDate(daysInMonth.getDate() - 1);
-
-  const allDaysInMonth: Array<{
-    DayOfWeek: number;
-    day: number;
-    x: string;
-    y: number;
-  }> = [];
-
-  for (let i = 1; i <= daysInMonth.getDate(); i++) {
-    const day = new Date(new Date().getFullYear(), month, i);
-    const dayOfMonth = {
-      DayOfWeek: day.getDay(),
-      day: day.getDate(),
-      x: `${DayOfWeek[day.getDay()]}` + `${day.getDate()}`,
-      y: 0,
-    };
-    allDaysInMonth.push(dayOfMonth);
-  }
-
-  return allDaysInMonth;
-};
-
-const WeeklyChart: FC<Props> = ({month}) => {
+const WeeklyChart: FC = () => {
   const orientation = useDeviceOrientation();
-  const allTransactions = useSelector(allTransactionsArray);
-  const allTransactionsByMonth = useMemo(() => {
-    return allTransactions.filter(it => new Date(it.date).getMonth() === month);
-  }, [allTransactions, month]);
 
-  const allDaysInMonth = useMemo(() => {
-    return monthArr(month);
-  }, [month]);
-
-  const allTransactionExpenses = useMemo(() => {
-    return allTransactionsByMonth
-      .filter(it => it.type === TransactionType.expenses)
-      .reverse()
-      .map(it => ({
-        x:
-          `${DayOfWeek[new Date(it.date).getDay()]}` +
-          ` ${new Date(it.date).getDate()}`,
-        day: new Date(it.date).getDate(),
-        DayOfWeek: new Date(it.date).getDay(),
-        y: it.amountTransaction,
-      }));
-  }, [allTransactionsByMonth]);
-
-  const allTransactionsDurMonth = allDaysInMonth.map(it => {
-    if (allTransactionExpenses.find(item => item.day === it.day)) {
-      const sum = allTransactionExpenses
-        .filter(items => items.day === it.day)
-        .reduce((sum, cur) => {
-          return sum + cur.y;
-        }, 0);
-      it.y = sum;
-      return it;
-    } else {
-      return it;
-    }
-  });
-
-  const arrayOfCharts = [
-    allTransactionsDurMonth.splice(0, 5),
-    allTransactionsDurMonth.splice(0, 5),
-    allTransactionsDurMonth.splice(0, 5),
-    allTransactionsDurMonth.splice(0, 5),
-    allTransactionsDurMonth.splice(0, 5),
-    allTransactionsDurMonth,
-    [],
-  ];
+  const arrayOfCharts = useSelector(weekly);
 
   const next = () => {
     if (arrayOfCharts[chartIndex + 1].length !== 0) {

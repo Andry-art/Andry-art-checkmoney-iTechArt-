@@ -141,3 +141,22 @@ export type Location = {
          longitude: number,
 
 };
+
+export enum Category {
+  Car = 'Car',
+  Health = 'Health',
+  Unknown = 'Unknown',
+  Grocery = 'Grocery',
+  Shopping = 'Shopping',
+  Restaurant = 'Restaurant',
+}
+
+export enum DayOfWeek {
+  Mon = 1,
+  Tue = 2,
+  Wed = 3,
+  Thu = 4,
+  Fri = 5,
+  Sat = 6,
+  Sun = 0,
+}

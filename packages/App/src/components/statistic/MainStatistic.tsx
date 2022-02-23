@@ -12,9 +12,14 @@ import {Months} from '../../types/types';
 import MoneyFlow from './MoneyFlow';
 import WeeklyChart from './WeeklyChart';
 import CategoryChart from './CategoryChart';
-import {useSelector} from 'react-redux';
-import {allTransactionsArray} from '../../store/selectors/walletItems';
+import {useDispatch, useSelector} from 'react-redux';
+import {allTransactionsArray} from '../../store/selectors/WalletSelectors';
 import smileSource from '../../../pictures/smile.png';
+import {setMonth} from '../../store/actions/StatisticActions';
+import {
+  getMonthSelector,
+  weekly,
+} from '../../store/selectors/StatisticSelectors';
 
 const months = [
   Months.January,
@@ -32,7 +37,8 @@ const months = [
 ];
 
 const MainStatistic: FC = () => {
-  const [chosenMonth, setChosenMonth] = useState<number>(new Date().getMonth());
+  const dispatch = useDispatch();
+  const chosenMonth = useSelector(getMonthSelector);
 
   const allTransactions = useSelector(allTransactionsArray);
   const allTransactionsByMonth = allTransactions.filter(
@@ -40,8 +46,7 @@ const MainStatistic: FC = () => {
   );
 
   const chooseMonth = (month: number) => {
-    setChosenMonth(0);
-    setChosenMonth(month);
+    dispatch(setMonth(month));
   };
 
   return (
@@ -76,9 +81,9 @@ const MainStatistic: FC = () => {
       ) : (
         <ScrollView style={styles.containerScroll}>
           <SafeAreaView style={styles.container}>
-            <MoneyFlow month={chosenMonth} />
-            <WeeklyChart month={chosenMonth} />
-            <CategoryChart month={chosenMonth} />
+            <MoneyFlow />
+            <WeeklyChart />
+            <CategoryChart />
           </SafeAreaView>
         </ScrollView>
       )}

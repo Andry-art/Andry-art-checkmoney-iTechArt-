@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {getAllItemWallet} from '../store/actions/WalletActions';
+import {getAllItemWallet} from '../store/actions/RalletActions';
 import {getDebitsItemsRequest} from '../store/actions/DebitsActions';
 import {useDispatch} from 'react-redux';
 import Debits from '../components/debits/Debits';
 import NewDebits from '../components/debits/NewDebits';
-import DebitInfoComponent from '../components/debits/DebitInfoComponent';
+import DebitInfoComponent from '../components/debits/DebitInfo';
 import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import logOutSource from '../../pictures/logout.png';
 import {logOutAction} from '../store/actions/RegistrationActions';

@@ -10,10 +10,10 @@ import {
   Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {monetaryMove} from '../../store/selectors/walletItems';
+import {monetaryMove} from '../../store/selectors/WalletSelectors';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
-import {walletItems} from '../../store/selectors/walletItems';
-import {addCorrectTransactionRequest} from '../../store/actions/WalletActions';
+import {walletItems} from '../../store/selectors/WalletSelectors';
+import {addCorrectTransactionRequest} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
   WalletNavigatorList,
