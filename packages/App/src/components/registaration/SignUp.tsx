@@ -7,16 +7,15 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-import PasswordInvisibleSource from '../../Pics/passwordUnvisible.png';
-import PasswordVisibleSource from '../../Pics/passwordVisible.png';
-import ButtonApp from '../components/ButtonApp';
+import PasswordInvisibleSource from '../../../pictures/passwordUnvisible.png';
+import PasswordVisibleSource from '../../../pictures/passwordVisible.png';
+import ButtonApp from '../ButtonApp';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch} from 'react-redux';
-import {userSignUp} from '../store/actions/registration';
+import {userSignUp} from '../../store/actions/RegistrationActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RegistrationNavigation} from '../types/types';
+import {RegistrationNavigation} from '../../types/types';
 
 const signUpSchema = yup.object({
   email: yup.string().required().email(),

@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import LogIn from './Registaration/LogIn';
-import SignUp from './Registaration/SignUp';
-import Loading from './components/Loading';
-import {userIsLogIn, IsLoadingUser} from './store/selectors/registration';
+import LogIn from '../components/registaration/LogIn';
+import SignUp from '../components/registaration/SignUp';
+import Loading from '../components/Loading';
+import {userIsLogIn, IsLoadingUser} from '../store/selectors/registration';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   StyleSheet,
@@ -15,19 +15,19 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import BalanceNavigation from './balance/wallet/WalletNavigation';
-import DebitNavigation from './balance/debits/DebitNavigation';
-import MainStatistic from './balance/statistic/MainStatistic';
-import walletImgSource from '../Pics/balance/wallet.png';
-import debitsImgSource from '../Pics/TabMenu/money.png';
-import mapImgSource from '../Pics/TabMenu/location.png';
-import statsImgSource from '../Pics/TabMenu/bar-chart.png';
-import logOutSource from '../Pics/logout.png';
-import {getAllItemWallet} from './store/actions/walletActions';
-import OnBoarding from './onBoardingPages/OnBoarding';
+import BalanceNavigation from './WalletNavigation';
+import DebitNavigation from './DebitNavigation';
+import MainStatistic from '../components/statistic/MainStatistic';
+import walletImgSource from '../../pictures/balance/wallet.png';
+import debitsImgSource from '../../pictures/TabMenu/money.png';
+import mapImgSource from '../../pictures/TabMenu/location.png';
+import statsImgSource from '../../pictures/TabMenu/bar-chart.png';
+import logOutSource from '../../pictures/logout.png';
+import {getAllItemWallet} from '../store/actions/WalletActions';
+import OnBoarding from '../components/onBoardingPages/OnBoarding';
 import AsyncStorage from '@react-native-community/async-storage';
-import {logOutAction} from './store/actions/registration';
-import Map from './balance/map/Map';
+import {logOutAction} from '../store/actions/RegistrationActions';
+import Map from '../components/map/Map';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

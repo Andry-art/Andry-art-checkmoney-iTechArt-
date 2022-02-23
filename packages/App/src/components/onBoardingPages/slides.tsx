@@ -1,6 +1,6 @@
-import MakePlansImage from './Pics/19197176.jpg';
-import SelectDepositsImage from './Pics/11060.jpg';
-import ConsiderFinancesImage from './Pics/5867.jpg';
+import MakePlansImage from '../../../pictures/19197176.jpg';
+import SelectDepositsImage from '../../../pictures/11060.jpg';
+import ConsiderFinancesImage from '../../../pictures/5867.jpg';
 
 export default [
   {

@@ -8,13 +8,12 @@ import {
   Image,
   ScrollView,
   Alert,
-  useWindowDimensions,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
 import {walletItems} from '../../store/selectors/walletItems';
-import {addTransactionRequest} from '../../store/actions/walletActions';
+import {addTransactionRequest} from '../../store/actions/WalletActions';
 import {
   WalletNavigatorList,
   ChosenCategory,
@@ -23,11 +22,11 @@ import {
   Location,
 } from '../../types/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import imgArrowSource from '../../../Pics/double-arrow.png';
+import imgArrowSource from '../../../pictures/double-arrow.png';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {TransactionType} from '../../types/types';
-import addTransactionSource from '../../../Pics/balance/income.png';
+import addTransactionSource from '../../../pictures/balance/income.png';
 import MapView, {Marker} from 'react-native-maps';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];

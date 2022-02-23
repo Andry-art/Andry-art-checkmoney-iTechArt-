@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/walletItems';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
 import {walletItems} from '../../store/selectors/walletItems';
-import {addCorrectTransactionRequest} from '../../store/actions/walletActions';
+import {addCorrectTransactionRequest} from '../../store/actions/WalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
   WalletNavigatorList,
@@ -23,7 +23,7 @@ import {
 } from '../../types/types';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
-import confirmSource from '../../../Pics/balance/basic-tick.png';
+import confirmSource from '../../../pictures/balance/basic-tick.png';
 import {TransactionType} from '../../types/types';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];

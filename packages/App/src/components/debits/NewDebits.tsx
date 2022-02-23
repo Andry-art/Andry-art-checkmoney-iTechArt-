@@ -16,13 +16,13 @@ import {walletItems} from '../../store/selectors/walletItems';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {getDebitsToYou, getYourDebits} from '../../store/selectors/debits';
-import {addNewDebitRequest} from '../../store/actions/debitsActions';
-import {getAllItemWallet} from '../../store/actions/walletActions';
+import {addNewDebitRequest} from '../../store/actions/DebitsActions';
+import {getAllItemWallet} from '../../store/actions/WalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
-import imgArrowSource from '../../../Pics/double-arrow.png';
+import imgArrowSource from '../../../pictures/double-arrow.png';
 import {DebitType} from '../../types/types';
-import plusSource from '../../../Pics/debt/plus.png';
+import plusSource from '../../../pictures/debt/plus.png';
 
 const newDebitSchema = yup.object({
   name: yup.string().required('Name is required'),

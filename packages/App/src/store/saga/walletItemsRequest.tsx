@@ -22,8 +22,8 @@ import {
   deleteTransactionRequest,
   correctTransactionInfo,
   addCorrectTransactionRequest,
-} from '../actions/walletActions';
-import {logOutAction} from '../actions/registration';
+} from '../actions/WalletActions';
+import {logOutAction} from '../actions/RegistrationActions';
 
 export function* getWalletItems(): Generator {
   try {

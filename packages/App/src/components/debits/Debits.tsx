@@ -9,7 +9,6 @@ import {
   Alert,
   ScrollView,
   Image,
-  View,
   SafeAreaView,
 } from 'react-native';
 import ListOfDebits from './ListOfDebits';
@@ -29,11 +28,11 @@ import {DebitInfo, DebitNavigatorList, DebitType} from '../../types/types';
 import {
   addDebitInfo,
   deleteDebitRequest,
-} from '../../store/actions/debitsActions';
-import {getAllItemWallet} from '../../store/actions/walletActions';
+} from '../../store/actions/DebitsActions';
+import {getAllItemWallet} from '../../store/actions/WalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import arrowSource from '../../../Pics/debt/up-arrow.png';
-import plusSource from '../../../Pics/debt/plus.png';
+import arrowSource from '../../../pictures/debt/up-arrow.png';
+import plusSource from '../../../pictures/debt/plus.png';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -88,7 +87,7 @@ const Debits: FC<Props> = ({navigation}) => {
     if (debToYouInitRotate.value === 180) {
       debToYouInitRotate.value = withTiming(0);
     }
-  }, [debitsVisible]);
+  }, [debToYouInitRotate, debitsVisible, yourDebInitRotate]);
 
   useEffect(() => {
     if (yourDebInitRotate.value === 0) {
@@ -98,7 +97,7 @@ const Debits: FC<Props> = ({navigation}) => {
     if (yourDebInitRotate.value === 180) {
       yourDebInitRotate.value = withTiming(0);
     }
-  }, [myDebitsVisible]);
+  }, [debToYouInitRotate, myDebitsVisible, yourDebInitRotate]);
 
   useEffect(() => {
     if (addDebitError) {

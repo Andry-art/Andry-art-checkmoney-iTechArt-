@@ -10,13 +10,13 @@ import {
 } from 'react-native';
 import {useFormik} from 'formik';
 import {useDispatch, useSelector} from 'react-redux';
-import {addNewCardRequest} from '../../store/actions/walletActions';
+import {addNewCardRequest} from '../../store/actions/WalletActions';
 import {walletItems} from '../../store/selectors/walletItems';
 import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletNavigatorList} from '../../types/types';
 import ColorsNewCard from './ColorsNewCard';
-import walletSource from '../../../Pics/balance/wallet.png';
+import walletSource from '../../../pictures/balance/wallet.png';
 import LinearGradient from 'react-native-linear-gradient';
 
 const colors = [

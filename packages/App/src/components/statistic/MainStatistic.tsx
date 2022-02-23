@@ -14,7 +14,7 @@ import WeeklyChart from './WeeklyChart';
 import CategoryChart from './CategoryChart';
 import {useSelector} from 'react-redux';
 import {allTransactionsArray} from '../../store/selectors/walletItems';
-import smileSource from '../../../Pics/smile.png';
+import smileSource from '../../../pictures/smile.png';
 
 const months = [
   Months.January,

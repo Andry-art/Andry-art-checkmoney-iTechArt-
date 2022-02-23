@@ -13,10 +13,9 @@ import {
 } from 'react-native';
 import WalletItem from './WalletItem';
 import Button from './Button';
-import incomeIconSource from '../../../Pics/balance/income.png';
-import expensesIconSource from '../../../Pics/balance/expense.png';
-import allCategoriesIconSource from '../../../Pics/balance/category.png';
-import addNewIconSource from '../../../Pics/balance/add.png';
+import incomeIconSource from '../../../pictures/balance/income.png';
+import expensesIconSource from '../../../pictures/balance/expense.png';
+import allCategoriesIconSource from '../../../pictures/balance/category.png';
 import Transactions from './Transactions';
 import {ViewabilityConfig} from 'react-native';
 import {
@@ -36,8 +35,8 @@ import {
   cardMonetaryMove,
   deleteTransactionRequest,
   correctTransactionInfo,
-} from '../../store/actions/walletActions';
-import Loading from '../../components/Loading';
+} from '../../store/actions/WalletActions';
+import Loading from '../Loading';
 import {
   WalletNavigatorList,
   WalletInfo,
@@ -82,7 +81,7 @@ const Wallet: FC<Props> = ({navigation}) => {
 
   useEffect(() => {
     setIsConnection(true);
-    NetInfo.addEventListener(state => {
+    return NetInfo.addEventListener(state => {
       console.log(state.isConnected);
       if (state.isConnected === false) {
         setIsConnection(false);

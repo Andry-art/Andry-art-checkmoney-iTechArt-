@@ -15,11 +15,11 @@ import {
   getDebitsToYou,
   getYourDebits,
 } from '../../store/selectors/debits';
-import {deleteDebitRequest} from '../../store/actions/debitsActions';
-import {getAllItemWallet} from '../../store/actions/walletActions';
+import {deleteDebitRequest} from '../../store/actions/DebitsActions';
+import {getAllItemWallet} from '../../store/actions/WalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
-import minusSource from '../../../Pics/debt/minus.png';
+import minusSource from '../../../pictures/debt/minus.png';
 import dayjs from 'dayjs';
 
 interface Props {

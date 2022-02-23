@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {useSelector} from 'react-redux';
-import slides from '../../../slides';
 import {allTransactionsArray} from '../../store/selectors/walletItems';
 import {
   ITransactions,
@@ -21,13 +20,13 @@ import {
   Months,
   TransactionType,
 } from '../../types/types';
-import iconCarSource from '../../../Pics/categories/car.png';
-import iconHealthSource from '../../../Pics/categories/heart-beat.png';
-import iconGrocerySource from '../../../Pics/categories/food.png';
-import iconUnknownSource from '../../../Pics/categories/question.png';
-import iconShoppingSource from '../../../Pics/categories/shop-bag.png';
-import iconRestaurantSource from '../../../Pics/categories/restaurant.png';
-import iconSalarySource from '../../../Pics/categories/money.png';
+import iconCarSource from '../../../pictures/categories/car.png';
+import iconHealthSource from '../../../pictures/categories/heart-beat.png';
+import iconGrocerySource from '../../../pictures/categories/food.png';
+import iconUnknownSource from '../../../pictures/categories/question.png';
+import iconShoppingSource from '../../../pictures/categories/shop-bag.png';
+import iconRestaurantSource from '../../../pictures/categories/restaurant.png';
+import iconSalarySource from '../../../pictures/categories/money.png';
 import dayjs from 'dayjs';
 
 const months = [

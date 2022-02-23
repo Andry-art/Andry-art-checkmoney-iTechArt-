@@ -8,16 +8,16 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import PasswordInvisibleSource from '../../Pics/passwordUnvisible.png';
-import PasswordVisibleSource from '../../Pics/passwordVisible.png';
-import ButtonApp from '../components/ButtonApp';
+import PasswordInvisibleSource from '../../../pictures/passwordUnvisible.png';
+import PasswordVisibleSource from '../../../pictures/passwordVisible.png';
+import ButtonApp from '../ButtonApp';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch, useSelector} from 'react-redux';
-import {userLogIn} from '../store/actions/registration';
-import {logInError} from '../store/selectors/registration';
+import {userLogIn} from '../../store/actions/RegistrationActions';
+import {logInError} from '../../store/selectors/registration';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RegistrationNavigation} from '../types/types';
+import {RegistrationNavigation} from '../../types/types';
 
 const logInSchema = yup.object({
   email: yup.string().required().email(),

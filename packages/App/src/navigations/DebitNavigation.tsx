@@ -1,27 +1,23 @@
 import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Wallet from './Wallet';
-import {getAllItemWallet} from '../../store/actions/walletActions';
-import {getDebitsItemsRequest} from '../../store/actions/debitsActions';
-import {useDispatch, useSelector} from 'react-redux';
-import NewCard from './NewCard';
-import AddMonetaryMovements from './AddMonetaryMovements';
-import CorrectTransaction from './CorrectTransaction';
+import {getAllItemWallet} from '../store/actions/WalletActions';
+import {getDebitsItemsRequest} from '../store/actions/DebitsActions';
+import {useDispatch} from 'react-redux';
+import Debits from '../components/debits/Debits';
+import NewDebits from '../components/debits/NewDebits';
+import DebitInfoComponent from '../components/debits/DebitInfoComponent';
 import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import logOutSource from '../../../Pics/logout.png';
-import {userIsLogIn} from '../../store/selectors/registration';
-import {logOutAction} from '../../store/actions/registration';
+import logOutSource from '../../pictures/logout.png';
+import {logOutAction} from '../store/actions/RegistrationActions';
 
 const Stack = createNativeStackNavigator();
 
-const BalanceNavigation = () => {
+const DebitNavigation = () => {
   const dispatch = useDispatch();
-  const isLogIn = useSelector(userIsLogIn);
-
   useEffect(() => {
     dispatch(getAllItemWallet());
     dispatch(getDebitsItemsRequest());
-  }, [dispatch, isLogIn]);
+  }, [dispatch]);
 
   const logOutRequest = () => {
     Alert.alert('Would you like to logOut?', '', [
@@ -41,8 +37,8 @@ const BalanceNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Wallets"
-        component={Wallet}
+        name="Debits"
+        component={Debits}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
@@ -53,8 +49,8 @@ const BalanceNavigation = () => {
         }}
       />
       <Stack.Screen
-        name="New Card"
-        component={NewCard}
+        name="Add New Debit"
+        component={NewDebits}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
@@ -65,20 +61,8 @@ const BalanceNavigation = () => {
         }}
       />
       <Stack.Screen
-        name="Add Transaction"
-        component={AddMonetaryMovements}
-        options={{
-          headerStyle: {backgroundColor: '#FFFFFF'},
-          headerRight: () => (
-            <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
-              <Image source={logOutSource} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="Correct Transaction"
-        component={CorrectTransaction}
+        name="Debit Info"
+        component={DebitInfoComponent}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
@@ -96,11 +80,6 @@ const styles = StyleSheet.create({
   logOut: {
     paddingRight: 10,
   },
-
-  title: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
 });
 
-export default BalanceNavigation;
+export default DebitNavigation;

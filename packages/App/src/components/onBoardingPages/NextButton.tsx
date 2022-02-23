@@ -6,7 +6,7 @@ import Animated, {
   useAnimatedProps,
   withTiming,
 } from 'react-native-reanimated';
-import RightArrowImageSource from '../../Pics/right-arrow.png';
+import RightArrowImageSource from '../../../pictures/right-arrow.png';
 
 interface Props {
   page: number;

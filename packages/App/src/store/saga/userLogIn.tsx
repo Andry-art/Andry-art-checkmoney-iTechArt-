@@ -5,10 +5,10 @@ import {
   userLogInSuccess,
   userLogInFailed,
   logOutActionSuccess,
-} from '../actions/registration';
+} from '../actions/RegistrationActions';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {cleanErrorsWallet} from '../actions/walletActions';
-import {cleanErrorsDebits} from '../actions/debitsActions';
+import {cleanErrorsWallet} from '../actions/WalletActions';
+import {cleanErrorsDebits} from '../actions/DebitsActions';
 
 export function* userSendLogIn(
   action: ReturnType<typeof userLogIn>,

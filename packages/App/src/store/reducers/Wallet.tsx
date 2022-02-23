@@ -20,7 +20,7 @@ import {
   deleteTransactionRequest,
   addCorrectTransactionRequest,
   cleanErrorsWallet,
-} from '../actions/walletActions';
+} from '../actions/WalletActions';
 import {WalletInfo} from '../../types/types';
 import {IWallet} from '../../types/types';
 

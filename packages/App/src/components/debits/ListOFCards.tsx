@@ -1,6 +1,6 @@
 import React, {FC, useCallback, useMemo} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
-import dollarImgSource from '../../../Pics/debt/dollar.png';
+import dollarImgSource from '../../../pictures/debt/dollar.png';
 
 type Props = {
   chosenCard: number;

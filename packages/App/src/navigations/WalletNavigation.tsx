@@ -1,26 +1,27 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {getAllItemWallet} from '../../store/actions/walletActions';
-import {getDebitsItemsRequest} from '../../store/actions/debitsActions';
-import {useDispatch} from 'react-redux';
-import Debits from '../debits/Debits';
-import NewDebits from '../debits/NewDebits';
-import DebitInfoComponent from './DebitInfoComponent';
+import Wallet from '../components/wallet/Wallet';
+import {getAllItemWallet} from '../store/actions/WalletActions';
+import {getDebitsItemsRequest} from '../store/actions/DebitsActions';
+import {useDispatch, useSelector} from 'react-redux';
+import NewCard from '../components/wallet/NewCard';
+import AddMonetaryMovements from '../components/wallet/AddMonetaryMovements';
+import CorrectTransaction from '../components/wallet/CorrectTransaction';
 import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import LogOutModal from '../../components/LogOutModal';
-import logOutSource from '../../../Pics/logout.png';
-import {logOutAction} from '../../store/actions/registration';
+import logOutSource from '../../pictures/logout.png';
+import {userIsLogIn} from '../store/selectors/registration';
+import {logOutAction} from '../store/actions/RegistrationActions';
 
 const Stack = createNativeStackNavigator();
 
-const DebitNavigation = () => {
+const BalanceNavigation = () => {
   const dispatch = useDispatch();
+  const isLogIn = useSelector(userIsLogIn);
+
   useEffect(() => {
     dispatch(getAllItemWallet());
     dispatch(getDebitsItemsRequest());
-  }, [dispatch]);
-
-  const [isVisible, setIsVisible] = useState(false);
+  }, [dispatch, isLogIn]);
 
   const logOutRequest = () => {
     Alert.alert('Would you like to logOut?', '', [
@@ -40,8 +41,8 @@ const DebitNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Debits"
-        component={Debits}
+        name="Wallets"
+        component={Wallet}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
@@ -52,8 +53,8 @@ const DebitNavigation = () => {
         }}
       />
       <Stack.Screen
-        name="Add New Debit"
-        component={NewDebits}
+        name="New Card"
+        component={NewCard}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
@@ -64,8 +65,20 @@ const DebitNavigation = () => {
         }}
       />
       <Stack.Screen
-        name="Debit Info"
-        component={DebitInfoComponent}
+        name="Add Transaction"
+        component={AddMonetaryMovements}
+        options={{
+          headerStyle: {backgroundColor: '#FFFFFF'},
+          headerRight: () => (
+            <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
+              <Image source={logOutSource} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Correct Transaction"
+        component={CorrectTransaction}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (
@@ -83,6 +96,11 @@ const styles = StyleSheet.create({
   logOut: {
     paddingRight: 10,
   },
+
+  title: {
+    fontSize: 20,
+    textAlign: 'center',
+  },
 });
 
-export default DebitNavigation;
+export default BalanceNavigation;

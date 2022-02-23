@@ -5,7 +5,7 @@ import {allTransactionsArray} from '../../store/selectors/walletItems';
 import {VictoryChart, VictoryBar, VictoryTheme} from 'victory-native';
 import {useDeviceOrientation} from '@react-native-community/hooks';
 import {TransactionType} from '../../types/types';
-import arrowSource from '../../../Pics/debt/right-arrow.png';
+import arrowSource from '../../../pictures/debt/right-arrow.png';
 
 enum DayOfWeek {
   Mon = 1,
@@ -21,13 +21,6 @@ interface Props {
   month: number;
 }
 
-const allDaysInMonth: Array<{
-  DayOfWeek: number;
-  day: number;
-  x: string;
-  y: number;
-}> = [];
-
 const monthArr = (month: number) => {
   const daysInMonth = new Date(new Date().getFullYear(), month + 1, 1);
   daysInMonth.setDate(daysInMonth.getDate() - 1);
@@ -41,7 +34,6 @@ const monthArr = (month: number) => {
 
   for (let i = 1; i <= daysInMonth.getDate(); i++) {
     const day = new Date(new Date().getFullYear(), month, i);
-    console.log(day);
     const dayOfMonth = {
       DayOfWeek: day.getDay(),
       day: day.getDate(),
@@ -79,9 +71,19 @@ const WeeklyChart: FC<Props> = ({month}) => {
       }));
   }, [allTransactionsByMonth]);
 
-  const allTransactionsDurMonth = allDaysInMonth.map(
-    it => allTransactionExpenses.find(item => item.day === it.day) || it,
-  );
+  const allTransactionsDurMonth = allDaysInMonth.map(it => {
+    if (allTransactionExpenses.find(item => item.day === it.day)) {
+      const sum = allTransactionExpenses
+        .filter(items => items.day === it.day)
+        .reduce((sum, cur) => {
+          return sum + cur.y;
+        }, 0);
+      it.y = sum;
+      return it;
+    } else {
+      return it;
+    }
+  });
 
   const arrayOfCharts = [
     allTransactionsDurMonth.splice(0, 5),
@@ -144,7 +146,7 @@ const WeeklyChart: FC<Props> = ({month}) => {
             domain={
               sumOfTransactions === 0
                 ? {y: [0, 50]}
-                : {y: [Math.min.apply(null, y), Math.max.apply(null, y)]}
+                : {y: [0, Math.max.apply(null, y)]}
             }
           />
         </VictoryChart>

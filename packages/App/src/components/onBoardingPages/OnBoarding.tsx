@@ -13,7 +13,7 @@ import {
   ImageSourcePropType,
   ViewabilityConfig,
 } from 'react-native';
-import slides from '../../slides';
+import slides from './slides';
 import OnBoardingItem from './OnBoardingItem';
 import Paginator from './Paginator';
 import NextButton from './NextButton';

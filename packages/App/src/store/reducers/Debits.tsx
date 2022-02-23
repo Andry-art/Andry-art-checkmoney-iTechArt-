@@ -13,7 +13,7 @@ import {
   deleteYourDebitSuccess,
   deleteDebitFailed,
   cleanErrorsDebits,
-} from '../actions/debitsActions';
+} from '../actions/DebitsActions';
 import {DebitInfo, Debits} from '../../types/types';
 
 interface IDebits {
