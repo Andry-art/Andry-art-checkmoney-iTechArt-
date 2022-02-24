@@ -2,10 +2,25 @@ import React, {FC} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {VictoryPie} from 'victory-native';
-import {category} from '../../store/selectors/StatisticSelectors';
+import {
+  category,
+} from '../../store/selectors/StatisticSelectors';
+
 
 const CategoryChart: FC = () => {
   const date = useSelector(category);
+
+  const categoriesChart: Array<{x: string; y: number}> = Object.entries(
+    date.result,
+  ).map(([key, value]) => {
+    return {x: key, y: Number(value)};
+  });
+  const list = categoriesChart.map(it => {
+    return {
+      category: it.x,
+      pro: `${Math.round((it.y / date.allTransactionExpensesSum) * 100)}%`,
+    };
+  });
 
   return (
     <View style={styles.container}>
@@ -18,10 +33,10 @@ const CategoryChart: FC = () => {
         labelRadius={120}
         colorScale={['#240046', '#3c096c', '#7b2cbf', '#9d4edd', '#e0aaff']}
         style={{data: {width: '100%'}}}
-        data={date.categories}
+        data={categoriesChart}
       />
       <View style={styles.listContainer}>
-        {date.list.map(it => (
+        {list.map(it => (
           <View key={it.category} style={styles.listItem}>
             <Text style={styles.category}>{it.category}</Text>
             <Text style={styles.percent}>{it.pro}</Text>
