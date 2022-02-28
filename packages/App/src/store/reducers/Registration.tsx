@@ -3,7 +3,7 @@ import {
   userLogInSuccess,
   userLogInFailed,
   logOutActionSuccess,
-} from '../actions/registration';
+} from '../actions/RegistrationActions';
 
 interface IRegistration {
   isLogIn: boolean;

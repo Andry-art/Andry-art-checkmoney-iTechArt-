@@ -39,7 +39,9 @@
       "**/react-native-linear-gradient",
       "**/@react-native-segmented-control/segmented-control/**",
       "**/@react-native-community/netinfo/**",
-      "**/@react-native-community/netinfo"
+      "**/@react-native-community/netinfo",
+      "**/react-native-maps/**",
+      "**/react-native-maps"
     ]
   },
   "scripts": {

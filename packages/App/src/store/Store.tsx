@@ -2,6 +2,7 @@ import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import registration from './reducers/Registration';
 import wallet from './reducers/Wallet';
 import debits from './reducers/Debits';
+import statistic from './reducers/Statistic';
 import createSagaMiddleware from '@redux-saga/core';
 import {RootSaga} from '../store/saga/RootSaga';
 import {persistStore, persistReducer} from 'redux-persist';
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   registration,
   wallet,
   debits,
+  statistic
 });
 
 const persistConfig = {

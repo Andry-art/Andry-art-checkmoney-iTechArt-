@@ -7,6 +7,12 @@ export interface ITransactions {
   category: string;
   date: string;
   icon: string;
+  coordinate?: {
+    latitude: number,
+    longitude: number,
+    latitudeDelta?: number,
+    longitudeDelta?: number
+  }
 }
 
 export interface WalletInfo {
@@ -128,4 +134,29 @@ export enum Months {
 export enum TransactionType {
   income = 'income',
   expenses = 'expenses',
+}
+
+export type Location = {
+         latitude: number,
+         longitude: number,
+
+};
+
+export enum Category {
+  Car = 'Car',
+  Health = 'Health',
+  Unknown = 'Unknown',
+  Grocery = 'Grocery',
+  Shopping = 'Shopping',
+  Restaurant = 'Restaurant',
+}
+
+export enum DayOfWeek {
+  Mon = 1,
+  Tue = 2,
+  Wed = 3,
+  Thu = 4,
+  Fri = 5,
+  Sat = 6,
+  Sun = 0,
 }

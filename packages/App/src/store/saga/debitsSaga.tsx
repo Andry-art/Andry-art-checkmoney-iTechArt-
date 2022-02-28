@@ -12,8 +12,8 @@ import {
   deleteDebitToYouSuccess,
   deleteYourDebitSuccess,
   deleteDebitFailed,
-} from '../actions/debitsActions';
-import {logOutAction} from '../actions/registration';
+} from '../actions/DebitsActions';
+import {logOutAction} from '../actions/RegistrationActions';
 
 export function* getDebitsItems(): Generator {
   try {
