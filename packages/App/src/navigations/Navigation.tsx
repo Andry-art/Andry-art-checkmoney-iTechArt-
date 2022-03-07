@@ -28,6 +28,7 @@ import OnBoarding from '../components/onBoardingPages/OnBoarding';
 import AsyncStorage from '@react-native-community/async-storage';
 import {logOutAction} from '../store/actions/RegistrationActions';
 import Map from '../components/map/Map';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,7 +41,7 @@ const Navigation = () => {
   const [ViewOnBoarding, setViewOnBoarding] = useState(true);
   const [loadingOnboarding, setLoadingOnBoarding] = useState(true);
 
-  const checkOnboardingPage = async () => {
+  const doCheckOnboardingPage = async () => {
     try {
       const value = await AsyncStorage.getItem('@viewedOnBoarding');
       if (value === null) {
@@ -54,8 +55,25 @@ const Navigation = () => {
     }
   };
 
+  const doCheckLogIn = async () => {
+    try {
+      const value = await EncryptedStorage.getItem('user_session');
+      if (value === null) {
+        dispatch(logOutAction)
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingOnBoarding(false);
+    }
+  };
+
   useEffect(() => {
-    checkOnboardingPage();
+    doCheckOnboardingPage();
+  }, []);
+
+  useEffect(()  => {
+    doCheckLogIn();
   }, []);
 
   useEffect(() => {

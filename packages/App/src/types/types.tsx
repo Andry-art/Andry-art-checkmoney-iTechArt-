@@ -4,15 +4,15 @@ export interface ITransactions {
   keyTransaction: number;
   type: string;
   amountTransaction: number;
-  category: string;
+  category: Category;
   date: string;
   icon: string;
   coordinate?: {
-    latitude: number,
-    longitude: number,
-    latitudeDelta?: number,
-    longitudeDelta?: number
-  }
+    latitude: number;
+    longitude: number;
+    latitudeDelta?: number;
+    longitudeDelta?: number;
+  };
 }
 
 export interface WalletInfo {
@@ -137,9 +137,8 @@ export enum TransactionType {
 }
 
 export type Location = {
-         latitude: number,
-         longitude: number,
-
+  latitude: number;
+  longitude: number;
 };
 
 export enum Category {
@@ -160,3 +159,5 @@ export enum DayOfWeek {
   Sat = 6,
   Sun = 0,
 }
+
+export type CategoryChart = Record<Category, number >;
