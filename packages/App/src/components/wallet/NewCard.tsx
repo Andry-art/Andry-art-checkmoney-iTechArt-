@@ -8,7 +8,6 @@ import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletNavigatorList} from '../../types/types';
 import ColorsNewCard from './ColorsNewCard';
-import walletSource from '../../../pictures/balance/wallet.png';
 import LinearGradient from 'react-native-linear-gradient';
 import ButtonApp from '../ButtonApp';
 
@@ -108,11 +107,7 @@ const NewCard: FC<Props> = ({navigation}) => {
           <ColorsNewCard key={i} color={it} onPress={setCardColor} />
         ))}
       </View>
-      <ButtonApp
-        label="ADD NEW CARD"
-        onPress={handleSubmit}
-        image={walletSource}
-      />
+      <ButtonApp label="ADD NEW CARD" onPress={handleSubmit} image="addCard" />
     </ScrollView>
   );
 };

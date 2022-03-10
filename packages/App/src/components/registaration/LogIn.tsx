@@ -1,6 +1,5 @@
 import React, {FC} from 'react';
-import {View, StyleSheet, Text, Alert} from 'react-native';
-import ButtonApp from '../ButtonApp';
+import {View, StyleSheet, Text, Alert, TouchableOpacity} from 'react-native';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch, useSelector} from 'react-redux';
@@ -41,9 +40,7 @@ const LogIn: FC<Props> = ({navigation}) => {
     initialValues: initialValues,
     validationSchema: logInSchema,
     onSubmit: values => {
-      const email = values.email;
-      const password = values.password;
-      dispatch(userLogIn({email, password}));
+      dispatch(userLogIn(values));
     },
   });
 
@@ -85,20 +82,16 @@ const LogIn: FC<Props> = ({navigation}) => {
         />
       </View>
 
-      <ButtonApp
-        label="LOG IN"
+      <TouchableOpacity
         disabled={!(isValid && dirty)}
-        styleBtn={!(isValid && dirty) ? styles.logInDisabled : styles.logIn}
-        styleTxt={styles.logInText}
-        onPress={handleSubmit}
-      />
+        style={!(isValid && dirty) ? styles.logInDisabled : styles.logIn}
+        onPress={handleSubmit}>
+        <Text style={styles.logInText}> LOG IN </Text>
+      </TouchableOpacity>
 
-      <ButtonApp
-        label="SIGN UP"
-        styleBtn={styles.signUp}
-        styleTxt={styles.signUpText}
-        onPress={goToSignUpScreen}
-      />
+      <TouchableOpacity style={styles.signUp} onPress={goToSignUpScreen}>
+        <Text style={styles.signUpText}> SIGN UP </Text>
+      </TouchableOpacity>
     </View>
   );
 };

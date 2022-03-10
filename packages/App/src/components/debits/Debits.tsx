@@ -32,7 +32,6 @@ import {
 import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import arrowSource from '../../../pictures/debt/up-arrow.png';
-import plusSource from '../../../pictures/debt/plus.png';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -316,7 +315,7 @@ const Debits: FC<Props> = ({navigation}) => {
             ))}
           </ScrollView>
         )}
-        <ButtonApp label="ADD NEW" onPress={toNewDebits} image={plusSource} />
+        <ButtonApp label="ADD NEW" onPress={toNewDebits} image="addDebit" />
       </SafeAreaView>
     </ScrollView>
   );

@@ -1,30 +1,39 @@
 import React, {FC} from 'react';
-import {TouchableOpacity, Text, StyleSheet, Image} from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Image,
+  ImageSourcePropType,
+} from 'react-native';
+import addTransactionSource from '../../pictures/balance/income.png';
+import confirmSource from '../../pictures/balance/basic-tick.png';
+import walletSource from '../../pictures/balance/wallet.png';
+import plusSource from '../../pictures/debt/plus.png';
+import minusSource from '../../pictures/debt/minus.png';
 
 interface Props {
   disabled?: boolean;
   label: string;
-  styleBtn?: any;
-  styleTxt?: any;
   onPress?: () => void;
-  image?: any;
+  image?: string;
 }
 
-const ButtonApp: FC<Props> = ({
-  label,
-  styleBtn,
-  styleTxt,
-  onPress,
-  disabled,
-  image,
-}) => {
+const imgSource: Record<string, ImageSourcePropType> = {
+  addTransaction: addTransactionSource,
+  correct: confirmSource,
+  addCard: walletSource,
+  addDebit: plusSource,
+  deleteDebit: minusSource,
+};
+
+const ButtonApp: FC<Props> = ({label, onPress, disabled, image = ''}) => {
+  const imgRender: ImageSourcePropType = imgSource[image];
+
   return (
-    <TouchableOpacity
-      style={styleBtn ? styleBtn : styles.btn}
-      onPress={onPress}
-      disabled={disabled}>
-      <Image source={image} style={styles.img} />
-      <Text style={styleTxt ? styleTxt : styles.text}>{label}</Text>
+    <TouchableOpacity style={styles.btn} onPress={onPress} disabled={disabled}>
+      <Image source={imgRender} style={styles.img} />
+      <Text style={styles.text}>{label}</Text>
     </TouchableOpacity>
   );
 };

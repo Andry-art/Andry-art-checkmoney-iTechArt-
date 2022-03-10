@@ -14,7 +14,6 @@ import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
 import {DebitType} from '../../types/types';
-import plusSource from '../../../pictures/debt/plus.png';
 import Input from '../Input';
 import ButtonApp from '../ButtonApp';
 import Switcher from '../Switcher';
@@ -171,7 +170,7 @@ const NewDebits: FC<Props> = ({navigation}) => {
         <ButtonApp
           label="ADD NEW DEBT"
           onPress={handleSubmit}
-          image={plusSource}
+          image="addDebit"
         />
       </View>
     </ScrollView>

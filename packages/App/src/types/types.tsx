@@ -7,14 +7,12 @@ export interface ITransactions {
   category: Category;
   date: string;
   icon: string;
-  coordinate?:
-    | {
-        latitude: number;
-        longitude: number;
-        latitudeDelta?: number;
-        longitudeDelta?: number;
-      }
-    | undefined;
+  coordinate?: {
+    latitude: number;
+    longitude: number;
+    latitudeDelta?: number;
+    longitudeDelta?: number;
+  };
 }
 
 export interface WalletInfo {

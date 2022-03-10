@@ -16,7 +16,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {TransactionType} from '../../types/types';
-import addTransactionSource from '../../../pictures/balance/income.png';
 import MapView, {Marker} from 'react-native-maps';
 import Input from '../Input';
 import ButtonApp from '../ButtonApp';
@@ -126,17 +125,13 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
     },
   });
 
-  const getLocation = async () => {
-    return await GetLocation.getCurrentPosition({
+  useEffect(() => {
+    GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 50000,
     }).then(res =>
       setMarkLocation({latitude: res.latitude, longitude: res.longitude}),
     );
-  };
-
-  useEffect(() => {
-    getLocation();
   }, []);
 
   return (
@@ -186,7 +181,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
       <ButtonApp
         label={`Add ${moneyMoveType}`}
         onPress={handleSubmit}
-        image={addTransactionSource}
+        image="addTransaction"
       />
       {moneyMoveType !== TransactionType.income && !chooseLocation && (
         <ButtonApp

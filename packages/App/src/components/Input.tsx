@@ -7,17 +7,19 @@ import {
   TouchableOpacity,
   Image,
   KeyboardTypeOptions,
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
 } from 'react-native';
 import PasswordInvisibleSource from '../../pictures/passwordUnvisible.png';
 import PasswordVisibleSource from '../../pictures/passwordVisible.png';
 import {textType} from '../types/types';
 
 type Props = {
-  onChangeText: (e: string | ChangeEvent<any>) => void;
+  onChangeText: (e: string | ChangeEvent<string>) => void;
   value: string;
   textContentType?: textType;
   keyboardType?: KeyboardTypeOptions | undefined;
-  onBlur?: (e: any) => void;
+  onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
   errors: string | undefined;
   isPassword: boolean;
   touched?: boolean | undefined;

@@ -11,7 +11,6 @@ import {deleteDebitRequest} from '../../store/actions/DebitsActions';
 import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
-import minusSource from '../../../pictures/debt/minus.png';
 import dayjs from 'dayjs';
 import ButtonApp from '../ButtonApp';
 
@@ -136,7 +135,7 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
           <ButtonApp
             label="DELETE DEBT"
             onPress={showModal}
-            image={minusSource}
+            image="deleteDebit"
           />
         </View>
       </ScrollView>

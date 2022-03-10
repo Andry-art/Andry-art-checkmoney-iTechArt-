@@ -98,19 +98,15 @@ const Map: FC = () => {
     }
   };
 
-  const getLocation = async () => {
-    return await GetLocation.getCurrentPosition({
+  useEffect(() => {
+    GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 50000,
     })
       .then(res =>
         setInitPosition({latitude: res.latitude, longitude: res.longitude}),
       )
-      .catch(err => console.log('rrrr', err));
-  };
-
-  useEffect(() => {
-    getLocation();
+      .catch(err => console.log(err.code, err.message));
   }, []);
 
   console.log(initPosition);
