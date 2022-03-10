@@ -2,6 +2,9 @@
   package="com.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
 
     <application
       android:name=".MainApplication"
@@ -26,5 +29,6 @@
      android:value="AIzaSyAB4igydWabAr83jRf-eaRDM1T8dFQGed8"/>
 
    <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
     </application>
 </manifest>

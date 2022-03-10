@@ -1,5 +1,5 @@
 import {createDraftSafeSelector} from '@reduxjs/toolkit';
-import {Category, CategoryChart, DayOfWeek, TransactionType} from '../../types/types';
+import {CategoryChart, DayOfWeek, TransactionType} from '../../types/types';
 import {RootState} from '../Store';
 import {allTransactionsArray} from './WalletSelectors';
 
@@ -26,17 +26,16 @@ export const category = createDraftSafeSelector(
     );
 
     let result: Partial<CategoryChart> = {};
-  
 
     allTransactionExpenses.forEach(it => {
-      const category = it.category 
+      const category = it.category;
       if (category in result) {
-        return result[category] =
-          (result[category] ?? 0)  + it.amountTransaction
+        return (result[category] =
+          (result[category] ?? 0) + it.amountTransaction);
       }
       return (result[it.category] = it.amountTransaction);
     });
-    
+
     return {result, allTransactionExpensesSum};
   },
 );

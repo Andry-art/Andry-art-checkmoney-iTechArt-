@@ -1,15 +1,5 @@
 import React, {FC, useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-  FlatList,
-  Image,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import {View, StyleSheet, FlatList, ScrollView, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ListOFCards from './ListOFCards';
 import {walletItems} from '../../store/selectors/WalletSelectors';
@@ -23,9 +13,11 @@ import {addNewDebitRequest} from '../../store/actions/DebitsActions';
 import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
-import imgArrowSource from '../../../pictures/double-arrow.png';
 import {DebitType} from '../../types/types';
 import plusSource from '../../../pictures/debt/plus.png';
+import Input from '../Input';
+import ButtonApp from '../ButtonApp';
+import Switcher from '../Switcher';
 
 const newDebitSchema = yup.object({
   name: yup.string().required('Name is required'),
@@ -57,7 +49,10 @@ const NewDebits: FC<Props> = ({navigation}) => {
     setDebitType(DebitType.yourDebit);
   };
 
-  const formik = useFormik<{name: string; amount: string}>({
+  const {handleChange, handleSubmit, values, errors} = useFormik<{
+    name: string;
+    amount: string;
+  }>({
     initialValues: initialValues,
     validationSchema: newDebitSchema,
     onSubmit: value => {
@@ -131,44 +126,31 @@ const NewDebits: FC<Props> = ({navigation}) => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.debtBTN}>
-        <TouchableOpacity
-          style={
-            debitType === DebitType.toYou
-              ? styles.activeBTNtoYou
-              : styles.inactiveBTNtoYou
-          }
-          onPress={setDebitToYou}>
-          <Text style={styles.btnText}>To you</Text>
-        </TouchableOpacity>
-        <Image source={imgArrowSource} />
-        <TouchableOpacity
-          style={
-            debitType === DebitType.yourDebit
-              ? styles.activeBTNYour
-              : styles.inactiveBTNYour
-          }
-          onPress={setYourDebit}>
-          <Text style={styles.btnText}>Your debt</Text>
-        </TouchableOpacity>
+      <View style={styles.switcher}>
+        <Switcher
+          choosenBtn={debitType}
+          onPressFirst={setDebitToYou}
+          onPressSecond={setYourDebit}
+          titleFirst={DebitType.toYou}
+          titleSecond={DebitType.yourDebit}
+        />
       </View>
       <View style={styles.inputArea}>
-        <TextInput
-          style={styles.input}
-          onChangeText={formik.handleChange('name')}
-          value={formik.values.name}
+        <Input
+          onChangeText={handleChange('name')}
+          value={values.name}
+          errors={errors.name}
           placeholder="Name"
+          isPassword={false}
         />
-        <Text style={styles.error}>{formik.errors.name}</Text>
-        <TextInput
-          style={styles.input}
+        <Input
+          onChangeText={handleChange('amount')}
+          value={values.amount}
           keyboardType="number-pad"
-          onChangeText={formik.handleChange('amount')}
-          value={formik.values.amount}
+          errors={errors.amount}
           placeholder="Amount"
-          contextMenuHidden={true}
+          isPassword={false}
         />
-        <Text style={styles.error}>{formik.errors.amount}</Text>
       </View>
       <FlatList
         style={styles.listOfCards}
@@ -186,12 +168,11 @@ const NewDebits: FC<Props> = ({navigation}) => {
         horizontal
       />
       <View style={styles.btnArea}>
-        <TouchableOpacity
-          style={styles.btnConfirm}
-          onPress={formik.handleSubmit}>
-          <Image source={plusSource} style={styles.imgBtn} />
-          <Text style={styles.textConfirm}>ADD NEW DEBT</Text>
-        </TouchableOpacity>
+        <ButtonApp
+          label="ADD NEW DEBT"
+          onPress={handleSubmit}
+          image={plusSource}
+        />
       </View>
     </ScrollView>
   );
@@ -204,49 +185,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-  debtBTN: {
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    padding: 10,
-    flexDirection: 'row',
-  },
-  activeBTNtoYou: {
-    height: 40,
-    backgroundColor: '#404CB2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '40%',
-    borderRadius: 10,
-  },
-  inactiveBTNtoYou: {
-    height: 40,
-    backgroundColor: '#C0C0C0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '40%',
-    borderRadius: 10,
-  },
-
-  activeBTNYour: {
-    height: 40,
-    backgroundColor: '#404CB2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '40%',
-    borderRadius: 10,
-  },
-
-  inactiveBTNYour: {
-    height: 40,
-    backgroundColor: '#C0C0C0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '40%',
-    borderRadius: 10,
-  },
-
   inputArea: {
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
 
   input: {
@@ -260,13 +201,7 @@ const styles = StyleSheet.create({
   },
   listOfCards: {
     paddingHorizontal: 10,
-  },
-
-  btnText: {
-    fontStyle: 'normal',
-    fontWeight: '700',
-    color: 'white',
-    fontSize: 18,
+    marginBottom: 10,
   },
 
   btnConfirm: {
@@ -302,6 +237,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     tintColor: 'white',
+  },
+  switcher: {
+    paddingHorizontal: 20,
   },
 });
 

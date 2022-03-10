@@ -1,21 +1,13 @@
-import React, {FC, useCallback, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  Text,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import PasswordInvisibleSource from '../../../pictures/passwordUnvisible.png';
-import PasswordVisibleSource from '../../../pictures/passwordVisible.png';
+import React, {FC} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import ButtonApp from '../ButtonApp';
-import {Formik} from 'formik';
+import {useFormik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch} from 'react-redux';
 import {userSignUp} from '../../store/actions/RegistrationActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RegistrationNavigation} from '../../types/types';
+import Input from '../Input';
 
 const signUpSchema = yup.object({
   email: yup.string().required().email(),
@@ -33,127 +25,85 @@ interface Props {
 const initialValues = {email: '', password: '', repeatPassword: ''};
 
 const LogIn: FC<Props> = ({navigation}) => {
-  const [visiblePass, setVisiblePass] = useState<boolean>(true);
-  const [visibleRepeatPass, setVisibleRepeatPass] = useState<boolean>(true);
   const dispatch = useDispatch();
-
-  const passwordVisibility = useCallback(() => {
-    setVisiblePass(prev => !prev);
-  }, []);
-
-  const repeatPasswordVisibility = useCallback(() => {
-    setVisibleRepeatPass(prev => !prev);
-  }, []);
 
   const goToLogInScreen = () => {
     navigation.navigate('LogIn');
   };
 
-  const onSubmit = useCallback(
-    (values: {email: string; password: string}) => {
+  const {
+    handleChange,
+    handleSubmit,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    isValid,
+    dirty,
+  } = useFormik<{email: string; password: string; repeatPassword: string}>({
+    initialValues: initialValues,
+    validationSchema: signUpSchema,
+    onSubmit: values => {
       const email = values.email;
       const password = values.password;
       dispatch(userSignUp({email, password}));
     },
-    [dispatch],
-  );
+  });
 
   return (
     <View style={styles.backGround}>
       <Text style={styles.welcome}>SIGN UP</Text>
 
-      <Formik
-        initialValues={initialValues}
-        validationSchema={signUpSchema}
-        onSubmit={onSubmit}>
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-          dirty,
-        }) => (
-          <>
-            <View style={styles.inputArea}>
-              <Text style={styles.labels}>Email</Text>
-              <TextInput
-                style={styles.inputs}
-                onChangeText={handleChange('email')}
-                value={values.email}
-                textContentType="emailAddress"
-                keyboardType="email-address"
-                onBlur={handleBlur('email')}
-              />
-              {touched.email && errors.email && (
-                <Text style={styles.error}>{errors.email}</Text>
-              )}
-            </View>
+      <View style={styles.inputArea}>
+        <Text style={styles.labels}>Email</Text>
+        <Input
+          onChangeText={handleChange('email')}
+          value={values.email}
+          textContentType="emailAddress"
+          keyboardType="email-address"
+          onBlur={handleBlur('email')}
+          errors={errors.email}
+          isPassword={false}
+          touched={touched.email}
+          isRegistration={true}
+        />
+      </View>
 
-            <View style={styles.inputArea}>
-              <Text style={styles.labels}>Password</Text>
+      <View style={styles.inputArea}>
+        <Text style={styles.labels}>Password</Text>
+        <Input
+          onChangeText={handleChange('password')}
+          value={values.password}
+          textContentType="password"
+          onBlur={handleBlur('password')}
+          errors={errors.password}
+          isPassword={true}
+          touched={touched.password}
+          isRegistration={true}
+        />
+      </View>
 
-              <TextInput
-                style={styles.inputs}
-                onChangeText={handleChange('password')}
-                value={values.password}
-                textContentType="password"
-                secureTextEntry={visiblePass}
-                onBlur={handleBlur('password')}
-              />
-              <TouchableOpacity onPress={passwordVisibility}>
-                <Image
-                  source={
-                    visiblePass
-                      ? PasswordInvisibleSource
-                      : PasswordVisibleSource
-                  }
-                  style={styles.passwordIcon}
-                />
-              </TouchableOpacity>
-              {touched.password && errors.password && (
-                <Text style={styles.error}>{errors.password}</Text>
-              )}
-            </View>
+      <View style={styles.inputArea}>
+        <Text style={styles.labels}>Repeat password</Text>
+        <Input
+          onChangeText={handleChange('repeatPassword')}
+          value={values.repeatPassword}
+          textContentType="password"
+          onBlur={handleBlur('repeatPassword')}
+          errors={errors.repeatPassword}
+          isPassword={true}
+          touched={touched.repeatPassword}
+          isRegistration={true}
+        />
+      </View>
 
-            <View style={styles.inputArea}>
-              <Text style={styles.labels}>Repeat password</Text>
-              <TextInput
-                style={styles.inputs}
-                onChangeText={handleChange('repeatPassword')}
-                textContentType="password"
-                secureTextEntry={visibleRepeatPass}
-                value={values.repeatPassword}
-                onBlur={handleBlur('repeatPassword')}
-              />
-              <TouchableOpacity onPress={repeatPasswordVisibility}>
-                <Image
-                  source={
-                    visibleRepeatPass
-                      ? PasswordInvisibleSource
-                      : PasswordVisibleSource
-                  }
-                  style={styles.passwordIcon}
-                />
-              </TouchableOpacity>
-              {touched.repeatPassword && errors.repeatPassword && (
-                <Text style={styles.error}>{errors.repeatPassword}</Text>
-              )}
-            </View>
-
-            <TouchableOpacity
-              disabled={!(isValid && dirty)}
-              style={
-                !(isValid && dirty) ? styles.signUpDisabled : styles.signUp
-              }
-              onPress={handleSubmit}>
-              <Text style={styles.signUpText}> SIGN UP </Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </Formik>
+      <ButtonApp
+        label="SIGN UP"
+        disabled={!(isValid && dirty)}
+        styleBtn={!(isValid && dirty) ? styles.signUpDisabled : styles.signUp}
+        styleTxt={styles.signUpText}
+        onPress={handleSubmit}
+      />
 
       <ButtonApp
         label="LOG IN"

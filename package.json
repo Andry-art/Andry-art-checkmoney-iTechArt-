@@ -41,7 +41,9 @@
       "**/@react-native-community/netinfo/**",
       "**/@react-native-community/netinfo",
       "**/react-native-maps/**",
-      "**/react-native-maps"
+      "**/react-native-maps",
+      "**/react-native-get-location/**",
+      "**/react-native-geolocation-service/**"
     ]
   },
   "scripts": {

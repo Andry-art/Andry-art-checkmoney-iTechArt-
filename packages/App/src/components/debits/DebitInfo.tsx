@@ -1,13 +1,5 @@
 import React, {FC} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   debitInfo,
@@ -21,6 +13,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
 import minusSource from '../../../pictures/debt/minus.png';
 import dayjs from 'dayjs';
+import ButtonApp from '../ButtonApp';
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
@@ -139,10 +132,13 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
           <Text style={styles.textName}>Wallet</Text>
           <Text style={styles.textAmount}>{wallet?.walletTitle}</Text>
         </View>
-        <TouchableOpacity style={styles.btnDelete} onPress={showModal}>
-          <Image source={minusSource} style={styles.imgBtn} />
-          <Text style={styles.textDelete}>DELETE DEBT</Text>
-        </TouchableOpacity>
+        <View style={styles.btnDelete}>
+          <ButtonApp
+            label="DELETE DEBT"
+            onPress={showModal}
+            image={minusSource}
+          />
+        </View>
       </ScrollView>
     </>
   );
@@ -184,16 +180,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   btnDelete: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    height: 100,
-    width: '100%',
-    backgroundColor: '#404CB2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 7,
-    marginTop: 75,
-    marginBottom: 80,
+    marginTop: 40,
   },
   textDelete: {
     fontStyle: 'normal',

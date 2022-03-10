@@ -1,14 +1,5 @@
 import React, {FC, useRef, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  Image,
-  Alert,
-} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/WalletSelectors';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
@@ -25,6 +16,8 @@ import * as yup from 'yup';
 import {useFormik} from 'formik';
 import confirmSource from '../../../pictures/balance/basic-tick.png';
 import {TransactionType} from '../../types/types';
+import Input from '../Input';
+import ButtonApp from '../ButtonApp';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -56,7 +49,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
   const oldAmount = useRef(transaction.amount);
   const oldIcon = useRef(transaction.icon);
 
-  const {handleChange, handleSubmit, values} = useFormik<{
+  const {handleChange, handleSubmit, values, errors} = useFormik<{
     amount: string;
   }>({
     initialValues: {amount: String(transaction.amount)},
@@ -130,12 +123,12 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
         </Text>
       </View>
       <View style={styles.inputArea}>
-        <TextInput
-          value={values.amount}
+        <Input
           onChangeText={handleChange('amount')}
-          style={styles.input}
+          value={values.amount}
           keyboardType="number-pad"
-          placeholder="0"
+          errors={errors.amount}
+          isPassword={false}
           contextMenuHidden={true}
         />
       </View>
@@ -158,10 +151,12 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
               />
             ))}
       </View>
-      <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
-        <Image source={confirmSource} style={styles.img} />
-        <Text style={styles.confirmText}>Correct {transaction.type}</Text>
-      </TouchableOpacity>
+
+      <ButtonApp
+        label={`Correct ${transaction.type}`}
+        onPress={handleSubmit}
+        image={confirmSource}
+      />
     </ScrollView>
   );
 };
@@ -241,6 +236,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     padding: 3,
     borderRadius: 8,
+    marginBottom: 10,
   },
 });
 
