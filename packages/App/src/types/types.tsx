@@ -136,7 +136,7 @@ export enum TransactionType {
   expenses = 'expenses',
 }
 
-export type Location = {
+export type Locations = {
   latitude: number;
   longitude: number;
 };
@@ -160,4 +160,35 @@ export enum DayOfWeek {
   Sun = 0,
 }
 
-export type CategoryChart = Record<Category, number >;
+export type CategoryChart = Record<Category, number>;
+
+export type textType =
+  | 'none'
+  | 'URL'
+  | 'addressCity'
+  | 'addressCityAndState'
+  | 'addressState'
+  | 'countryName'
+  | 'creditCardNumber'
+  | 'emailAddress'
+  | 'familyName'
+  | 'fullStreetAddress'
+  | 'givenName'
+  | 'jobTitle'
+  | 'location'
+  | 'middleName'
+  | 'name'
+  | 'namePrefix'
+  | 'nameSuffix'
+  | 'nickname'
+  | 'organizationName'
+  | 'postalCode'
+  | 'streetAddressLine1'
+  | 'streetAddressLine2'
+  | 'sublocality'
+  | 'telephoneNumber'
+  | 'username'
+  | 'password'
+  | 'newPassword'
+  | 'oneTimeCode'
+  | undefined;

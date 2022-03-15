@@ -2,10 +2,7 @@ import React, {FC} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import {VictoryPie} from 'victory-native';
-import {
-  category,
-} from '../../store/selectors/StatisticSelectors';
-
+import {category} from '../../store/selectors/StatisticSelectors';
 
 const CategoryChart: FC = () => {
   const date = useSelector(category);

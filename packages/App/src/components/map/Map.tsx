@@ -16,7 +16,7 @@ import {useSelector} from 'react-redux';
 import {allTransactionsArray} from '../../store/selectors/WalletSelectors';
 import {
   ITransactions,
-  Location,
+  Locations,
   Months,
   TransactionType,
 } from '../../types/types';
@@ -28,6 +28,12 @@ import iconShoppingSource from '../../../pictures/categories/shop-bag.png';
 import iconRestaurantSource from '../../../pictures/categories/restaurant.png';
 import iconSalarySource from '../../../pictures/categories/money.png';
 import dayjs from 'dayjs';
+import GetLocation, {Location} from 'react-native-get-location';
+import {useEffect} from 'react';
+
+interface forLoc {
+  current: Location | undefined;
+}
 
 const months = [
   Months.January,
@@ -59,7 +65,7 @@ const Map: FC = () => {
   const [chosenMonth, setChosenMonth] = useState<number>(new Date().getMonth());
   const [chosenMark, setChosenMark] = useState<ITransactions>();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [initPosition, setInitPosition] = useState<Location>({
+  const [initPosition, setInitPosition] = useState<Locations>({
     latitude: 53.902287,
     longitude: 27.561824,
   });
@@ -79,7 +85,9 @@ const Map: FC = () => {
   }, [allTransactions, chosenMonth]);
 
   const allTransactionExpenses = allTransactionsByMonth.filter(
-    it => it.type === TransactionType.expenses,
+    it =>
+      it.type === TransactionType.expenses &&
+      JSON.stringify(it.coordinate) !== '{}',
   );
 
   const showInfo = (transaction?: ITransactions) => {
@@ -89,6 +97,19 @@ const Map: FC = () => {
       setInitPosition(transaction?.coordinate);
     }
   };
+
+  useEffect(() => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 50000,
+    })
+      .then(res =>
+        setInitPosition({latitude: res.latitude, longitude: res.longitude}),
+      )
+      .catch(err => console.log(err.code, err.message));
+  }, []);
+
+  console.log(initPosition);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -158,21 +179,22 @@ const Map: FC = () => {
           latitudeDelta: 0.0015,
           longitudeDelta: 0.0121,
         }}>
-        {allTransactionExpenses.map(
-          it =>
-            it.coordinate && (
-              <Marker
-                onPress={() => showInfo(it)}
-                key={it.keyTransaction}
-                coordinate={it.coordinate}>
-                <View style={styles.marker}>
-                  <Text style={styles.markerText}>{`${String(
-                    it.amountTransaction,
-                  )}$`}</Text>
-                </View>
-              </Marker>
-            ),
-        )}
+        {allTransactionExpenses &&
+          allTransactionExpenses.map(
+            it =>
+              it.coordinate && (
+                <Marker
+                  onPress={() => showInfo(it)}
+                  key={it.keyTransaction}
+                  coordinate={it.coordinate}>
+                  <View style={styles.marker}>
+                    <Text style={styles.markerText}>{`${String(
+                      it.amountTransaction,
+                    )}$`}</Text>
+                  </View>
+                </Marker>
+              ),
+          )}
       </MapView>
     </SafeAreaView>
   );

@@ -32,12 +32,13 @@ import {
 import {getAllItemWallet} from '../../store/actions/RalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import arrowSource from '../../../pictures/debt/up-arrow.png';
-import plusSource from '../../../pictures/debt/plus.png';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
+import ButtonApp from '../ButtonApp';
+import plusSource from '../../../pictures/debt/plus.png';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -315,11 +316,7 @@ const Debits: FC<Props> = ({navigation}) => {
             ))}
           </ScrollView>
         )}
-
-        <TouchableOpacity style={styles.addNewDebit} onPress={toNewDebits}>
-          <Image source={plusSource} style={styles.imgBtn} />
-          <Text style={styles.titleAddNew}>ADD NEW</Text>
-        </TouchableOpacity>
+        <ButtonApp label="ADD NEW" onPress={toNewDebits} image={plusSource} />
       </SafeAreaView>
     </ScrollView>
   );
@@ -381,7 +378,7 @@ const styles = StyleSheet.create({
     height: 85,
     borderRadius: 12,
     paddingHorizontal: 10,
-    marginTop: 20,
+    marginVertical: 20,
   },
 
   title: {
@@ -417,6 +414,7 @@ const styles = StyleSheet.create({
     borderColor: '#E9E9E9',
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
+    marginBottom: 20,
   },
 
   titleAddNew: {

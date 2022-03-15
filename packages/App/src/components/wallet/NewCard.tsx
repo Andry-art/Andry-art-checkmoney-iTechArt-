@@ -1,13 +1,5 @@
 import React, {FC, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, View, Text, TextInput, ScrollView} from 'react-native';
 import {useFormik} from 'formik';
 import {useDispatch, useSelector} from 'react-redux';
 import {addNewCardRequest} from '../../store/actions/RalletActions';
@@ -16,8 +8,9 @@ import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletNavigatorList} from '../../types/types';
 import ColorsNewCard from './ColorsNewCard';
-import walletSource from '../../../pictures/balance/wallet.png';
 import LinearGradient from 'react-native-linear-gradient';
+import ButtonApp from '../ButtonApp';
+import walletSource from '../../../pictures/balance/wallet.png';
 
 const colors = [
   ['#F39034', '#FF2727'],
@@ -115,10 +108,11 @@ const NewCard: FC<Props> = ({navigation}) => {
           <ColorsNewCard key={i} color={it} onPress={setCardColor} />
         ))}
       </View>
-      <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
-        <Image source={walletSource} style={styles.img} />
-        <Text style={styles.textBtn}>ADD NEW CARD</Text>
-      </TouchableOpacity>
+      <ButtonApp
+        label="ADD NEW CARD"
+        onPress={handleSubmit}
+        image={walletSource}
+      />
     </ScrollView>
   );
 };
@@ -180,6 +174,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 20,
+    marginBottom: 10,
   },
 
   submitBtn: {

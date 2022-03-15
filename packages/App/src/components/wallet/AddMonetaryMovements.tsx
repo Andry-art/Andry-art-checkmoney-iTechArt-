@@ -1,14 +1,5 @@
-import React, {FC, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Image,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import React, {FC, useEffect, useState} from 'react';
+import {StyleSheet, View, Text, ScrollView, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/WalletSelectors';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
@@ -19,15 +10,18 @@ import {
   ChosenCategory,
   Expenses,
   Income,
-  Location,
+  Locations,
 } from '../../types/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import imgArrowSource from '../../../pictures/double-arrow.png';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import {TransactionType} from '../../types/types';
-import addTransactionSource from '../../../pictures/balance/income.png';
 import MapView, {Marker} from 'react-native-maps';
+import Input from '../Input';
+import ButtonApp from '../ButtonApp';
+import GetLocation from 'react-native-get-location';
+import Switcher from '../Switcher';
+import addTransactionSource from '../../../pictures/balance/income.png';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -62,9 +56,9 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
     category: '',
   });
 
-  const [chooseLocation, setchooseLocation] = useState<boolean>(false);
+  const [chooseLocation, setChooseLocation] = useState<boolean>(false);
 
-  const [markLocation, setMarkLocation] = useState<Location>({
+  const [markLocation, setMarkLocation] = useState<Locations>({
     latitude: 53.902287,
     longitude: 27.561824,
   });
@@ -132,44 +126,38 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
     },
   });
 
+  useEffect(() => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 50000,
+    }).then(res =>
+      setMarkLocation({latitude: res.latitude, longitude: res.longitude}),
+    );
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.title}>
         <Text style={styles.textTitle}>{title?.toUpperCase()}</Text>
         <Text style={styles.textAmount}>{Math.round(amount * 100) / 100}$</Text>
       </View>
-
-      <View style={styles.moneyMoves}>
-        <TouchableOpacity
-          style={
-            moneyMoveType === TransactionType.expenses
-              ? styles.BtnIncomeExpensesFocus
-              : styles.BtnIncomeExpenses
-          }
-          onPress={() => setMoneyMoveType(TransactionType.expenses)}>
-          <Text style={styles.textIncomeExpenses}>Expenses</Text>
-        </TouchableOpacity>
-        <Image source={imgArrowSource} />
-        <TouchableOpacity
-          style={
-            moneyMoveType === TransactionType.income
-              ? styles.BtnIncomeExpensesFocus
-              : styles.BtnIncomeExpenses
-          }
-          onPress={() => setMoneyMoveType(TransactionType.income)}>
-          <Text style={styles.textIncomeExpenses}>Income</Text>
-        </TouchableOpacity>
-      </View>
+      <Switcher
+        choosenBtn={moneyMoveType}
+        onPressFirst={() => setMoneyMoveType(TransactionType.expenses)}
+        onPressSecond={() => setMoneyMoveType(TransactionType.income)}
+        titleFirst={TransactionType.expenses}
+        titleSecond={TransactionType.income}
+      />
       <View style={styles.inputArea}>
-        <TextInput
-          value={values.amount}
+        <Input
           onChangeText={handleChange('amount')}
-          style={styles.input}
+          value={values.amount}
           keyboardType="number-pad"
+          errors={errors.amount}
           placeholder="0"
+          isPassword={false}
           contextMenuHidden={true}
         />
-        <Text style={styles.validation}>{errors.amount}</Text>
       </View>
       <View style={styles.categoriesList}>
         {moneyMoveType === TransactionType.income
@@ -191,16 +179,16 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
             ))}
       </View>
 
-      <TouchableOpacity style={styles.confirm} onPress={handleSubmit}>
-        <Image source={addTransactionSource} style={styles.img} />
-        <Text style={styles.confirmText}>Add {moneyMoveType}</Text>
-      </TouchableOpacity>
-      {!chooseLocation && (
-        <TouchableOpacity
-          style={styles.chooseLocation}
-          onPress={() => setchooseLocation(true)}>
-          <Text style={styles.confirmText}>Choose location</Text>
-        </TouchableOpacity>
+      <ButtonApp
+        label={`Add ${moneyMoveType}`}
+        onPress={handleSubmit}
+        image={addTransactionSource}
+      />
+      {moneyMoveType !== TransactionType.income && !chooseLocation && (
+        <ButtonApp
+          label="Choose location"
+          onPress={() => setChooseLocation(true)}
+        />
       )}
 
       {moneyMoveType === TransactionType.expenses && chooseLocation && (
@@ -255,76 +243,9 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 
-  BtnIncomeExpenses: {
-    height: 40,
-    backgroundColor: '#C0C0C0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '40%',
-    borderRadius: 10,
-  },
-
-  textIncomeExpenses: {
-    fontStyle: 'normal',
-    fontWeight: '700',
-    color: 'white',
-    fontSize: 18,
-  },
-
-  BtnIncomeExpensesFocus: {
-    height: 40,
-    backgroundColor: '#404CB2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '40%',
-    borderRadius: 10,
-  },
-
   inputArea: {
     height: 70,
     marginBottom: 20,
-  },
-  input: {
-    fontSize: 20,
-    paddingHorizontal: 20,
-    borderWidth: 2,
-    borderColor: '#404CB2',
-    marginTop: 20,
-    borderRadius: 10,
-    textAlign: 'center',
-  },
-
-  confirm: {
-    flexDirection: 'row',
-    marginTop: 20,
-    borderRadius: 10,
-    height: 100,
-    width: '100%',
-    backgroundColor: '#404CB2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    elevation: 7,
-  },
-
-  chooseLocation: {
-    flexDirection: 'row',
-
-    borderRadius: 10,
-    height: 100,
-    width: '100%',
-    backgroundColor: '#404CB2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 40,
-    elevation: 7,
-  },
-
-  confirmText: {
-    fontStyle: 'normal',
-    fontWeight: '700',
-    fontSize: 16,
-    color: '#FFFFFF',
   },
 
   moneyMoves: {
@@ -348,12 +269,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     padding: 3,
     borderRadius: 8,
-  },
-
-  img: {
-    position: 'absolute',
-    left: 20,
-    tintColor: 'white',
+    marginBottom: 10,
   },
 
   marker: {
