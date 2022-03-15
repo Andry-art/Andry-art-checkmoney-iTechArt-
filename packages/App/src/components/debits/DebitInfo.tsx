@@ -1,14 +1,11 @@
 import React, {FC} from 'react';
 import {View, Text, StyleSheet, ScrollView, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import {debitInfo, walletName} from '../../store/selectors/DebitSelectors';
 import {
-  debitInfo,
-  walletName,
-  getDebitsToYou,
-  getYourDebits,
-} from '../../store/selectors/DebitSelectors';
-import {deleteDebitRequest} from '../../store/actions/DebitsActions';
-import {getAllItemWallet} from '../../store/actions/RalletActions';
+  deleteTransactionRequest,
+  getAllItemWallet,
+} from '../../store/actions/WalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
 import dayjs from 'dayjs';
@@ -22,8 +19,11 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
   const dispatch = useDispatch();
   const info = useSelector(debitInfo);
   let wallet = useSelector(walletName);
-  const debitToYou = useSelector(getDebitsToYou);
-  const yourDebits = useSelector(getYourDebits);
+  const transactionKey = {
+    keyTransaction: info.keyTransaction,
+    amountTransaction: info.amountTransaction,
+    type: info.type,
+  };
 
   const showModal = () => {
     Alert.alert(' Would you like to delete card?', '', [
@@ -34,75 +34,49 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
       {
         text: 'Delete',
         onPress: () => {
-          deleteDebit();
+          if (wallet) {
+            if (info.type === DebitType.toYou) {
+              wallet = {
+                ...wallet,
+                walletAmount: wallet.walletAmount + info.amountTransaction,
+              };
+            }
+            if (info.type === DebitType.yourDebit) {
+              wallet = {
+                ...wallet,
+                walletAmount: wallet.walletAmount - info.amountTransaction,
+              };
+            }
+
+            if (wallet?.walletAmount < 0) {
+              Alert.alert('Going to be minus, delete?', '', [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Delete',
+                  onPress: () => {
+                    deleteDebitMinus();
+                  },
+                },
+              ]);
+            }
+          }
+
+          if (wallet && wallet?.walletAmount > 0) {
+            dispatch(deleteTransactionRequest({item: wallet, transactionKey}));
+            navigation.goBack();
+            dispatch(getAllItemWallet());
+          }
         },
       },
     ]);
   };
 
   const deleteDebitMinus = () => {
-    let debitsArray;
-    if (info.type === DebitType.yourDebit) {
-      debitsArray = yourDebits;
-    }
-
-    if (info.type === DebitType.toYou) {
-      debitsArray = debitToYou;
-    }
-
-    if (wallet && debitsArray) {
-      dispatch(
-        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
-      );
-      navigation.goBack();
-      dispatch(getAllItemWallet());
-    }
-  };
-
-  const deleteDebit = () => {
-    let debitsArray;
-    if (info.type === DebitType.yourDebit) {
-      debitsArray = yourDebits;
-    }
-
-    if (info.type === DebitType.toYou) {
-      debitsArray = debitToYou;
-    }
-
     if (wallet) {
-      if (info.type === DebitType.toYou) {
-        wallet = {
-          ...wallet,
-          walletAmount: wallet.walletAmount + info.amount,
-        };
-      }
-      if (info.type === DebitType.yourDebit) {
-        wallet = {
-          ...wallet,
-          walletAmount: wallet.walletAmount - info.amount,
-        };
-      }
-
-      if (wallet?.walletAmount < 0) {
-        Alert.alert('Going to be minus, delete?', '', [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Delete',
-            onPress: () => {
-              deleteDebitMinus();
-            },
-          },
-        ]);
-      }
-    }
-
-    if (wallet && debitsArray && wallet?.walletAmount > 0) {
-      dispatch(
-        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
-      );
+      dispatch(deleteTransactionRequest({item: wallet, transactionKey}));
       navigation.goBack();
       dispatch(getAllItemWallet());
     }
@@ -125,7 +99,7 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
         </View>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>Amount</Text>
-          <Text style={styles.textAmount}>{info.amount}$</Text>
+          <Text style={styles.textAmount}>{info.amountTransaction}$</Text>
         </View>
         <View style={styles.debitInfo}>
           <Text style={styles.textName}>Wallet</Text>
@@ -135,7 +109,7 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
           <ButtonApp
             label="DELETE DEBT"
             onPress={showModal}
-            image="deleteDebit"
+            // image="deleteDebit"
           />
         </View>
       </ScrollView>

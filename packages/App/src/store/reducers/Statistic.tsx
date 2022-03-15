@@ -1,4 +1,4 @@
-import {createReducer, PayloadAction} from '@reduxjs/toolkit';
+import {createReducer} from '@reduxjs/toolkit';
 import {setMonthSuccsess} from '../actions/StatisticActions';
 
 interface Month {

@@ -22,7 +22,7 @@ import {
   deleteTransactionRequest,
   correctTransactionInfo,
   addCorrectTransactionRequest,
-} from '../actions/RalletActions';
+} from '../actions/WalletActions';
 import {logOutAction} from '../actions/RegistrationActions';
 
 export function* getWalletItems(): Generator {
@@ -115,12 +115,42 @@ export function* addTransaction(
   action: ReturnType<typeof addTransactionRequest>,
 ): Generator {
   try {
+    if (action.payload.transaction.type === 'debit to you') {
+      const newTransaction = action.payload.transaction;
+      let item = action.payload.item;
+      const newArrayOfTransaction = [newTransaction, ...item.transactions];
+      const newPosition = {...item, transactions: newArrayOfTransaction};
+      const response = (yield call(
+        Api.authPut.bind(Api),
+        `http://localhost:8000/wallet/${action.payload.item.id}`,
+        newPosition,
+      )) as WalletInfo;
+      if (response) {
+        yield put(addTransactionSuccess(response));
+      }
+      if (!response) {
+        yield put(addTransactionFailed('Network isn`t working'));
+      }
+      console.log('rere', response);
+    }
+
+    if (action.payload.transaction.type === 'your debit') {
+      const newTransaction = action.payload.transaction;
+      let item = action.payload.item;
+      const newArrayOfTransaction = [newTransaction, ...item.transactions];
+      const newPosition = {...item, transactions: newArrayOfTransaction};
+      const response = (yield call(
+        Api.authPut.bind(Api),
+        `http://localhost:8000/wallet/${action.payload.item.id}`,
+        newPosition,
+      )) as WalletInfo;
+      console.log(response);
+    }
     const categoryAmount = action.payload.transaction.amountTransaction;
     const totalAmount = action.payload.item.walletAmount;
     const newTransaction = action.payload.transaction;
     let item = action.payload.item;
 
-    console.log(action.payload.transaction.type);
     if (action.payload.transaction.type === 'income') {
       item = {...item, walletAmount: totalAmount + categoryAmount};
     }
@@ -156,38 +186,79 @@ export function* deleteTransaction(
 ): Generator {
   try {
     let item = action.payload.item;
-
+    console.log(item.walletAmount);
     const newArrayTransactions = action.payload.item.transactions.filter(
       it => it.keyTransaction !== action.payload.transactionKey.keyTransaction,
     );
 
     item = {...item, transactions: newArrayTransactions};
 
+    if (action.payload.transactionKey.type === 'debit to you') {
+      const response = (yield call(
+        Api.authPut.bind(Api),
+        `http://localhost:8000/wallet/${action.payload.item.id}`,
+        item,
+      )) as WalletInfo;
+      if (response) {
+        yield put(deleteTransactionSuccess(response));
+      }
+      if (!response) {
+        yield put(deleteTransactionFailed('Network isn`t working'));
+      }
+    }
+
+    if (action.payload.transactionKey.type === 'your debit') {
+      const response = (yield call(
+        Api.authPut.bind(Api),
+        `http://localhost:8000/wallet/${action.payload.item.id}`,
+        item,
+      )) as WalletInfo;
+      if (response) {
+        yield put(deleteTransactionSuccess(response));
+      }
+      if (!response) {
+        yield put(deleteTransactionFailed('Network isn`t working'));
+      }
+    }
+
     if (action.payload.transactionKey.type === 'income') {
       item = {
         ...item,
-        walletAmount: item.walletAmount - action.payload.transactionKey.amount,
+        walletAmount:
+          item.walletAmount - action.payload.transactionKey.amountTransaction,
       };
+      const response = (yield call(
+        Api.authPut.bind(Api),
+        `http://localhost:8000/wallet/${action.payload.item.id}`,
+        item,
+      )) as WalletInfo;
+
+      if (response) {
+        yield put(deleteTransactionSuccess(response));
+      }
+      if (!response) {
+        yield put(deleteTransactionFailed('Network isn`t working'));
+      }
     }
 
     if (action.payload.transactionKey.type === 'expenses') {
       item = {
         ...item,
-        walletAmount: item.walletAmount + action.payload.transactionKey.amount,
+        walletAmount:
+          item.walletAmount + action.payload.transactionKey.amountTransaction,
       };
-    }
+      const response = (yield call(
+        Api.authPut.bind(Api),
+        `http://localhost:8000/wallet/${action.payload.item.id}`,
+        item,
+      )) as WalletInfo;
 
-    const response = (yield call(
-      Api.authPut.bind(Api),
-      `http://localhost:8000/wallet/${action.payload.item.id}`,
-      item,
-    )) as WalletInfo;
-
-    if (response) {
-      yield put(deleteTransactionSuccess(response));
-    }
-    if (!response) {
-      yield put(deleteTransactionFailed('Network isn`t working'));
+      if (response) {
+        yield put(deleteTransactionSuccess(response));
+      }
+      if (!response) {
+        yield put(deleteTransactionFailed('Network isn`t working'));
+      }
     }
   } catch (error) {
     console.log('deleteTransaction', error);

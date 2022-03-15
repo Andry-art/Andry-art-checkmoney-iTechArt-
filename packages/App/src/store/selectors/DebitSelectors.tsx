@@ -1,5 +1,6 @@
 import {createDraftSafeSelector} from '@reduxjs/toolkit';
 import {RootState} from '../Store';
+import {allTransactionsArray} from './WalletSelectors';
 
 export const debitsToYou = (state: RootState) => {
   return state.debits.toYou;
@@ -9,25 +10,41 @@ export const yourDebits = (state: RootState) => {
   return state?.debits.yourDebit;
 };
 
-export const sumDebitsToYou = createDraftSafeSelector(debitsToYou, state => {
-  return state?.reduce((sum, cur) => {
-    return (sum * 100 + cur.amount * 100) / 100;
-  }, 0);
-});
+export const sumDebitsToYou = createDraftSafeSelector(
+  allTransactionsArray,
+  state => {
+    return state
+      ?.filter(it => it.type === 'debit to you')
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  },
+);
 
-export const sumOfYourDebits = createDraftSafeSelector(yourDebits, state => {
-  return state.reduce((sum, cur) => {
-    return (sum * 100 + cur.amount * 100) / 100;
-  }, 0);
-});
+export const sumOfYourDebits = createDraftSafeSelector(
+  allTransactionsArray,
+  state => {
+    return state
+      ?.filter(it => it.type === 'your debit')
+      .reduce((sum, cur) => {
+        return (sum * 100 + cur.amountTransaction * 100) / 100;
+      }, 0);
+  },
+);
 
-export const getDebitsToYou = (state: RootState) => {
-  return state.debits.toYou;
-};
+export const getDebitsToYou = createDraftSafeSelector(
+  allTransactionsArray,
+  state => {
+    return state.filter(it => it.type === 'debit to you');
+  },
+);
 
-export const getYourDebits = (state: RootState) => {
-  return state.debits.yourDebit;
-};
+export const getYourDebits = createDraftSafeSelector(
+  allTransactionsArray,
+  state => {
+    return state.filter(it => it.type === 'your debit');
+  },
+);
 
 export const debitInfo = (state: RootState) => {
   return state.debits.debInfo;

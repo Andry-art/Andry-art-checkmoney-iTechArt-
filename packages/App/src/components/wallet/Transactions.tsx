@@ -14,9 +14,12 @@ import iconUnknownSource from '../../../pictures/categories/question.png';
 import iconShoppingSource from '../../../pictures/categories/shop-bag.png';
 import iconRestaurantSource from '../../../pictures/categories/restaurant.png';
 import iconSalarySource from '../../../pictures/categories/money.png';
-import {AmountInCents} from '../../types/types';
+import iconDebit from '../../../pictures/debt/loan.png';
+import {AmountInCents, DebitType} from '../../types/types';
 import {TransactionType} from '../../types/types';
 import dayjs from 'dayjs';
+import {addDebitInfo} from '../../store/actions/DebitsActions';
+import {useDispatch} from 'react-redux';
 
 interface Props {
   keyTransaction: number;
@@ -25,6 +28,8 @@ interface Props {
   date: string;
   type: string;
   icon: string;
+  keyOfWallet: number;
+  person: string;
   onLongPress: (keyTransaction: number, amount: number, type: string) => void;
   onPress: (
     keyTransaction: number,
@@ -33,6 +38,8 @@ interface Props {
     amount: number,
     type: string,
     icon: string,
+    keyOfWallet?: number,
+    person?: string,
   ) => void;
 }
 
@@ -43,9 +50,12 @@ const Transactions: FC<Props> = ({
   date,
   type,
   icon,
+  keyOfWallet,
+  person,
   onLongPress,
   onPress,
 }) => {
+  const dispatch = useDispatch();
   const imgSource: Record<string, ImageSourcePropType> = {
     iconCarSource: iconCarSource,
     iconHealthSource: iconHealthSource,
@@ -54,17 +64,56 @@ const Transactions: FC<Props> = ({
     iconShoppingSource: iconShoppingSource,
     iconRestaurantSource: iconRestaurantSource,
     iconSalarySource: iconSalarySource,
+    iconDebit: iconDebit,
   };
 
   const img = imgSource[icon];
 
   const onLongPressCallBack = useCallback(() => {
+    dispatch(
+      addDebitInfo({
+        type,
+        keyOfWallet,
+        keyTransaction,
+        date,
+        person,
+        amountTransaction: amount,
+      }),
+    );
     onLongPress(keyTransaction, amount, type);
-  }, [amount, keyTransaction, onLongPress, type]);
+  }, [
+    amount,
+    date,
+    dispatch,
+    keyOfWallet,
+    keyTransaction,
+    onLongPress,
+    person,
+    type,
+  ]);
 
   const onPressCallBack = useCallback(() => {
-    onPress(keyTransaction, category, date, amount, type, icon);
-  }, [amount, category, date, icon, keyTransaction, onPress, type]);
+    onPress(
+      keyTransaction,
+      category,
+      date,
+      amount,
+      type,
+      icon,
+      keyOfWallet,
+      person,
+    );
+  }, [
+    amount,
+    category,
+    date,
+    icon,
+    keyOfWallet,
+    keyTransaction,
+    onPress,
+    person,
+    type,
+  ]);
 
   return (
     <TouchableOpacity
@@ -74,14 +123,14 @@ const Transactions: FC<Props> = ({
       <View style={styles.iconsInfo}>
         <View
           style={
-            type === TransactionType.income
+            type === TransactionType.income || type === DebitType.yourDebit
               ? styles.iconBGIncome
               : styles.iconBGExpens
           }>
           <Image
             source={img}
             style={
-              type === TransactionType.income
+              type === TransactionType.income || type === DebitType.yourDebit
                 ? styles.imgIncome
                 : styles.imgExpenses
             }
@@ -92,7 +141,7 @@ const Transactions: FC<Props> = ({
           <Text style={styles.date}>{dayjs(date).format('DD/MM/YY')}</Text>
         </View>
       </View>
-      {type === TransactionType.income ? (
+      {type === TransactionType.income || type === DebitType.yourDebit ? (
         <Text style={styles.sumPlus}>+{amount}$</Text>
       ) : (
         <Text style={styles.sumMinus}>-{amount}$</Text>

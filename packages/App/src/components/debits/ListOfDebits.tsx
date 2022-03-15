@@ -10,14 +10,20 @@ interface Props {
   person: string;
   amount: number;
   color: string;
-  onPress: ({keyOfWallet, key, date, person, amount}: DebitInfo) => void;
+  onPress: ({
+    keyOfWallet,
+    keyTransaction,
+    date,
+    person,
+    amountTransaction,
+  }: DebitInfo) => void;
   onLongPress: ({
     type,
     keyOfWallet,
-    key,
+    keyTransaction,
     date,
     person,
-    amount,
+    amountTransaction,
   }: DebitInfo) => void;
   lastKey: number;
 }
@@ -35,13 +41,29 @@ const ListOfDebits: FC<Props> = ({
   lastKey,
 }) => {
   const chosenDebt = () => {
-    const key = keyDeb;
-    onPress({type, keyOfWallet, key, date, person, amount});
+    const keyTransaction = keyDeb;
+    const amountTransaction = amount;
+    onPress({
+      type,
+      keyOfWallet,
+      keyTransaction,
+      date,
+      person,
+      amountTransaction,
+    });
   };
 
   const chosenDebtOnLongPress = () => {
-    const key = keyDeb;
-    onLongPress({type, keyOfWallet, key, date, person, amount});
+    const keyTransaction = keyDeb;
+    const amountTransaction = amount;
+    onLongPress({
+      type,
+      keyOfWallet,
+      keyTransaction,
+      date,
+      person,
+      amountTransaction,
+    });
   };
 
   return (

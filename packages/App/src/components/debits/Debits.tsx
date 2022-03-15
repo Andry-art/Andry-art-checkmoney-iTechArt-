@@ -25,11 +25,11 @@ import {
 } from '../../store/selectors/DebitSelectors';
 import {useDispatch, useSelector} from 'react-redux';
 import {DebitInfo, DebitNavigatorList, DebitType} from '../../types/types';
+import {addDebitInfo} from '../../store/actions/DebitsActions';
 import {
-  addDebitInfo,
-  deleteDebitRequest,
-} from '../../store/actions/DebitsActions';
-import {getAllItemWallet} from '../../store/actions/RalletActions';
+  deleteTransactionRequest,
+  getAllItemWallet,
+} from '../../store/actions/WalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import arrowSource from '../../../pictures/debt/up-arrow.png';
 import Animated, {
@@ -64,6 +64,11 @@ const Debits: FC<Props> = ({navigation}) => {
   const debitsError = useSelector(getErrorDebits);
   const debToYouInitRotate = useSharedValue(180);
   const yourDebInitRotate = useSharedValue(180);
+  const transactionKey = {
+    keyTransaction: info.keyTransaction,
+    amountTransaction: info.amountTransaction,
+    type: info.type,
+  };
 
   const debToYouAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -126,19 +131,19 @@ const Debits: FC<Props> = ({navigation}) => {
   const showModalDelete = ({
     type,
     keyOfWallet,
-    key,
+    keyTransaction,
     date,
     person,
-    amount,
+    amountTransaction,
   }: DebitInfo) => {
     dispatch(
       addDebitInfo({
         type,
         keyOfWallet,
-        key,
+        keyTransaction,
         date,
         person,
-        amount,
+        amountTransaction,
       }),
     );
     Alert.alert(' Would you like to delete debt?', '', [
@@ -149,58 +154,43 @@ const Debits: FC<Props> = ({navigation}) => {
       {
         text: 'Delete',
         onPress: () => {
-          deleteDebit();
+          if (wallet) {
+            if (type === DebitType.toYou) {
+              wallet = {
+                ...wallet,
+                walletAmount: wallet.walletAmount + amountTransaction,
+              };
+            }
+            if (type === DebitType.yourDebit) {
+              wallet = {
+                ...wallet,
+                walletAmount: wallet.walletAmount - amountTransaction,
+              };
+            }
+
+            if (wallet?.walletAmount < 0) {
+              Alert.alert('Going to be minus, delete?', '', [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Delete',
+                  onPress: () => {
+                    deleteDebitMinus();
+                  },
+                },
+              ]);
+            }
+          }
+
+          if (wallet && wallet?.walletAmount > 0) {
+            dispatch(deleteTransactionRequest({item: wallet, transactionKey}));
+            dispatch(getAllItemWallet());
+          }
         },
       },
     ]);
-  };
-
-  const deleteDebit = () => {
-    let debitsArray;
-    if (info.type === DebitType.yourDebit) {
-      debitsArray = yourDebits;
-    }
-
-    if (info.type === DebitType.toYou) {
-      debitsArray = debitToYou;
-    }
-
-    if (wallet) {
-      if (info.type === DebitType.toYou) {
-        wallet = {
-          ...wallet,
-          walletAmount: wallet.walletAmount + info.amount,
-        };
-      }
-      if (info.type === DebitType.yourDebit) {
-        wallet = {
-          ...wallet,
-          walletAmount: wallet.walletAmount - info.amount,
-        };
-      }
-
-      if (wallet?.walletAmount < 0) {
-        Alert.alert('Going to be minus, delete?', '', [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Delete',
-            onPress: () => {
-              deleteDebitMinus();
-            },
-          },
-        ]);
-      }
-    }
-
-    if (wallet && debitsArray && wallet?.walletAmount > 0) {
-      dispatch(
-        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
-      );
-      dispatch(getAllItemWallet());
-    }
   };
 
   const deleteDebitMinus = () => {
@@ -214,23 +204,28 @@ const Debits: FC<Props> = ({navigation}) => {
     }
 
     if (wallet && debitsArray) {
-      dispatch(
-        deleteDebitRequest({wallet: wallet, debit: info, array: debitsArray}),
-      );
+      dispatch(deleteTransactionRequest({item: wallet, transactionKey}));
       dispatch(getAllItemWallet());
     }
   };
 
   const toDebitInfo = useCallback(
-    ({type, keyOfWallet, key, date, person, amount}: DebitInfo) => {
+    ({
+      type,
+      keyOfWallet,
+      keyTransaction,
+      date,
+      person,
+      amountTransaction,
+    }: DebitInfo) => {
       dispatch(
         addDebitInfo({
           type,
           keyOfWallet,
-          key,
+          keyTransaction,
           date,
           person,
-          amount,
+          amountTransaction,
         }),
       );
       navigation.navigate('Debit Info');
@@ -244,6 +239,7 @@ const Debits: FC<Props> = ({navigation}) => {
     <ScrollView nestedScrollEnabled={true} style={styles.container}>
       <SafeAreaView>
         <TouchableOpacity
+          disabled={debitToYou.length === 0}
           style={debitsVisible ? styles.debitsActive : styles.debits}
           onPress={debitsToYouVisible}>
           <Animated.View style={[styles.arrowUp, debToYouAnimatedStyle]}>
@@ -263,23 +259,24 @@ const Debits: FC<Props> = ({navigation}) => {
           <ScrollView style={styles.listDebits}>
             {debitToYou.map(item => (
               <ListOfDebits
-                key={item.key}
+                key={item.keyTransaction}
                 type={item.type}
-                keyOfWallet={item.keyOfWallet}
-                keyDeb={item.key}
+                keyOfWallet={item.keyOfWallet || 0}
+                keyDeb={item.keyTransaction}
                 date={item.date}
-                person={item.person}
-                amount={item.amount}
+                person={item.person || ''}
+                amount={item.amountTransaction}
                 color="#1B824A"
                 onPress={toDebitInfo}
                 onLongPress={showModalDelete}
-                lastKey={debitToYou[debitToYou.length - 1].key}
+                lastKey={debitToYou[debitToYou.length - 1].keyTransaction}
               />
             ))}
           </ScrollView>
         )}
 
         <TouchableOpacity
+          disabled={yourDebits.length === 0}
           style={myDebitsVisible ? styles.yourDebitsActive : styles.yourDebits}
           onPress={yourDebitsVisible}>
           <Animated.View style={[styles.arrowDown, yourDebAnimatedStyle]}>
@@ -300,22 +297,23 @@ const Debits: FC<Props> = ({navigation}) => {
           <ScrollView style={styles.listDebits}>
             {yourDebits.map(item => (
               <ListOfDebits
-                key={item.key}
+                key={item.keyTransaction}
                 type={item.type}
-                keyOfWallet={item.keyOfWallet}
-                keyDeb={item.key}
+                keyOfWallet={item.keyOfWallet || 0}
+                keyDeb={item.keyTransaction}
                 date={item.date}
-                person={item.person}
-                amount={item.amount}
+                person={item.person || ''}
+                amount={item.amountTransaction}
                 color="#1B824A"
                 onPress={toDebitInfo}
                 onLongPress={showModalDelete}
-                lastKey={yourDebits[yourDebits.length - 1].key}
+                lastKey={yourDebits[yourDebits.length - 1].keyTransaction}
               />
             ))}
           </ScrollView>
         )}
-        <ButtonApp label="ADD NEW" onPress={toNewDebits} image="addDebit" />
+        <ButtonApp label="ADD NEW" onPress={toNewDebits} />
+        {/* image="addDebit" */}
       </SafeAreaView>
     </ScrollView>
   );

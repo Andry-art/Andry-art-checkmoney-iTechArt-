@@ -1,5 +1,5 @@
 import {createAction} from '@reduxjs/toolkit';
-import {Location, WalletInfo} from '../../types/types';
+import {DebitInfo, TransactionRequest, WalletInfo} from '../../types/types';
 
 export const getAllItemWallet = createAction<undefined>('GET_WALLET_ITEMS');
 export const getWalletItemsSuccess = createAction<Array<WalletInfo>>(
@@ -29,15 +29,7 @@ export const cardMonetaryMove =
 
 export const addTransactionRequest = createAction<{
   item: WalletInfo;
-  transaction: {
-    keyTransaction: number;
-    type: string;
-    amountTransaction: number;
-    category: string;
-    icon: string;
-    date: Date;
-    coordinate?: Location | {};
-  };
+  transaction: TransactionRequest | DebitInfo;
 }>('ADD_TRANSACTION');
 export const addTransactionSuccess = createAction<WalletInfo>('addTransaction');
 export const addTransactionFailed = createAction<string>(
@@ -46,7 +38,11 @@ export const addTransactionFailed = createAction<string>(
 
 export const deleteTransactionRequest = createAction<{
   item: WalletInfo;
-  transactionKey: {keyTransaction: number; amount: number; type: string};
+  transactionKey: {
+    keyTransaction: number;
+    amountTransaction: number;
+    type: string;
+  };
 }>('DELETE_TRANSACTION');
 export const deleteTransactionSuccess =
   createAction<WalletInfo>('deleteTransaction');

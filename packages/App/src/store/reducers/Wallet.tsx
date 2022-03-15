@@ -20,8 +20,8 @@ import {
   deleteTransactionRequest,
   addCorrectTransactionRequest,
   cleanErrorsWallet,
-} from '../actions/RalletActions';
-import {WalletInfo} from '../../types/types';
+} from '../actions/WalletActions';
+import {Category, WalletInfo} from '../../types/types';
 import {IWallet} from '../../types/types';
 
 const initialState: IWallet = {
@@ -37,7 +37,8 @@ const initialState: IWallet = {
           keyTransaction: 0,
           type: '',
           amountTransaction: 0,
-          category: '',
+          keyOfWallet: 0,
+          category: Category.Unknown,
           date: '',
           icon: '',
         },

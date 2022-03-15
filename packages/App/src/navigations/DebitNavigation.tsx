@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {getAllItemWallet} from '../store/actions/RalletActions';
+import {getAllItemWallet} from '../store/actions/WalletActions';
 import {getDebitsItemsRequest} from '../store/actions/DebitsActions';
 import {useDispatch} from 'react-redux';
 import Debits from '../components/debits/Debits';
