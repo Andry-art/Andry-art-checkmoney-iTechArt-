@@ -21,6 +21,7 @@ import Input from '../Input';
 import ButtonApp from '../ButtonApp';
 import GetLocation from 'react-native-get-location';
 import Switcher from '../Switcher';
+import addTransactionSource from '../../../pictures/balance/income.png';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -181,7 +182,7 @@ const AddMonetaryMovements: FC<Props> = ({navigation}) => {
       <ButtonApp
         label={`Add ${moneyMoveType}`}
         onPress={handleSubmit}
-        image="addTransaction"
+        image={addTransactionSource}
       />
       {moneyMoveType !== TransactionType.income && !chooseLocation && (
         <ButtonApp

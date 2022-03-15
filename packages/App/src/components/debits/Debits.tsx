@@ -38,6 +38,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import ButtonApp from '../ButtonApp';
+import plusSource from '../../../pictures/debt/plus.png';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -315,7 +316,7 @@ const Debits: FC<Props> = ({navigation}) => {
             ))}
           </ScrollView>
         )}
-        <ButtonApp label="ADD NEW" onPress={toNewDebits} image="addDebit" />
+        <ButtonApp label="ADD NEW" onPress={toNewDebits} image={plusSource} />
       </SafeAreaView>
     </ScrollView>
   );

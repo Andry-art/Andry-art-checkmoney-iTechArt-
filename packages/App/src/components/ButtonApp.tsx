@@ -6,33 +6,18 @@ import {
   Image,
   ImageSourcePropType,
 } from 'react-native';
-import addTransactionSource from '../../pictures/balance/income.png';
-import confirmSource from '../../pictures/balance/basic-tick.png';
-import walletSource from '../../pictures/balance/wallet.png';
-import plusSource from '../../pictures/debt/plus.png';
-import minusSource from '../../pictures/debt/minus.png';
 
 interface Props {
   disabled?: boolean;
   label: string;
   onPress?: () => void;
-  image?: string;
+  image?: ImageSourcePropType;
 }
 
-const imgSource: Record<string, ImageSourcePropType> = {
-  addTransaction: addTransactionSource,
-  correct: confirmSource,
-  addCard: walletSource,
-  addDebit: plusSource,
-  deleteDebit: minusSource,
-};
-
-const ButtonApp: FC<Props> = ({label, onPress, disabled, image = ''}) => {
-  const imgRender: ImageSourcePropType = imgSource[image];
-
+const ButtonApp: FC<Props> = ({label, onPress, disabled, image}) => {
   return (
     <TouchableOpacity style={styles.btn} onPress={onPress} disabled={disabled}>
-      <Image source={imgRender} style={styles.img} />
+      {image && <Image source={image} style={styles.img} />}
       <Text style={styles.text}>{label}</Text>
     </TouchableOpacity>
   );

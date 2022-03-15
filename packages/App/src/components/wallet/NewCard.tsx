@@ -10,6 +10,7 @@ import {WalletNavigatorList} from '../../types/types';
 import ColorsNewCard from './ColorsNewCard';
 import LinearGradient from 'react-native-linear-gradient';
 import ButtonApp from '../ButtonApp';
+import walletSource from '../../../pictures/balance/wallet.png';
 
 const colors = [
   ['#F39034', '#FF2727'],
@@ -107,7 +108,11 @@ const NewCard: FC<Props> = ({navigation}) => {
           <ColorsNewCard key={i} color={it} onPress={setCardColor} />
         ))}
       </View>
-      <ButtonApp label="ADD NEW CARD" onPress={handleSubmit} image="addCard" />
+      <ButtonApp
+        label="ADD NEW CARD"
+        onPress={handleSubmit}
+        image={walletSource}
+      />
     </ScrollView>
   );
 };

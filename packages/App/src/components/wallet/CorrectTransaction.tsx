@@ -18,6 +18,7 @@ import {useFormik} from 'formik';
 import {TransactionType} from '../../types/types';
 import Input from '../Input';
 import ButtonApp from '../ButtonApp';
+import confirmSource from '../../../pictures/balance/basic-tick.png';
 
 const income: Income = ['iconUnknownSource', 'iconSalarySource'];
 const expenses: Expenses = [
@@ -155,7 +156,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
       <ButtonApp
         label={`Correct ${transaction.type}`}
         onPress={handleSubmit}
-        image="correct"
+        image={confirmSource}
       />
     </ScrollView>
   );
