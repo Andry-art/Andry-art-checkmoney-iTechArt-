@@ -14,7 +14,7 @@ import {
 } from '../../types/types';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
-
+import confirmSource from '../../../pictures/balance/basic-tick.png';
 import {TransactionType} from '../../types/types';
 import Input from '../Input';
 import ButtonApp from '../ButtonApp';
@@ -155,7 +155,7 @@ const CorrectTransaction: FC<Props> = ({navigation}) => {
       <ButtonApp
         label={`Correct ${transaction.type}`}
         onPress={handleSubmit}
-        image="correct"
+        image={confirmSource}
       />
     </ScrollView>
   );

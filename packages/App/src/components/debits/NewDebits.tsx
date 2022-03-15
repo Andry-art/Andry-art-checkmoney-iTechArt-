@@ -19,6 +19,7 @@ import {DebitType} from '../../types/types';
 import Input from '../Input';
 import ButtonApp from '../ButtonApp';
 import Switcher from '../Switcher';
+import plusSource from '../../../pictures/debt/plus.png';
 
 const newDebitSchema = yup.object({
   name: yup.string().required('Name is required'),
@@ -183,7 +184,7 @@ const NewDebits: FC<Props> = ({navigation}) => {
         <ButtonApp
           label="ADD NEW DEBT"
           onPress={handleSubmit}
-          // image="addDebit"
+          image={plusSource}
         />
       </View>
     </ScrollView>

@@ -109,8 +109,6 @@ const Map: FC = () => {
       .catch(err => console.log(err.code, err.message));
   }, []);
 
-  console.log(initPosition);
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView horizontal style={styles.monthsScroll}>

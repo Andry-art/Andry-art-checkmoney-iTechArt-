@@ -1,6 +1,6 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import {Api} from '../Api';
-import {WalletInfo, ErrorFetch} from '../../types/types';
+import {WalletInfo, ErrorFetch, DebitType} from '../../types/types';
 import {
   getWalletItemsSuccess,
   getWalletItemsFailed,
@@ -115,7 +115,7 @@ export function* addTransaction(
   action: ReturnType<typeof addTransactionRequest>,
 ): Generator {
   try {
-    if (action.payload.transaction.type === 'debit to you') {
+    if (action.payload.transaction.type === DebitType.toYou) {
       const newTransaction = action.payload.transaction;
       let item = action.payload.item;
       const newArrayOfTransaction = [newTransaction, ...item.transactions];
@@ -131,10 +131,9 @@ export function* addTransaction(
       if (!response) {
         yield put(addTransactionFailed('Network isn`t working'));
       }
-      console.log('rere', response);
     }
 
-    if (action.payload.transaction.type === 'your debit') {
+    if (action.payload.transaction.type === DebitType.yourDebit) {
       const newTransaction = action.payload.transaction;
       let item = action.payload.item;
       const newArrayOfTransaction = [newTransaction, ...item.transactions];
@@ -144,7 +143,12 @@ export function* addTransaction(
         `http://localhost:8000/wallet/${action.payload.item.id}`,
         newPosition,
       )) as WalletInfo;
-      console.log(response);
+      if (response) {
+        yield put(addTransactionSuccess(response));
+      }
+      if (!response) {
+        yield put(addTransactionFailed('Network isn`t working'));
+      }
     }
     const categoryAmount = action.payload.transaction.amountTransaction;
     const totalAmount = action.payload.item.walletAmount;
@@ -186,14 +190,13 @@ export function* deleteTransaction(
 ): Generator {
   try {
     let item = action.payload.item;
-    console.log(item.walletAmount);
     const newArrayTransactions = action.payload.item.transactions.filter(
       it => it.keyTransaction !== action.payload.transactionKey.keyTransaction,
     );
 
     item = {...item, transactions: newArrayTransactions};
 
-    if (action.payload.transactionKey.type === 'debit to you') {
+    if (action.payload.transactionKey.type === DebitType.toYou) {
       const response = (yield call(
         Api.authPut.bind(Api),
         `http://localhost:8000/wallet/${action.payload.item.id}`,
@@ -207,7 +210,7 @@ export function* deleteTransaction(
       }
     }
 
-    if (action.payload.transactionKey.type === 'your debit') {
+    if (action.payload.transactionKey.type === DebitType.yourDebit) {
       const response = (yield call(
         Api.authPut.bind(Api),
         `http://localhost:8000/wallet/${action.payload.item.id}`,

@@ -1,4 +1,5 @@
 import {createDraftSafeSelector} from '@reduxjs/toolkit';
+import {DebitType} from '../../types/types';
 import {RootState} from '../Store';
 import {allTransactionsArray} from './WalletSelectors';
 
@@ -14,7 +15,7 @@ export const sumDebitsToYou = createDraftSafeSelector(
   allTransactionsArray,
   state => {
     return state
-      ?.filter(it => it.type === 'debit to you')
+      ?.filter(it => it.type === DebitType.toYou)
       .reduce((sum, cur) => {
         return (sum * 100 + cur.amountTransaction * 100) / 100;
       }, 0);
@@ -25,7 +26,7 @@ export const sumOfYourDebits = createDraftSafeSelector(
   allTransactionsArray,
   state => {
     return state
-      ?.filter(it => it.type === 'your debit')
+      ?.filter(it => it.type === DebitType.yourDebit)
       .reduce((sum, cur) => {
         return (sum * 100 + cur.amountTransaction * 100) / 100;
       }, 0);
@@ -35,14 +36,14 @@ export const sumOfYourDebits = createDraftSafeSelector(
 export const getDebitsToYou = createDraftSafeSelector(
   allTransactionsArray,
   state => {
-    return state.filter(it => it.type === 'debit to you');
+    return state.filter(it => it.type === DebitType.toYou);
   },
 );
 
 export const getYourDebits = createDraftSafeSelector(
   allTransactionsArray,
   state => {
-    return state.filter(it => it.type === 'your debit');
+    return state.filter(it => it.type === DebitType.yourDebit);
   },
 );
 

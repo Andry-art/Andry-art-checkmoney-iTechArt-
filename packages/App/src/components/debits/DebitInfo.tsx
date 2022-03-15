@@ -10,6 +10,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList, DebitType} from '../../types/types';
 import dayjs from 'dayjs';
 import ButtonApp from '../ButtonApp';
+import minusSource from '../../../pictures/debt/minus.png';
 
 interface Props {
   navigation: NativeStackNavigationProp<DebitNavigatorList>;
@@ -109,7 +110,7 @@ const DebitInfoComponent: FC<Props> = ({navigation}) => {
           <ButtonApp
             label="DELETE DEBT"
             onPress={showModal}
-            // image="deleteDebit"
+            image={minusSource}
           />
         </View>
       </ScrollView>

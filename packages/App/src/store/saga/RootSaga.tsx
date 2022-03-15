@@ -5,5 +5,10 @@ import {DebitsItems} from './DebitsSaga';
 import {StatisticSaga} from './StatisticSaga';
 
 export function* RootSaga(): Generator {
-  return yield all([userIsLogIn(), WalletItems(), DebitsItems(), StatisticSaga()]);
+  return yield all([
+    userIsLogIn(),
+    WalletItems(),
+    DebitsItems(),
+    StatisticSaga(),
+  ]);
 }
