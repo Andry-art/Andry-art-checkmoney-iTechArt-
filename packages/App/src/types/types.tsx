@@ -4,9 +4,11 @@ export interface ITransactions {
   keyTransaction: number;
   type: string;
   amountTransaction: number;
-  category: Category;
+  category: string;
   date: string;
   icon: string;
+  keyOfWallet?: number;
+  person?: '';
   coordinate?: {
     latitude: number;
     longitude: number;
@@ -14,6 +16,16 @@ export interface ITransactions {
     longitudeDelta?: number;
   };
 }
+export type DebitInfo = {
+  type: string;
+  keyTransaction: number;
+  date: string;
+  keyOfWallet: number;
+  amountTransaction: number;
+  person: string;
+  category?: string;
+  icon?: string;
+};
 
 export interface WalletInfo {
   id: number;
@@ -29,6 +41,7 @@ export type WalletNavigatorList = {
   'New Card': undefined;
   'Correct Transaction': undefined;
   'Add Transaction': undefined;
+  'Debit Info': undefined;
 };
 
 export type DebitNavigatorList = {
@@ -84,15 +97,6 @@ export interface IWallet {
   errorDeleteCard: string;
 }
 
-export type DebitInfo = {
-  type: string;
-  key: number;
-  date: string;
-  keyOfWallet: number;
-  amount: number;
-  person: string;
-};
-
 export type DebitsToYou = {
   debitsToYou: Array<DebitInfo>;
 };
@@ -112,8 +116,9 @@ export type ErrorFetch = {
 };
 
 export enum DebitType {
-  toYou = 'debit to you',
-  yourDebit = 'your debit',
+  toYou = 'Debit to you',
+  yourDebit = 'Your debit',
+  icon = 'iconDebit',
 }
 
 export enum Months {
@@ -192,3 +197,13 @@ export type textType =
   | 'newPassword'
   | 'oneTimeCode'
   | undefined;
+
+export type TransactionRequest = {
+  keyTransaction: number;
+  type: string;
+  amountTransaction: number;
+  category: string;
+  icon: string;
+  date: Date;
+  coordinate?: Locations | {};
+};

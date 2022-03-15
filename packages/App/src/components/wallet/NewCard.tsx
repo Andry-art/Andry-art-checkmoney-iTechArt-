@@ -2,7 +2,7 @@ import React, {FC, useState} from 'react';
 import {StyleSheet, View, Text, TextInput, ScrollView} from 'react-native';
 import {useFormik} from 'formik';
 import {useDispatch, useSelector} from 'react-redux';
-import {addNewCardRequest} from '../../store/actions/RalletActions';
+import {addNewCardRequest} from '../../store/actions/WalletActions';
 import {walletItems} from '../../store/selectors/WalletSelectors';
 import * as yup from 'yup';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

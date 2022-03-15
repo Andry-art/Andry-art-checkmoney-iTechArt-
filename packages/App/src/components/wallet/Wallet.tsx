@@ -35,18 +35,22 @@ import {
   cardMonetaryMove,
   deleteTransactionRequest,
   correctTransactionInfo,
-} from '../../store/actions/RalletActions';
+} from '../../store/actions/WalletActions';
 import Loading from '../Loading';
 import {
   WalletNavigatorList,
   WalletInfo,
   ITransactions,
+  DebitType,
+  TransactionType,
 } from '../../types/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useDeviceOrientation} from '@react-native-community/hooks/lib/useDeviceOrientation';
 import NetInfo from '@react-native-community/netinfo';
 import dayjs from 'dayjs';
 import LinearGradient from 'react-native-linear-gradient';
+import {walletName} from '../../store/selectors/DebitSelectors';
+import {addDebitInfo} from '../../store/actions/DebitsActions';
 
 const viewability: ViewabilityConfig = {
   viewAreaCoveragePercentThreshold: 10,
@@ -72,7 +76,7 @@ const Wallet: FC<Props> = ({navigation}) => {
   const errorDeleteCard = useSelector(deleteCardError);
   const errorAddCard = useSelector(addNewCardError);
   const getErrorInfo = useSelector(getError);
-
+  let chosenWallet = useSelector(walletName);
   const [itemVisible, setItemVisible] = useState<number>(0);
   const [refItem, setRefItem] = useState<FlatList<WalletInfo> | null>();
   const [chosenBtn, setChosenBtn] = useState<string>('All actions');
@@ -82,7 +86,6 @@ const Wallet: FC<Props> = ({navigation}) => {
   useEffect(() => {
     setIsConnection(true);
     return NetInfo.addEventListener(state => {
-      console.log(state.isConnected);
       if (state.isConnected === false) {
         setIsConnection(false);
       }
@@ -150,10 +153,12 @@ const Wallet: FC<Props> = ({navigation}) => {
 
   const showModalTransaction = (
     keyTransaction: number,
-    amount: number,
+    amountTransaction: number,
     type: string,
   ) => {
-    const transactionKey = {keyTransaction, amount, type};
+    const transactionKey = {keyTransaction, amountTransaction, type};
+    let item;
+
     Alert.alert('Would you like to delete transaction?', '', [
       {
         text: 'Cancel',
@@ -162,8 +167,48 @@ const Wallet: FC<Props> = ({navigation}) => {
       {
         text: 'Delete',
         onPress: () => {
-          const item = receivedWalletItems[itemVisible];
-          dispatch(deleteTransactionRequest({item, transactionKey}));
+          if (chosenWallet) {
+            if (type === DebitType.toYou) {
+              chosenWallet = {
+                ...chosenWallet,
+                walletAmount: chosenWallet.walletAmount + amountTransaction,
+              };
+            }
+            if (type === DebitType.yourDebit) {
+              chosenWallet = {
+                ...chosenWallet,
+                walletAmount: chosenWallet.walletAmount - amountTransaction,
+              };
+            }
+
+            if (chosenWallet?.walletAmount < 0) {
+              Alert.alert('Going to be minus, delete?', '', [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Delete',
+                  onPress: () => {
+                    if (chosenWallet) {
+                      item = chosenWallet;
+                    }
+                    item = receivedWalletItems[itemVisible];
+                    dispatch(deleteTransactionRequest({item, transactionKey}));
+                  },
+                },
+              ]);
+            }
+            item = chosenWallet;
+            dispatch(deleteTransactionRequest({item, transactionKey}));
+          }
+          if (
+            type === TransactionType.expenses ||
+            type === TransactionType.income
+          ) {
+            item = receivedWalletItems[itemVisible];
+            dispatch(deleteTransactionRequest({item, transactionKey}));
+          }
         },
       },
     ]);
@@ -176,13 +221,38 @@ const Wallet: FC<Props> = ({navigation}) => {
     amount: number,
     type: string,
     icon: string,
+    keyOfWallet?: number,
+    person?: string,
   ) => {
     const key = keyTransaction;
     const idCard = receivedWalletItems[itemVisible].key;
-    dispatch(
-      correctTransactionInfo({key, amount, category, date, type, icon, idCard}),
-    );
-    navigation.navigate('Correct Transaction');
+    if (type === TransactionType.expenses || type === TransactionType.income) {
+      dispatch(
+        correctTransactionInfo({
+          key,
+          amount,
+          category,
+          date,
+          type,
+          icon,
+          idCard,
+        }),
+      );
+      navigation.navigate('Correct Transaction');
+    }
+    if (keyOfWallet && person) {
+      dispatch(
+        addDebitInfo({
+          type,
+          keyOfWallet,
+          keyTransaction,
+          date,
+          person,
+          amountTransaction: amount,
+        }),
+      );
+      navigation.navigate('Debit Info');
+    }
   };
 
   const viewableItemsChanged = useCallback(({viewableItems}) => {
@@ -312,6 +382,8 @@ const Wallet: FC<Props> = ({navigation}) => {
                 type={item.type}
                 icon={item.icon}
                 keyTransaction={item.keyTransaction}
+                keyOfWallet={item.keyOfWallet || 0}
+                person={item.person || ''}
                 onLongPress={showModalTransaction}
                 onPress={correctTransaction}
               />

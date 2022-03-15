@@ -1,9 +1,7 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import {Api} from '../Api';
-import {DebitInfo, Debits, ErrorFetch, WalletInfo} from '../../types/types';
+import {DebitInfo, ErrorFetch, WalletInfo} from '../../types/types';
 import {
-  getDebitsItemsSuccess,
-  getDebitsItemsFailed,
   addNewDebitRequest,
   addNewDebitToYouSuccess,
   addNewYourDebitSuccess,
@@ -14,29 +12,6 @@ import {
   deleteDebitFailed,
 } from '../actions/DebitsActions';
 import {logOutAction} from '../actions/RegistrationActions';
-
-export function* getDebitsItems(): Generator {
-  try {
-    const response = (yield call(
-      Api.authGet.bind(Api),
-      'http://localhost:8000/debits',
-    )) as Debits;
-
-    if (response) {
-      yield put(getDebitsItemsSuccess(response));
-    }
-
-    if (!response) {
-      yield put(getDebitsItemsFailed('Network isn`t working'));
-    }
-  } catch (error) {
-    console.log('getWallet', error);
-    yield put(getDebitsItemsFailed((error as Error).message));
-    if ((error as ErrorFetch).code === 401) {
-      yield put(logOutAction());
-    }
-  }
-}
 
 export function* addNewDebit(
   action: ReturnType<typeof addNewDebitRequest>,
@@ -102,7 +77,7 @@ export function* deleteDebit(
 ): Generator {
   try {
     let wallet = action.payload.wallet;
-
+    console.log('ww', action.payload);
     const responseWallet = (yield call(
       Api.authPut.bind(Api),
       `http://localhost:8000/wallet/${action.payload.wallet.id}`,
@@ -115,7 +90,9 @@ export function* deleteDebit(
 
     if (action.payload.debit.type === 'debit to you' && responseWallet) {
       let debits = action.payload.array;
-      debits = debits.filter(it => it.key !== action.payload.debit.key);
+      debits = debits.filter(
+        it => it.keyTransaction !== action.payload.debit.keyTransaction,
+      );
 
       const responseDebit = (yield call(
         Api.authPut.bind(Api),
@@ -132,7 +109,9 @@ export function* deleteDebit(
 
     if (action.payload.debit.type === 'your debit' && responseWallet) {
       let debits = action.payload.array;
-      debits = debits.filter(it => it.key !== action.payload.debit.key);
+      debits = debits.filter(
+        it => it.keyTransaction !== action.payload.debit.keyTransaction,
+      );
 
       const responseDebit = (yield call(
         Api.authPut.bind(Api),
@@ -156,7 +135,6 @@ export function* deleteDebit(
 }
 
 export function* DebitsItems(): Generator {
-  yield takeEvery('GET_DEBITS_ITEMS', getDebitsItems);
   yield takeEvery('addNewDebit', addNewDebit);
   yield takeEvery('deleteDebitRequest', deleteDebit);
 }

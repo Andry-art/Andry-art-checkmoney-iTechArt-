@@ -34,10 +34,10 @@ const initialState: IDebits = {
   debInfo: {
     type: '',
     keyOfWallet: 0,
-    key: 0,
+    keyTransaction: 0,
     date: '',
     person: '',
-    amount: 0,
+    amountTransaction: 0,
   },
   isLoading: false,
   isNewDebitLoading: false,

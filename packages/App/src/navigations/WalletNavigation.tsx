@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Wallet from '../components/wallet/Wallet';
-import {getAllItemWallet} from '../store/actions/RalletActions';
+import {getAllItemWallet} from '../store/actions/WalletActions';
 import {getDebitsItemsRequest} from '../store/actions/DebitsActions';
 import {useDispatch, useSelector} from 'react-redux';
 import NewCard from '../components/wallet/NewCard';
@@ -11,6 +11,7 @@ import {Alert, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import logOutSource from '../../pictures/logout.png';
 import {userIsLogIn} from '../store/selectors/RegistrationSelectors';
 import {logOutAction} from '../store/actions/RegistrationActions';
+import DebitInfoComponent from '../components/debits/DebitInfo';
 
 const Stack = createNativeStackNavigator();
 
@@ -79,6 +80,19 @@ const BalanceNavigation = () => {
       <Stack.Screen
         name="Correct Transaction"
         component={CorrectTransaction}
+        options={{
+          headerStyle: {backgroundColor: '#FFFFFF'},
+          headerRight: () => (
+            <TouchableOpacity style={styles.logOut} onPress={logOutRequest}>
+              <Image source={logOutSource} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name="Debit Info"
+        component={DebitInfoComponent}
         options={{
           headerStyle: {backgroundColor: '#FFFFFF'},
           headerRight: () => (

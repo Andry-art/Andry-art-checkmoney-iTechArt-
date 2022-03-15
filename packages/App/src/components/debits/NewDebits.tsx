@@ -9,8 +9,10 @@ import {
   getDebitsToYou,
   getYourDebits,
 } from '../../store/selectors/DebitSelectors';
-import {addNewDebitRequest} from '../../store/actions/DebitsActions';
-import {getAllItemWallet} from '../../store/actions/RalletActions';
+import {
+  addTransactionRequest,
+  getAllItemWallet,
+} from '../../store/actions/WalletActions';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DebitNavigatorList} from '../../types/types';
 import {DebitType} from '../../types/types';
@@ -56,10 +58,12 @@ const NewDebits: FC<Props> = ({navigation}) => {
     initialValues: initialValues,
     validationSchema: newDebitSchema,
     onSubmit: value => {
-      let key = 0;
+      let keyTransaction = 0;
       let debitsArray;
       const person = value.name;
-      const amount =
+      const icon = DebitType.icon;
+      let category;
+      const amountTransaction =
         Math.round(
           Number(
             value.amount
@@ -70,35 +74,36 @@ const NewDebits: FC<Props> = ({navigation}) => {
         ) / 100;
       const date = String(new Date(Date.now()));
       const keyOfWallet = keyCard;
+      let wallet = cards.find(it => it.key === keyOfWallet);
       const type = debitType;
-      if (type === DebitType.toYou) {
-        key =
-          debitToYou.length === 0
+      if (type === DebitType.toYou && wallet) {
+        keyTransaction =
+          wallet.transactions.length === 0
             ? 1
-            : debitToYou[debitToYou.length - 1].key + 1;
+            : wallet.transactions[0].keyTransaction + 1;
         debitsArray = debitToYou;
       }
-      if (type === DebitType.yourDebit) {
-        key =
-          yourDebits.length === 0
+      if (type === DebitType.yourDebit && wallet) {
+        keyTransaction =
+          wallet.transactions.length === 0
             ? 1
-            : yourDebits[yourDebits.length - 1].key + 1;
+            : wallet.transactions[0].keyTransaction + 1;
         debitsArray = yourDebits;
       }
 
-      let wallet = cards.find(it => it.key === keyOfWallet);
-
       if (wallet) {
         if (type === DebitType.toYou) {
+          category = DebitType.toYou;
           wallet = {
             ...wallet,
-            walletAmount: wallet.walletAmount - amount,
+            walletAmount: wallet.walletAmount - amountTransaction,
           };
         }
         if (type === DebitType.yourDebit) {
+          category = DebitType.yourDebit;
           wallet = {
             ...wallet,
-            walletAmount: wallet.walletAmount + amount,
+            walletAmount: wallet.walletAmount + amountTransaction,
           };
         }
         if (wallet.walletAmount < 0) {
@@ -110,12 +115,20 @@ const NewDebits: FC<Props> = ({navigation}) => {
         Alert.alert('Choose wallet');
       }
 
-      if (wallet && key && debitsArray && wallet?.walletAmount > 0) {
+      if (wallet && keyTransaction && debitsArray && wallet?.walletAmount > 0) {
         dispatch(
-          addNewDebitRequest({
-            wallet: wallet,
-            debit: {key, person, amount, date, keyOfWallet, type},
-            array: debitsArray,
+          addTransactionRequest({
+            item: wallet,
+            transaction: {
+              keyTransaction,
+              person,
+              amountTransaction,
+              date,
+              keyOfWallet,
+              type,
+              icon,
+              category,
+            },
           }),
         );
         navigation.goBack();

@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {monetaryMove} from '../../store/selectors/WalletSelectors';
 import CategoriesInAddMoneyMove from './CategoriesInAddMoneyMove';
 import {walletItems} from '../../store/selectors/WalletSelectors';
-import {addTransactionRequest} from '../../store/actions/RalletActions';
+import {addTransactionRequest} from '../../store/actions/WalletActions';
 import {
   WalletNavigatorList,
   ChosenCategory,
