@@ -20,6 +20,16 @@ import {TransactionType} from '../../types/types';
 import dayjs from 'dayjs';
 import {addDebitInfo} from '../../store/actions/DebitsActions';
 import {useDispatch} from 'react-redux';
+import {
+  GestureDetector,
+  Gesture,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface Props {
   keyTransaction: number;
@@ -69,7 +79,40 @@ const Transactions: FC<Props> = ({
 
   const img = imgSource[icon];
 
-  const onLongPressCallBack = useCallback(() => {
+  const translateX = useSharedValue(0);
+
+  // const gesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
+  //   onActive: event => {
+  //     if (translateX.value === 0) {
+  //       translateX.value = withTiming(-80);
+  //     }
+  //     if (translateX.value < 0) {
+  //       translateX.value = withTiming(0);
+  //     }
+
+  //     console.log(event.translationX);
+  //   },
+  //   onEnd: () => {},
+  // });
+
+  const gesture = Gesture.Pan().onEnd(() => {
+    if (translateX.value === 0) {
+      translateX.value = withTiming(-80);
+    }
+    if (translateX.value < 0) {
+      translateX.value = withTiming(0);
+    }
+  });
+
+  const deleteTransactionAnmStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{translateX: translateX.value}],
+      zIndex: 100,
+      backgroundColor: 'gray',
+    };
+  });
+
+  const deleteCallBack = useCallback(() => {
     dispatch(
       addDebitInfo({
         type,
@@ -116,37 +159,50 @@ const Transactions: FC<Props> = ({
   ]);
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onLongPress={onLongPressCallBack}
-      onPress={onPressCallBack}>
-      <View style={styles.iconsInfo}>
-        <View
-          style={
-            type === TransactionType.income || type === DebitType.yourDebit
-              ? styles.iconBGIncome
-              : styles.iconBGExpens
-          }>
-          <Image
-            source={img}
-            style={
-              type === TransactionType.income || type === DebitType.yourDebit
-                ? styles.imgIncome
-                : styles.imgExpenses
-            }
-          />
-        </View>
-        <View style={styles.info}>
-          <Text style={styles.title}>{category}</Text>
-          <Text style={styles.date}>{dayjs(date).format('DD/MM/YY')}</Text>
-        </View>
-      </View>
-      {type === TransactionType.income || type === DebitType.yourDebit ? (
-        <Text style={styles.sumPlus}>+{amount}$</Text>
-      ) : (
-        <Text style={styles.sumMinus}>-{amount}$</Text>
-      )}
-    </TouchableOpacity>
+    <GestureHandlerRootView>
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={deleteTransactionAnmStyle}>
+          <TouchableOpacity
+            style={styles.container}
+            onLongPress={deleteCallBack}
+            onPress={onPressCallBack}>
+            <View style={styles.iconsInfo}>
+              <View
+                style={
+                  type === TransactionType.income ||
+                  type === DebitType.yourDebit
+                    ? styles.iconBGIncome
+                    : styles.iconBGExpens
+                }>
+                <Image
+                  source={img}
+                  style={
+                    type === TransactionType.income ||
+                    type === DebitType.yourDebit
+                      ? styles.imgIncome
+                      : styles.imgExpenses
+                  }
+                />
+              </View>
+              <View style={styles.info}>
+                <Text style={styles.title}>{category}</Text>
+                <Text style={styles.date}>
+                  {dayjs(date).format('DD/MM/YY')}
+                </Text>
+              </View>
+            </View>
+            {type === TransactionType.income || type === DebitType.yourDebit ? (
+              <Text style={styles.sumPlus}>+{amount}$</Text>
+            ) : (
+              <Text style={styles.sumMinus}>-{amount}$</Text>
+            )}
+          </TouchableOpacity>
+        </Animated.View>
+      </GestureDetector>
+      <TouchableOpacity style={styles.btnDelete} onPress={deleteCallBack}>
+        <Text style={styles.delete}>Х</Text>
+      </TouchableOpacity>
+    </GestureHandlerRootView>
   );
 };
 
@@ -216,6 +272,21 @@ const styles = StyleSheet.create({
 
   imgIncome: {
     tintColor: '#2FBC5F',
+  },
+
+  btnDelete: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    position: 'absolute',
+    minHeight: 100,
+    width: '100%',
+    backgroundColor: 'red',
+    paddingHorizontal: 30,
+  },
+
+  delete: {
+    fontSize: 25,
+    fontWeight: '800',
   },
 });
 
